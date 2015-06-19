@@ -16,10 +16,14 @@ public class CSPInsertionNeighbourhood implements Neighbourhood<CSPSolution>{
 	public List<SingleInsertion> getAllMoves(CSPSolution sol) {
 		List<SingleInsertion> allInsertions = new ArrayList<SingleInsertion>();
 		
-		int demand = sol.getSecuenceLength();
-		
-		for (int pos = 0; pos<demand; pos++) {
-			allInsertions.add(new SingleInsertion(pos));
+		int[] sequence = sol.getSequence();
+		int demand = sequence.length;
+
+		for (int oldPos=0; oldPos<demand; oldPos++) {
+			List<Integer> indexes = CSPNeighbourhodd.getValues(oldPos, sequence);
+			for (int newPos: indexes) {
+				allInsertions.add(new SingleInsertion(oldPos, newPos));
+			}
 		}
 		
 		return allInsertions;
@@ -28,8 +32,10 @@ public class CSPInsertionNeighbourhood implements Neighbourhood<CSPSolution>{
 	public SingleInsertion getRandomMove(CSPSolution sol) {
 		Randomizer random = CSPProblem.random;
 		
-		int randomPos = random.nextInt(sol.getSecuenceLength()-1);
+		List<SingleInsertion> moves = getAllMoves(sol);
 		
-		return new SingleInsertion(randomPos);
+		int numMoves = moves.size();
+		
+		return moves.get(random.nextInt(numMoves));
 	}
 }

@@ -1,6 +1,7 @@
 package jcsp.algo;
 
 import java.util.Arrays;
+import java.util.List;
 
 import jcsp.CSPProblem;
 import jcsp.CSPSolution;
@@ -23,8 +24,8 @@ public class GRASP {
 	private double alpha;
 	private long maxSteps;
 
-	//Local search
-	private Neighbourhood<CSPSolution> neighbourhood;
+	//Local searchs
+	private List<Neighbourhood<CSPSolution>> neighbourhoods;
 	
 	//Output
 	private CSPSolution bestFound = null;
@@ -34,13 +35,13 @@ public class GRASP {
 	private boolean verbose;
 	
 	public GRASP(CSPProblem csp, int iterations, double alpha, long maxSteps,
-			Neighbourhood<CSPSolution> neighbourhood, boolean verbose) {
+			List<Neighbourhood<CSPSolution>> neighbourhoods, boolean verbose) {
 		super();
 		this.csp = csp;
 		this.iterations = iterations;
 		this.alpha = alpha;
 		this.maxSteps = maxSteps;
-		this.neighbourhood = neighbourhood;
+		this.neighbourhoods = neighbourhoods;
 		this.verbose = verbose;
 	}
 
@@ -84,45 +85,59 @@ public class GRASP {
 		
 			//Constructive phase: best initial solution
 		    CSPSolution best = constructivePhase();
+		    
+		    double improvedFitness = Double.MAX_VALUE;
 
-		    SteepestDescent<CSPSolution> stocasticDescent = 
-		    		new SteepestDescent<CSPSolution>(csp, neighbourhood);
-		    // set maximum runtime
-//		    stocasticDescent.addStopCriterion(new MaxRuntime(timeLimit, TimeUnit.SECONDS));
-		    stocasticDescent.addStopCriterion(new MaxSteps(maxSteps));
-		    if(verbose) {
-		    	stocasticDescent.addSearchListener(new ProgressSearchListener());
-		    }
-		    
-		    //Constructed solutions is improved.
-		    stocasticDescent.setCurrentSolution(best);
-		    
-		    //Improvement phase
-		    stocasticDescent.start();
-		    
-		    CSPSolution improved = stocasticDescent.getBestSolution();
-		    
-		    if(improved!=null) {
-		    	
-		    	double improvedFitness = stocasticDescent.getBestSolutionEvaluation().getValue();
-		    	
-		    	if(improvedFitness<bestFitness) {
-		    		bestFitness=improvedFitness;
-		    		bestFound=improved;
-		    		 // print results
+		    for (Neighbourhood<CSPSolution> neighbourhood: neighbourhoods) {
+		    	SteepestDescent<CSPSolution> stocasticDescent = 
+			    		new SteepestDescent<CSPSolution>(csp, neighbourhood);
+
+//			    stocasticDescent.addStopCriterion(new MaxRuntime(timeLimit, TimeUnit.SECONDS));
+			    stocasticDescent.addStopCriterion(new MaxSteps(maxSteps));
+			    if(verbose) {
+			    	stocasticDescent.addSearchListener(new ProgressSearchListener());
+			    }
+			    
+			    //Try to improve constructed solution.
+			    stocasticDescent.setCurrentSolution(best);
+			    
+			    //Improvement phase
+			    stocasticDescent.start();
+			    
+			    CSPSolution improved = stocasticDescent.getBestSolution();
+			    
+			    if(improved!=null) {
+			    	best=improved;
+			    	
+			    	improvedFitness = 
+			    			stocasticDescent.getBestSolutionEvaluation().getValue();
+			    	bestFitness=improvedFitness;
+		    		// print results
 				    if(verbose) {
 		    			System.out.println("Improved sequence: " + Arrays.toString(
 		    					improved.getSequence()));
 				        System.out.println("Improved sequence fitness: " + 
 				        		improvedFitness);
 				    }
-		    	}
-		    } else if(verbose) {
-		    	System.out.println("No improving solution found...");
+			    } else if(verbose) {
+			    	System.out.println("No improving solution found...");
+			    }
+			    // dispose		    
+			    stocasticDescent.dispose();
 		    }
-		
-		    // dispose		    
-		    stocasticDescent.dispose();
+		    
+	    	if(improvedFitness<bestFitness) {
+	    		bestFitness=improvedFitness;
+	    		bestFound=best;
+	    		 // print results
+			    if(verbose) {
+	    			System.out.println("Improved sequence: " + Arrays.toString(
+	    					best.getSequence()));
+			        System.out.println("Improved sequence fitness: " + 
+			        		improvedFitness);
+			    }
+	    	}
+		    
 		}
 	}
 	

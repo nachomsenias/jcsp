@@ -71,12 +71,23 @@ public class CSPSolution extends Solution{
 		sequence[j]=tmp;
 	}
 	
-	public void insert(int pos) {
-		int last = sequence[sequence.length-1];
-		for (int i=sequence.length-1; i>pos; i--) {
-			sequence[i]=sequence[i-1];
+	public void insert(int oldPos, int newPos) {
+		int type = sequence[oldPos];
+		//Inserting bellow
+		if(newPos<oldPos) {
+			//Move up
+			for (int i=oldPos; i>newPos; i--) {
+				sequence[i]=sequence[i-1];
+			}
+			
+		} else {
+			//Inserting over
+			//Move down
+			for (int i=oldPos; i<newPos; i++) {
+				sequence[i]=sequence[i+1];
+			}
 		}
-		sequence[pos]=last;
+		sequence[newPos] = type;
 	}
 	
 	public void addCar(int typeClass) {

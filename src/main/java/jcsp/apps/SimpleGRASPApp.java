@@ -1,6 +1,8 @@
 package jcsp.apps;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jamesframework.core.search.neigh.Neighbourhood;
 
@@ -10,14 +12,17 @@ import util.random.RandomizerFactory.RandomizerAlgorithm;
 import jcsp.CSPProblem;
 import jcsp.CSPSolution;
 import jcsp.algo.GRASP;
+import jcsp.neighbourhood.CSPInsertionNeighbourhood;
 import jcsp.neighbourhood.CSPSwapNeighbourhood;
 import jcsp.util.CSPParser;
 
 public class SimpleGRASPApp {
 
 	public static void main(String[] args) throws IOException {
+//		String exampleFile="../xCSP/instances/test_10_cars.txt";
+//		String exampleFile="../xCSP/instances/test_12_cars.txt";
 		String exampleFile="../xCSP/instances/pb_400_05.txt";
-        
+		
         CSPProblem csp = CSPParser.load(exampleFile);
         
         System.out.println("Starting experiment with file: " + exampleFile);
@@ -25,9 +30,15 @@ public class SimpleGRASPApp {
         double alpha = 0.8;
         int iterations = 50;
         long maxSteps = 100000;
-        
-        Neighbourhood<CSPSolution> neighbourhood = new CSPSwapNeighbourhood();
         boolean verbose = true;
+
+        List<Neighbourhood<CSPSolution>> neighbourhoods = new ArrayList<Neighbourhood<CSPSolution>>();
+        
+        Neighbourhood<CSPSolution> swapNeighbourhood = new CSPSwapNeighbourhood();
+        neighbourhoods.add(swapNeighbourhood);
+        
+        Neighbourhood<CSPSolution> insertNeighbourhood = new CSPInsertionNeighbourhood();
+        neighbourhoods.add(insertNeighbourhood);
         
         for (int seedIndex = 0; seedIndex<30; seedIndex++) { 
         
@@ -37,7 +48,7 @@ public class SimpleGRASPApp {
 		    		RandomizerAlgorithm.XOR_SHIFT_128_PLUS_FAST, RandomizerUtils.PRIME_SEEDS[seedIndex]
 			); 
         	
-        	GRASP grasp = new GRASP(csp, iterations, alpha, maxSteps, neighbourhood, verbose);
+        	GRASP grasp = new GRASP(csp, iterations, alpha, maxSteps, neighbourhoods, verbose);
         	grasp.optimize();
         	
         	CSPSolution best = grasp.getBest();
