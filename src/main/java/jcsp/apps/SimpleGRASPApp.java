@@ -19,18 +19,22 @@ import jcsp.util.CSPParser;
 public class SimpleGRASPApp {
 
 	public static void main(String[] args) throws IOException {
+		String exampleFile="../xCSP/instances/classical/p4_72.txt";
+//		String exampleFile="../xCSP/instances/classical/p26_82.txt";
+//		String exampleFile="../xCSP/instances/pb_100_01_4_72_feasible.txt";
+//		String exampleFile="../xCSP/instances/pb_200_01.txt";
 //		String exampleFile="../xCSP/instances/test_10_cars.txt";
 //		String exampleFile="../xCSP/instances/test_12_cars.txt";
-		String exampleFile="../xCSP/instances/pb_400_05.txt";
+//		String exampleFile="../xCSP/instances/pb_400_05.txt";
 		
         CSPProblem csp = CSPParser.load(exampleFile);
         
         System.out.println("Starting experiment with file: " + exampleFile);
         
-        double alpha = 0.8;
+        double alpha = 0.3;
         int iterations = 50;
         long maxSteps = 100000;
-        boolean verbose = true;
+        boolean verbose = false;
 
         List<Neighbourhood<CSPSolution>> neighbourhoods = new ArrayList<Neighbourhood<CSPSolution>>();
         

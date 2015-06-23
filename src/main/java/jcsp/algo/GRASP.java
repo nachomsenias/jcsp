@@ -111,7 +111,7 @@ public class GRASP {
 			    	
 			    	improvedFitness = 
 			    			stocasticDescent.getBestSolutionEvaluation().getValue();
-			    	bestFitness=improvedFitness;
+//			    	bestFitness=improvedFitness;
 		    		// print results
 				    if(verbose) {
 		    			System.out.println("Improved sequence: " + Arrays.toString(
@@ -136,6 +136,14 @@ public class GRASP {
 			        System.out.println("Improved sequence fitness: " + 
 			        		improvedFitness);
 			    }
+	    	}
+	    	if(improvedFitness==CSPProblem.FEASIBLE_FITNESS) {
+	    		if(verbose) {
+	    			System.out.println("Feasible solution found at iteration "
+	    					+i+", ending process.");
+	    		}
+	    		
+	    		break;
 	    	}
 		    
 		}

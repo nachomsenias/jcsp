@@ -26,6 +26,8 @@ public class CSPProblem implements Problem<CSPSolution>{
 	
 	public final static int EMPTY_CAR = -1;
 	
+	public final static double FEASIBLE_FITNESS = 0.0;
+	
 	private static final byte POSSIBLE_FROM = 0;
 	private static final byte TOTAL_INDEX = 1;
 	
