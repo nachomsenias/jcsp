@@ -16,6 +16,8 @@ public class CSPSolution extends Solution{
 	private int lastType = -1;
 	private int prevType = -1;
 	
+	private boolean building = true;
+	
 	public CSPSolution(
 			int[] sequence,
 			int numClasses
@@ -109,6 +111,14 @@ public class CSPSolution extends Solution{
 	}
 
 	// GETTERS & SETTERS
+	
+	public void setImproving() {
+		building = false;
+	}
+	
+	public boolean isBuilding() {
+		return building;
+	}
 	
 	public int getNumClasses() {
 		return numClasses;

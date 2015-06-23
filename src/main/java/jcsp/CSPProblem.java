@@ -48,6 +48,15 @@ public class CSPProblem implements Problem<CSPSolution>{
 	private int[][] requirements;
 	private int[] demandByClasses;
 	
+	//Auxiliar structs
+	
+	/**
+	 * For each option.
+	 */
+	private double [] ratioPossibleTotal;
+	
+	private double baseError;
+	
 	//xCSP weights
 	//0 Upper Over Assignement // P+
 	//1 Under Over Assignement // P-
@@ -72,6 +81,14 @@ public class CSPProblem implements Problem<CSPSolution>{
 		this.options = options;
 		this.requirements = requirements;
 		this.demandByClasses = demandByClasses;
+		
+		//Create datastructs
+		ratioPossibleTotal = new double[numOptions];
+		for (int i=0; i<numOptions; i++) {
+			ratioPossibleTotal[i] = (double) options[0][i] / (double) options[1][i];
+		}
+		
+		baseError = numOptions*carsDemand;
 	}
 	
 	public CSPSolution createRandomSolution() {
@@ -107,16 +124,11 @@ public class CSPProblem implements Problem<CSPSolution>{
 			);
 	}
 
-	public Evaluation evaluate(CSPSolution sol) {
+	
+	private double evaluateRestrictions(int[] sequence) {
 		int[] values = new int [NUM_RESTRICTIONS];
 		
-		int[] sequence = sol.getSequence();
-		
-		int lastIndex = sol.getLastIndex();
-		
-		int invalidCars = carsDemand-(lastIndex+1);
-		
-		for (int car=0; car<lastIndex; car++) {
+		for (int car=0; car<carsDemand; car++) {
 			for (int option=0; option<numOptions; option++) {
 				
 				int total = this.options[TOTAL_INDEX][option];
@@ -156,12 +168,64 @@ public class CSPProblem implements Problem<CSPSolution>{
 			}
 		}
 		
-		double fitness =invalidCars*100;
+		double fitness =0;
 		
 		for (int i=0; i<values.length; i++) {
 			fitness+=values[i]*weights[i];
 		}
-		return new SimpleEvaluation(fitness);
+		
+		return fitness;
+	}
+	
+	private double dynamicUtilizationRate(CSPSolution sol) {
+		double totalDur = 0;
+		int [] availableByClass = sol.getRemainingClasses();
+		
+		int lastAssigned = sol.getLastIndex();
+
+		
+		for (int i=0; i<numOptions; i++) {
+			
+			//Ni(PI) - Ni(PIj) => Because Ni(PIj) = Ni(PI) - (Not assigned using i)
+			// This expression equals : Not assigned using i.
+			int notAssigned = 0;
+			for (int j=0; j<numClasses; j++) {
+				if(requirements[j][i]>0) {
+					notAssigned+=availableByClass[j];
+				}
+			}
+			
+			double dur = ratioPossibleTotal[i]*((double)notAssigned/(carsDemand-(lastAssigned)));
+			totalDur+=dur;
+		}
+		
+		return totalDur*carsDemand;
+	}
+	
+	//TODO
+	public CSPSolution createGreedy() {
+		CSPSolution initial = createEmptySolution();
+		return initial;
+	}
+	
+	public Evaluation evaluate(CSPSolution sol) {		
+		int[] sequence = sol.getSequence();
+		
+		int lastIndex = sol.getLastIndex();
+		
+		int invalidCars = carsDemand-(lastIndex+1);
+		
+		if (invalidCars>0) {
+			double dur = dynamicUtilizationRate(sol);
+			
+			double fitness = ((double)carsDemand) / dur;
+			fitness+=baseError;
+			
+			return new SimpleEvaluation(fitness);
+		} else {
+			return new SimpleEvaluation(
+					evaluateRestrictions(sequence));
+		}
 	}
 
 	/**
