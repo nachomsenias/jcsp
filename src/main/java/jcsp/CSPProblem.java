@@ -1,7 +1,13 @@
 package jcsp;
 
 import java.util.Arrays;
+import java.util.List;
 
+import jcsp.move.AddCar;
+import jcsp.neighbourhood.CSPGreedyNeighbourhood;
+import jcsp.util.FitnessBean;
+
+import org.apache.commons.collections.BinaryHeap;
 import org.jamesframework.core.problems.Problem;
 import org.jamesframework.core.problems.constraints.validations.SimpleValidation;
 import org.jamesframework.core.problems.constraints.validations.Validation;
@@ -11,6 +17,7 @@ import org.jamesframework.core.problems.objectives.evaluations.SimpleEvaluation;
 import util.Functions;
 import util.random.Randomizer;
 
+@SuppressWarnings("deprecation")
 public class CSPProblem implements Problem<CSPSolution>{
 
 	/**
@@ -199,13 +206,51 @@ public class CSPProblem implements Problem<CSPSolution>{
 			totalDur+=dur;
 		}
 		
-		return totalDur*carsDemand;
+		return totalDur;
 	}
 	
 	//TODO
-	public CSPSolution createGreedy() {
+	public CSPSolution createGreedy(double alpha) {
 		CSPSolution initial = createEmptySolution();
+		CSPGreedyNeighbourhood neighbourhood = new CSPGreedyNeighbourhood(this,alpha);
+		
+		while(initial.getLastIndex()<carsDemand-1) {
+			initial = getMaxDur(initial, neighbourhood);
+		}
+		
 		return initial;
+	}
+	
+	private CSPSolution getMaxDur(CSPSolution sol, CSPGreedyNeighbourhood neighbourhood) {
+		BinaryHeap bh = new BinaryHeap(false, FitnessBean.beanComparator());
+		
+		List<AddCar> everyMove = neighbourhood.getEveryMove(sol);
+		int totalMoves = everyMove.size();
+		
+		for (AddCar move: everyMove) {
+			move.apply(sol);
+			double dur = dynamicUtilizationRate(sol);
+			move.undo(sol);
+			bh.add(new FitnessBean(dur, move));
+		}
+		
+		if(neighbourhood.getAlpha()!=0.0) {
+			List<AddCar> besties = neighbourhood.selectBesties(bh, totalMoves);
+			int howManyBesties = besties.size();
+			
+			AddCar move = besties.get(random.nextInt(howManyBesties));
+			move.apply(sol);
+			
+			return sol;
+			
+		} else {
+			FitnessBean fb = (FitnessBean)bh.pop();
+			
+			fb.move.apply(sol);
+			
+			return sol;
+		}	
+		
 	}
 	
 	public Evaluation evaluate(CSPSolution sol) {		

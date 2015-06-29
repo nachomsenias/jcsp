@@ -25,7 +25,7 @@ public class CSPGreedyNeighbourhood implements Neighbourhood<CSPSolution>{
 	@Override
 	public List<AddCar> getAllMoves(CSPSolution sol) {
 		
-		List<AddCar> allMoves = showMeYourMoves(sol);
+		List<AddCar> allMoves = getEveryMove(sol);
 		
 		if (allMoves.isEmpty()) {
 			return allMoves; 
@@ -43,8 +43,12 @@ public class CSPGreedyNeighbourhood implements Neighbourhood<CSPSolution>{
 			bh.add(new FitnessBean(fitness, move));
 		}
 		
+		return selectBesties(bh, totalMoves);
+	}
+	
+	public List<AddCar> selectBesties(BinaryHeap bh, int total) {
 		//At least one move should be applied when the sequence is not complete.
-		int selectableMoves = (int) (alpha * totalMoves)+1;
+		int selectableMoves = (int) (alpha * total)+1;
 		
 		List<AddCar> selectedMoves = new ArrayList<AddCar>();
 		
@@ -59,7 +63,7 @@ public class CSPGreedyNeighbourhood implements Neighbourhood<CSPSolution>{
 		return selectedMoves;
 	}
 
-	private List<AddCar> showMeYourMoves(CSPSolution sol) {
+	public List<AddCar> getEveryMove(CSPSolution sol) {
 		List<AddCar> allMoves = new ArrayList<AddCar>();
 		int[] remaining = sol.getRemainingClasses();
 		for(int i=0; i<sol.getNumClasses(); i++) {
@@ -79,6 +83,10 @@ public class CSPGreedyNeighbourhood implements Neighbourhood<CSPSolution>{
 			int moves = allMoves.size();
 			return allMoves.get(CSPProblem.random.nextInt(moves));
 		}
+	}
+	
+	public double getAlpha() {
+		return alpha;
 	}
 
 }

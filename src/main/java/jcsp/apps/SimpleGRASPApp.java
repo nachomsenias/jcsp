@@ -31,10 +31,10 @@ public class SimpleGRASPApp {
         
         System.out.println("Starting experiment with file: " + exampleFile);
         
-        double alpha = 0.3;
+        double alpha = 0.0;
         int iterations = 50;
         long maxSteps = 100000;
-        boolean verbose = false;
+        boolean verbose = true;
 
         List<Neighbourhood<CSPSolution>> neighbourhoods = new ArrayList<Neighbourhood<CSPSolution>>();
         

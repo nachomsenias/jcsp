@@ -5,11 +5,8 @@ import java.util.List;
 
 import jcsp.CSPProblem;
 import jcsp.CSPSolution;
-import jcsp.neighbourhood.CSPGreedyNeighbourhood;
 import jcsp.util.ProgressSearchListener;
 
-import org.jamesframework.core.search.LocalSearch;
-import org.jamesframework.core.search.algo.RandomDescent;
 import org.jamesframework.core.search.algo.SteepestDescent;
 import org.jamesframework.core.search.neigh.Neighbourhood;
 import org.jamesframework.core.search.stopcriteria.MaxSteps;
@@ -46,37 +43,38 @@ public class GRASP {
 	}
 
 	private CSPSolution constructivePhase() {
-		// create random descent search with greedy neighbourhood
-	    LocalSearch<CSPSolution> randomDescent = 
-	    		new RandomDescent<CSPSolution>(
-	    				csp, 
-	    				new CSPGreedyNeighbourhood(csp,alpha)
-	    			);
-
-	    // attach listener 
-	    if(verbose) {
-	    	randomDescent.addSearchListener(new ProgressSearchListener());
-	    }
-	    
-	    // IMPORTANT: start with empty sequence
-	    randomDescent.setCurrentSolution(csp.createEmptySolution());
-	
-	    // start search
-	    randomDescent.start();
-	    
-	    //Constructive phase: best initial solution
-	    CSPSolution best = randomDescent.getBestSolution();
-	    
-	    if(verbose) {
-	    	System.out.println("Built sequence: " + Arrays.toString(
-	        		best.getSequence()));
-	        System.out.println("Built sequence fitness: " + 
-	        		randomDescent.getBestSolutionEvaluation());
-	    }
-	    
-	    randomDescent.dispose();
-	    
-	    return best;
+//		// create random descent search with greedy neighbourhood
+//	    LocalSearch<CSPSolution> randomDescent = 
+//	    		new RandomDescent<CSPSolution>(
+//	    				csp, 
+//	    				new CSPGreedyNeighbourhood(csp,alpha)
+//	    			);
+//
+//	    // attach listener 
+//	    if(verbose) {
+//	    	randomDescent.addSearchListener(new ProgressSearchListener());
+//	    }
+//	    
+//	    // IMPORTANT: start with empty sequence
+//	    randomDescent.setCurrentSolution(csp.createEmptySolution());
+//	
+//	    // start search
+//	    randomDescent.start();
+//	    
+//	    //Constructive phase: best initial solution
+//	    CSPSolution best = randomDescent.getBestSolution();
+//	    
+//	    if(verbose) {
+//	    	System.out.println("Built sequence: " + Arrays.toString(
+//	        		best.getSequence()));
+//	        System.out.println("Built sequence fitness: " + 
+//	        		randomDescent.getBestSolutionEvaluation());
+//	    }
+//	    
+//	    randomDescent.dispose();
+//	    
+//	    return best;
+		return csp.createGreedy(alpha);
 	}
 	
 	public void optimize() {
@@ -99,7 +97,7 @@ public class GRASP {
 			    }
 			    
 			    //Try to improve constructed solution.
-			    stocasticDescent.setCurrentSolution(best);
+			    stocasticDescent.setCurrentSolution((CSPSolution)best.copy());
 			    
 			    //Improvement phase
 			    stocasticDescent.start();
