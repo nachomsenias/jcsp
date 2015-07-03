@@ -19,6 +19,7 @@ public class CSPProblemTest extends TestCase {
 		sols.add(new CSPSolution(new int[]{0,1,5,2,4,3,3,4,2,5}, 6));
 		sols.add(new CSPSolution(new int[]{5,3,4,2,3,4,1,5,2,0}, 6));
 		sols.add(new CSPSolution(new int[]{5,2,4,3,3,4,2,5,1,0}, 6));
+		sols.add(new CSPSolution(new int[]{4,3,2,4,3,5,1,5,2,0}, 6));
 	}
 
 	public void testEvaluation() {

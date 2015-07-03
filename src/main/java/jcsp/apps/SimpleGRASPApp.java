@@ -13,15 +13,18 @@ import jcsp.CSPProblem;
 import jcsp.CSPSolution;
 import jcsp.algo.GRASP;
 import jcsp.neighbourhood.CSPInsertionNeighbourhood;
+import jcsp.neighbourhood.CSPInvertionNeighbourhood;
 import jcsp.neighbourhood.CSPSwapNeighbourhood;
 import jcsp.util.CSPParser;
 
 public class SimpleGRASPApp {
 
 	public static void main(String[] args) throws IOException {
-		String exampleFile="../xCSP/instances/classical/p4_72.txt";
+//		String exampleFile="../xCSP/instances/classical/p4_72.txt";
 //		String exampleFile="../xCSP/instances/classical/p26_82.txt";
 //		String exampleFile="../xCSP/instances/pb_100_01_4_72_feasible.txt";
+//		String exampleFile="../xCSP/instances/pb_60-01.txt";
+		String exampleFile="../xCSP/instances/pb_60-02.txt";
 //		String exampleFile="../xCSP/instances/pb_200_01.txt";
 //		String exampleFile="../xCSP/instances/test_10_cars.txt";
 //		String exampleFile="../xCSP/instances/test_12_cars.txt";
@@ -31,10 +34,10 @@ public class SimpleGRASPApp {
         
         System.out.println("Starting experiment with file: " + exampleFile);
         
-        double alpha = 0.0;
+        double alpha = 0.4;
         int iterations = 50;
         long maxSteps = 100000;
-        boolean verbose = true;
+        boolean verbose = false;
 
         List<Neighbourhood<CSPSolution>> neighbourhoods = new ArrayList<Neighbourhood<CSPSolution>>();
         
@@ -43,6 +46,10 @@ public class SimpleGRASPApp {
         
         Neighbourhood<CSPSolution> insertNeighbourhood = new CSPInsertionNeighbourhood();
         neighbourhoods.add(insertNeighbourhood);
+        
+        Neighbourhood<CSPSolution> invertNeighbourhood = new CSPInvertionNeighbourhood();
+        neighbourhoods.add(invertNeighbourhood);
+        
         
         for (int seedIndex = 0; seedIndex<30; seedIndex++) { 
         

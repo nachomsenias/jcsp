@@ -43,10 +43,10 @@ public class CSPGreedyNeighbourhood implements Neighbourhood<CSPSolution>{
 			bh.add(new FitnessBean(fitness, move));
 		}
 		
-		return selectBesties(bh, totalMoves);
+		return selectBesties(bh, totalMoves, alpha);
 	}
 	
-	public List<AddCar> selectBesties(BinaryHeap bh, int total) {
+	public static List<AddCar> selectBesties(BinaryHeap bh, int total, double alpha) {
 		//At least one move should be applied when the sequence is not complete.
 		int selectableMoves = (int) (alpha * total)+1;
 		

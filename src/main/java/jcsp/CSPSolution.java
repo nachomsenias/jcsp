@@ -3,6 +3,7 @@ package jcsp;
 import java.util.Arrays;
 import java.util.Objects;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.jamesframework.core.problems.Solution;
 
 public class CSPSolution extends Solution{
@@ -92,6 +93,11 @@ public class CSPSolution extends Solution{
 		sequence[newPos] = type;
 	}
 	
+	public void invert(int begin, int end) {
+		//reverse uses the last position as a not inclusive one.
+		ArrayUtils.reverse(sequence,begin,end+1);
+	}
+	
 	public void addCar(int typeClass) {
 		if(lastIndex==sequence.length-1)
 			throw new IllegalStateException(
@@ -134,6 +140,10 @@ public class CSPSolution extends Solution{
 	
 	public int getLastIndex() {
 		return lastIndex;
+	}
+	
+	public int getLastCar() {
+		return sequence[lastIndex];
 	}
 	
 	public int[] getRemainingClasses() {

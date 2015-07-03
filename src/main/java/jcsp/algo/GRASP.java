@@ -11,6 +11,8 @@ import org.jamesframework.core.search.algo.SteepestDescent;
 import org.jamesframework.core.search.neigh.Neighbourhood;
 import org.jamesframework.core.search.stopcriteria.MaxSteps;
 
+import util.random.Randomizer;
+
 public class GRASP {
 
 	//Problem
@@ -30,6 +32,8 @@ public class GRASP {
 	
 	//Time printing
 	private boolean verbose;
+	
+	private boolean optimalFound = false;
 	
 	public GRASP(CSPProblem csp, int iterations, double alpha, long maxSteps,
 			List<Neighbourhood<CSPSolution>> neighbourhoods, boolean verbose) {
@@ -80,13 +84,33 @@ public class GRASP {
 	public void optimize() {
 		
 		for (int i=0; i<iterations; i++) {
-		
+			if(verbose) {
+				System.out.println("**Begining GRASP Iteration: "+i);
+			}
 			//Constructive phase: best initial solution
-		    CSPSolution best = constructivePhase();
+		    CSPSolution best = constructivePhase();		    
+		    double improvedFitness = csp.evaluate(best).getValue();
 		    
-		    double improvedFitness = Double.MAX_VALUE;
+		    if(verbose) {
+		    	System.out.println("Built sequence: " + Arrays.toString(
+    					best.getSequence()));
+		    	 System.out.println("Built sequence fitness: " + 
+			        		improvedFitness);
+		    }
 
-		    for (Neighbourhood<CSPSolution> neighbourhood: neighbourhoods) {
+		    int numNeighbourhoods = neighbourhoods.size();
+		    Randomizer random = CSPProblem.random;
+		    
+		    int neighbourMax = (int)Math.pow(2, numNeighbourhoods);
+		    int neighbourApplied = 0;
+		    
+		    while(!optimalFound && maxSteps>0 && neighbourApplied<neighbourMax) {
+
+//		    for (Neighbourhood<CSPSolution> neighbourhood: neighbourhoods) {
+		    	
+		    	Neighbourhood<CSPSolution> neighbourhood = neighbourhoods.get(
+		    			random.nextInt(numNeighbourhoods));
+		    	
 		    	SteepestDescent<CSPSolution> stocasticDescent = 
 			    		new SteepestDescent<CSPSolution>(csp, neighbourhood);
 
@@ -120,8 +144,9 @@ public class GRASP {
 			    } else if(verbose) {
 			    	System.out.println("No improving solution found...");
 			    }
-			    // dispose		    
+			    // dispose
 			    stocasticDescent.dispose();
+			    neighbourApplied++;
 		    }
 		    
 	    	if(improvedFitness<bestFitness) {
@@ -136,12 +161,13 @@ public class GRASP {
 			    }
 	    	}
 	    	if(improvedFitness==CSPProblem.FEASIBLE_FITNESS) {
+	    		optimalFound=true;
 	    		if(verbose) {
 	    			System.out.println("Feasible solution found at iteration "
 	    					+i+", ending process.");
 	    		}
 	    		
-	    		break;
+//	    		break;
 	    	}
 		    
 		}
