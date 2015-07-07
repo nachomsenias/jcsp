@@ -88,9 +88,14 @@ public class SimpleGRASPApp {
 		
 		for (File config :dir.listFiles()) {
 			
+			String name = config.getName();
+			
+			if(name.equals(".") || name.equals(".."))
+				continue;
+			
 			String timestamp = String.valueOf(System.currentTimeMillis());
 			
-			runGrasp(config.getAbsolutePath(), config.getName(), args[1], timestamp);
+			runGrasp(config.getAbsolutePath(), name, args[1], timestamp);
 		}
 	}
 	
