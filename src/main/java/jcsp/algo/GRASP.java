@@ -23,7 +23,7 @@ public class GRASP {
 	private double alpha;
 	private long maxSteps;
 
-	//Local searchs
+	//Neighbourhoods
 	private List<Neighbourhood<CSPSolution>> neighbourhoods;
 	
 	//Output
@@ -104,7 +104,7 @@ public class GRASP {
 		    int neighbourMax = (int)Math.pow(2, numNeighbourhoods);
 		    int neighbourApplied = 0;
 		    
-		    while(!optimalFound && maxSteps>0 && neighbourApplied<neighbourMax) {
+		    while(!optimalFound && neighbourApplied<neighbourMax) {
 
 //		    for (Neighbourhood<CSPSolution> neighbourhood: neighbourhoods) {
 		    	

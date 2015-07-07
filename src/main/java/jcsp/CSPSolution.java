@@ -6,6 +6,8 @@ import java.util.Objects;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jamesframework.core.problems.Solution;
 
+import util.Functions;
+
 public class CSPSolution extends Solution{
 
 	private final int[] sequence;
@@ -92,6 +94,31 @@ public class CSPSolution extends Solution{
 		}
 		sequence[newPos] = type;
 	}
+	
+	/**
+	 * End is inclusive.
+	 * @param subsequence
+	 * @param begin
+	 * @param end
+	 */
+	public void restore(int [] subsequence, int begin, int end) {
+		for (int i=0;  i<subsequence.length; i++) {
+			sequence[i+begin] = subsequence[i];
+		}
+//		for (int i=begin;  i<=end; i++) {
+//			sequence[i] = subsequence[i];
+//		}
+	}
+	
+	/**
+	 * End is inclusive.
+	 * @param begin
+	 * @param end
+	 */
+	public void shuffle(int begin, int end) {
+		Functions.partialShuffle(sequence, CSPProblem.random, begin, end);
+	}
+	
 	
 	public void invert(int begin, int end) {
 		//reverse uses the last position as a not inclusive one.
