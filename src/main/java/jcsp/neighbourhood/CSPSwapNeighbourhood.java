@@ -7,21 +7,22 @@ import jcsp.CSPProblem;
 import jcsp.CSPSolution;
 import jcsp.move.SingleSwap;
 
-import org.jamesframework.core.search.neigh.Neighbourhood;
+import org.jamesframework.core.search.neigh.Move;
 
 import util.random.Randomizer;
 
-public class CSPSwapNeighbourhood implements Neighbourhood<CSPSolution>{
+public class CSPSwapNeighbourhood extends CSPNeighbourhood{
 
-	public List<SingleSwap> getAllMoves(CSPSolution sol) {
+	@Override
+	public List<Move<CSPSolution>> getAllMoves(CSPSolution sol) {
 
-		List<SingleSwap> allSwaps = new ArrayList<SingleSwap>();
+		List<Move<CSPSolution>> allSwaps = new ArrayList<Move<CSPSolution>>();
 		
 		int[] sequence = sol.getSequence();
 		int demand = sequence.length;
 
 		for (int firstIndex=0; firstIndex<demand; firstIndex++) {
-			List<Integer> indexes = CSPNeighbourhodd.getValues(firstIndex, sequence);
+			List<Integer> indexes = getValues(firstIndex, sequence);
 			for (int secondIndex: indexes) {
 				allSwaps.add(new SingleSwap(firstIndex, secondIndex));
 			}
@@ -29,10 +30,14 @@ public class CSPSwapNeighbourhood implements Neighbourhood<CSPSolution>{
 		
 		return allSwaps;
 	}
-
-	public SingleSwap getRandomMove(CSPSolution sol) {
+	
+	//TODO This method is meant to try "Brute" strategies.
+	@Override
+	public Move<CSPSolution> getRandomMove(CSPSolution sol) {
 		Randomizer random = CSPProblem.random;
 		int sequenceLenght = sol.getSecuenceLength();
+		
+		int[] sequence = sol.getSequence();
 		
 		int firstIndex = -1;
 		int secondIndex = -1;
@@ -40,7 +45,8 @@ public class CSPSwapNeighbourhood implements Neighbourhood<CSPSolution>{
 		do {
 			firstIndex = random.nextInt(sequenceLenght);
 			secondIndex = random.nextInt(sequenceLenght);
-		} while(firstIndex == secondIndex);
+		} while(firstIndex == secondIndex || 
+				sequence[firstIndex] == sequence[secondIndex]);
 		
 		return new SingleSwap(firstIndex, secondIndex);
 	}

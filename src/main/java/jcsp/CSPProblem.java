@@ -201,7 +201,6 @@ public class CSPProblem implements Problem<CSPSolution>{
 	}
 	
 	private double dynamicUtilizationRate(int option, int currentRequiring) {
-//		double dur = (carsRequiring[option] - currentRequiring) * ratioPossibleTotal[option];
 		double dur = currentRequiring * ratioPossibleTotal[option];
 		
 		return dur;
@@ -277,20 +276,20 @@ public class CSPProblem implements Problem<CSPSolution>{
 		return requiringLeft;
 	}
 	
-	private double dynamicUtilizationRateMax(CSPSolution sol) {
-		double totalDur = 0;
-
-		int lastAssigned = sol.getLastCar();
-		
-		for (int i=0; i<numOptions; i++) {
-			if(requirements[lastAssigned][i]>0) {
-				double dur = staticUtilizationRate(i);
-				totalDur+=dur;
-			}
-		}
-		
-		return totalDur;
-	}
+//	private double dynamicUtilizationRateMax(CSPSolution sol) {
+//		double totalDur = 0;
+//
+//		int lastAssigned = sol.getLastCar();
+//		
+//		for (int i=0; i<numOptions; i++) {
+//			if(requirements[lastAssigned][i]>0) {
+//				double dur = staticUtilizationRate(i);
+//				totalDur+=dur;
+//			}
+//		}
+//		
+//		return totalDur;
+//	}
 	
 	public CSPSolution createGreedy(double alpha) {
 		CSPSolution initial = createEmptySolution();

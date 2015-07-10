@@ -71,35 +71,46 @@ public class SimpleGRASPApp {
 //		String exampleFile="../xCSP/instances/test_12_cars.txt";
 //		String exampleFile="../xCSP/instances/pb_400_05.txt";
 		
-		if(args.length!=2) {
-			throw new IllegalArgumentException(
-					"This application requires a directory with sequence files "
-					+ "and a folder for writing the experiment log.");
-		}
+//		if(args.length!=2) {
+//			throw new IllegalArgumentException(
+//					"This application requires a directory with sequence files "
+//					+ "and a folder for writing the experiment log.");
+//		}
+//		
+//		String sourceDir = args[0];
+//		
+//		File dir = new File(sourceDir);
+//		
+//		if(!dir.isDirectory()) {
+//			throw new IllegalArgumentException(
+//					"Supplied path is intended to be a directory");
+//		}
+//		
+//		for (File config :dir.listFiles()) {
+//			
+//			String name = config.getName();
+//			
+//			if(name.equals(".") || name.equals("..") || name.equals("results"))
+//				continue;
+//			
+//			String timestamp = String.valueOf(System.currentTimeMillis());
+//			
+//			runGrasp(config.getAbsolutePath(), name, args[1], timestamp);
+//		}
 		
-		String sourceDir = args[0];
+		String exampleFile="../xCSP/instances/90/pb_90-05.txt"; //4.0
 		
-		File dir = new File(sourceDir);
+		File config = new File(exampleFile);
 		
-		if(!dir.isDirectory()) {
-			throw new IllegalArgumentException(
-					"Supplied path is intended to be a directory");
-		}
+		String timestamp = String.valueOf(System.currentTimeMillis());
 		
-		for (File config :dir.listFiles()) {
-			
-			String name = config.getName();
-			
-			if(name.equals(".") || name.equals(".."))
-				continue;
-			
-			String timestamp = String.valueOf(System.currentTimeMillis());
-			
-			runGrasp(config.getAbsolutePath(), name, args[1], timestamp);
-		}
+		String logFolder = "/home/ECSC/imoya/xcsp/xCSP/instances/90/results";
+		
+		runGrasp(config.getAbsolutePath(), config.getName(), logFolder, timestamp);
 	}
 	
-	private static void runGrasp(String sequenceFile, String name, String logFolder, String signature) throws IOException {
+	private static void runGrasp(String sequenceFile, String name, 
+			String logFolder, String signature) throws IOException {
 		new File(logFolder).mkdirs();
 		String resulPath = logFolder+"/"+name+"_"+signature+".log";
 		FileWriter fw = new FileWriter(resulPath);
@@ -121,7 +132,7 @@ public class SimpleGRASPApp {
         double alpha = 0.4;
         int iterations = 50;
         long maxSteps = 100000;
-        boolean verbose = false;
+        boolean verbose = true;
 
         List<Neighbourhood<CSPSolution>> neighbourhoods = new ArrayList<Neighbourhood<CSPSolution>>();
         

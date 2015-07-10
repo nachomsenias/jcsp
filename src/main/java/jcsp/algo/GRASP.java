@@ -1,13 +1,17 @@
 package jcsp.algo;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import jcsp.CSPProblem;
 import jcsp.CSPSolution;
+import jcsp.algo.beans.GRASPBean;
+import jcsp.localsearch.FirstImprovement;
+import jcsp.localsearch.LocalSearch;
 import jcsp.util.ProgressSearchListener;
 
-import org.jamesframework.core.search.algo.SteepestDescent;
+import org.jamesframework.core.search.SingleNeighbourhoodSearch;
 import org.jamesframework.core.search.neigh.Neighbourhood;
 import org.jamesframework.core.search.stopcriteria.MaxSteps;
 
@@ -26,6 +30,9 @@ public class GRASP {
 	//Neighbourhoods
 	private List<Neighbourhood<CSPSolution>> neighbourhoods;
 	
+	//Local search
+	private LocalSearch localSearch;
+	
 	//Output
 	private CSPSolution bestFound = null;
 	private double bestFitness = Double.MAX_VALUE;
@@ -35,6 +42,10 @@ public class GRASP {
 	
 	private boolean optimalFound = false;
 	
+	public GRASP() {
+		
+	}
+	
 	public GRASP(CSPProblem csp, int iterations, double alpha, long maxSteps,
 			List<Neighbourhood<CSPSolution>> neighbourhoods, boolean verbose) {
 		super();
@@ -42,42 +53,28 @@ public class GRASP {
 		this.iterations = iterations;
 		this.alpha = alpha;
 		this.maxSteps = maxSteps;
+		
 		this.neighbourhoods = neighbourhoods;
+		localSearch = new FirstImprovement(null);
+		
 		this.verbose = verbose;
 	}
-
+	
+	public GRASP(CSPProblem csp, GRASPBean bean, boolean verbose) {
+		super();
+		this.csp = csp;
+		this.iterations = bean.iterations;
+		this.alpha = bean.alpha;
+		this.maxSteps = bean.maxSteps;
+		
+		this.localSearch = bean.localSearch;
+		this.neighbourhoods = new ArrayList<Neighbourhood<CSPSolution>>();
+		neighbourhoods.add(localSearch.getNeighbourhood());
+		
+		this.verbose = verbose;
+	}
+	
 	private CSPSolution constructivePhase() {
-//		// create random descent search with greedy neighbourhood
-//	    LocalSearch<CSPSolution> randomDescent = 
-//	    		new RandomDescent<CSPSolution>(
-//	    				csp, 
-//	    				new CSPGreedyNeighbourhood(csp,alpha)
-//	    			);
-//
-//	    // attach listener 
-//	    if(verbose) {
-//	    	randomDescent.addSearchListener(new ProgressSearchListener());
-//	    }
-//	    
-//	    // IMPORTANT: start with empty sequence
-//	    randomDescent.setCurrentSolution(csp.createEmptySolution());
-//	
-//	    // start search
-//	    randomDescent.start();
-//	    
-//	    //Constructive phase: best initial solution
-//	    CSPSolution best = randomDescent.getBestSolution();
-//	    
-//	    if(verbose) {
-//	    	System.out.println("Built sequence: " + Arrays.toString(
-//	        		best.getSequence()));
-//	        System.out.println("Built sequence fitness: " + 
-//	        		randomDescent.getBestSolutionEvaluation());
-//	    }
-//	    
-//	    randomDescent.dispose();
-//	    
-//	    return best;
 		return csp.createGreedy(alpha);
 	}
 	
@@ -111,29 +108,27 @@ public class GRASP {
 		    	Neighbourhood<CSPSolution> neighbourhood = neighbourhoods.get(
 		    			random.nextInt(numNeighbourhoods));
 		    	
-		    	SteepestDescent<CSPSolution> stocasticDescent = 
-			    		new SteepestDescent<CSPSolution>(csp, neighbourhood);
+		    	SingleNeighbourhoodSearch<CSPSolution> searchAlgo = localSearch.createLocalSearch(csp, neighbourhood);
 
 //			    stocasticDescent.addStopCriterion(new MaxRuntime(timeLimit, TimeUnit.SECONDS));
-			    stocasticDescent.addStopCriterion(new MaxSteps(maxSteps));
+			    searchAlgo.addStopCriterion(new MaxSteps(maxSteps));
 			    if(verbose) {
-			    	stocasticDescent.addSearchListener(new ProgressSearchListener());
+			    	searchAlgo.addSearchListener(new ProgressSearchListener());
 			    }
 			    
 			    //Try to improve constructed solution.
-			    stocasticDescent.setCurrentSolution((CSPSolution)best.copy());
+			    searchAlgo.setCurrentSolution((CSPSolution)best.copy());
 			    
 			    //Improvement phase
-			    stocasticDescent.start();
+			    searchAlgo.start();
 			    
-			    CSPSolution improved = stocasticDescent.getBestSolution();
+			    CSPSolution improved = searchAlgo.getBestSolution();
 			    
 			    if(improved!=null) {
 			    	best=improved;
 			    	
 			    	improvedFitness = 
-			    			stocasticDescent.getBestSolutionEvaluation().getValue();
-//			    	bestFitness=improvedFitness;
+			    			searchAlgo.getBestSolutionEvaluation().getValue();
 		    		// print results
 				    if(verbose) {
 		    			System.out.println("Improved sequence: " + Arrays.toString(
@@ -145,7 +140,7 @@ public class GRASP {
 			    	System.out.println("No improving solution found...");
 			    }
 			    // dispose
-			    stocasticDescent.dispose();
+			    searchAlgo.dispose();
 			    neighbourApplied++;
 		    }
 		    

@@ -3,27 +3,12 @@ package jcsp.neighbourhood;
 import java.util.ArrayList;
 import java.util.List;
 
-import jcsp.CSPProblem;
 import jcsp.CSPSolution;
 import jcsp.move.InvertSequence;
 
 import org.jamesframework.core.search.neigh.Move;
-import org.jamesframework.core.search.neigh.Neighbourhood;
 
-import util.random.Randomizer;
-
-public class CSPInvertionNeighbourhood implements Neighbourhood<CSPSolution>{
-
-	@Override
-	public Move<CSPSolution> getRandomMove(CSPSolution solution) {
-		Randomizer random = CSPProblem.random;
-		
-		List<Move<CSPSolution>> moves = getAllMoves(solution);
-		
-		int numMoves = moves.size();
-		
-		return moves.get(random.nextInt(numMoves));
-	}
+public class CSPInvertionNeighbourhood extends CSPNeighbourhood{
 
 	@Override
 	public List<Move<CSPSolution>> getAllMoves(CSPSolution solution) {
@@ -33,7 +18,7 @@ public class CSPInvertionNeighbourhood implements Neighbourhood<CSPSolution>{
 		int demand = sequence.length;
 
 		for (int firstIndex=0; firstIndex<demand; firstIndex++) {
-			List<Integer> indexes = CSPNeighbourhodd.getIntervals(firstIndex, sequence);
+			List<Integer> indexes = getIntervals(firstIndex, sequence);
 			for (int secondIndex: indexes) {
 				if(firstIndex<secondIndex) {
 					allInvertions.add(new InvertSequence(firstIndex, secondIndex));

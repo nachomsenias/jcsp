@@ -1,9 +1,20 @@
 package jcsp.neighbourhood;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
-public class CSPNeighbourhodd {
+import jcsp.CSPSolution;
+
+import org.jamesframework.core.search.neigh.Move;
+import org.jamesframework.core.search.neigh.Neighbourhood;
+
+public abstract class CSPNeighbourhood implements Neighbourhood<CSPSolution>{
+	
+	protected Queue<Move<CSPSolution>> moveRepository = new LinkedList<Move<CSPSolution>>();
+	
 	/**
 	 * Returns indexes compatible with given pivot for using in 
 	 * swaps and insertions.
@@ -13,7 +24,7 @@ public class CSPNeighbourhodd {
 	 * @param sequence
 	 * @return
 	 */
-	static List<Integer> getValues(int pivot, int[] sequence) {
+	protected List<Integer> getValues(int pivot, int[] sequence) {
 		final int type = sequence[pivot];
 		List<Integer> indexes = new ArrayList<Integer>();
 		
@@ -46,7 +57,7 @@ public class CSPNeighbourhodd {
 		return indexes;
 	}
 	
-	static List<Integer> getIntervals(int begin, int[] sequence) {
+	protected List<Integer> getIntervals(int begin, int[] sequence) {
 		final int type = sequence[begin];
 		List<Integer> indexes = new ArrayList<Integer>();
 		
@@ -71,4 +82,20 @@ public class CSPNeighbourhodd {
 		
 		return indexes;
 	}
+
+	@Override
+	public Move<CSPSolution> getRandomMove(CSPSolution sol) {
+		
+		if(moveRepository.isEmpty()) {
+			List<Move<CSPSolution>> allSwaps = getAllMoves(sol);
+			Collections.shuffle(allSwaps);
+			
+			moveRepository.addAll(allSwaps);
+		}
+		
+		return moveRepository.remove();
+	}
+
+	@Override
+	public abstract List<Move<CSPSolution>> getAllMoves(CSPSolution solution);
 }
