@@ -3,10 +3,13 @@ package jcsp.neighbourhood;
 import java.util.ArrayList;
 import java.util.List;
 
+import jcsp.CSPProblem;
 import jcsp.CSPSolution;
 import jcsp.move.SingleInsertion;
 
 import org.jamesframework.core.search.neigh.Move;
+
+import util.random.Randomizer;
 
 public class CSPInsertionNeighbourhood extends CSPNeighbourhood{
 
@@ -25,5 +28,27 @@ public class CSPInsertionNeighbourhood extends CSPNeighbourhood{
 		}
 		
 		return allInsertions;
+	}
+	
+	//TODO This method is meant to try "Brute" strategies.
+	@Override
+	public Move<CSPSolution> getRandomMove(CSPSolution sol) {
+		Randomizer random = CSPProblem.random;
+		int sequenceLenght = sol.getSecuenceLength();
+		
+		int[] sequence = sol.getSequence();
+		
+		int oldPos = random.nextInt(sequenceLenght);
+
+		List<Integer> indexes = getValues(oldPos, sequence);
+		
+		if(indexes.isEmpty()) {
+			return null;
+		}
+		
+		int numPos = indexes.size();
+		int newPos = indexes.get(random.nextInt(numPos));
+		
+		return new SingleInsertion(oldPos, newPos);
 	}
 }

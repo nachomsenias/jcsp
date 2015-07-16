@@ -161,8 +161,6 @@ public class GRASP {
 	    			System.out.println("Feasible solution found at iteration "
 	    					+i+", ending process.");
 	    		}
-	    		
-//	    		break;
 	    	}
 		    
 		}

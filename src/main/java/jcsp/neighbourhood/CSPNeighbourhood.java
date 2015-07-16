@@ -61,6 +61,7 @@ public abstract class CSPNeighbourhood implements Neighbourhood<CSPSolution>{
 		final int type = sequence[begin];
 		List<Integer> indexes = new ArrayList<Integer>();
 		
+		//Invertible intervals should be longer than 2.
 		int index = begin+2;
 		
 		if(begin+1<sequence.length && sequence[begin+1] == type) {

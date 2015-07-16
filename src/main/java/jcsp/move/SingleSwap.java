@@ -26,7 +26,7 @@ public class SingleSwap implements Move<CSPSolution>{
 	 * Undoing a swap consist in applying swap again.
 	 */
 	public void undo(CSPSolution sol) {
-		apply(sol);
+		sol.swap(firstIndex, secondIndex);
 	}
 
 	@Override
