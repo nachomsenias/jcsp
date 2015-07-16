@@ -115,16 +115,18 @@ public class CSPSolution extends Solution{
 			);
 		
 //		double debugFitness = csp.evaluateRestrictions(sequence, lastIndex+1);
-		
-//		double otherDebugFitness = csp.evaluate(this).getValue();
-		
+//		
+////		double otherDebugFitness = csp.evaluate(this).getValue();
+//		
 //		if(fitness!=debugFitness) {
-//		if(fitness!=debugFitness || debugFitness!=otherDebugFitness) {
-//		if(fitness!=otherDebugFitness ) {
+////		if(fitness!=debugFitness || debugFitness!=otherDebugFitness) {
+////		if(fitness!=otherDebugFitness ) {
 //			System.out.println("###########");
 //			System.out.println("fitness:: "+fitness);
 //			System.out.println("debug fitness:: "+debugFitness);
 //			System.out.println("%%%%%%");
+//		}else {
+//			System.out.println("$$$$TODO OK$$$");
 //		}
 	}
 	
@@ -136,7 +138,6 @@ public class CSPSolution extends Solution{
 			for (int i=oldPos; i>newPos; i--) {
 				sequence[i]=sequence[i-1];
 			}
-			
 		} else {
 			//Inserting over
 			//Move down

@@ -186,7 +186,7 @@ public class CSPProblem implements Problem<CSPSolution>{
 			
 			int endIndexFirst;
 			if(first+(q-1)<=carsDemand-q) {
-				endIndexFirst = first+(q-1);
+				endIndexFirst = first;
 			} else {
 				endIndexFirst = carsDemand-q;
 			}
@@ -205,17 +205,17 @@ public class CSPProblem implements Problem<CSPSolution>{
 			}
 			
 			int endIndexSecond;
-			if(second+(q-1)<=carsDemand-q) {
-				endIndexSecond = second+(q-1);
+			if(second+(q-1)<carsDemand) {
+				endIndexSecond = second;
 			} else {
 				endIndexSecond = carsDemand-q;
 			}
 			
 			if (beginIndexFirst<beginIndexSecond 
-					&& beginIndexSecond<endIndexFirst) {
+					&& beginIndexSecond<first) {
 				beginIndexSecond = endIndexFirst+1;
 			} else if(beginIndexSecond<beginIndexFirst 
-					&& beginIndexFirst<endIndexSecond) {
+					&& beginIndexFirst<second) {
 				endIndexSecond = beginIndexFirst-1;
 			}
 
@@ -361,6 +361,10 @@ public class CSPProblem implements Problem<CSPSolution>{
 		int p = this.options[POSSIBLE_FROM][option];
 		
 		for (int car=beginIndexFirst; car<=endIndexFirst; car++) {
+			
+			if(car+q>carsDemand) {
+				break;
+			}
 			
 			int occurrences = 0;
 			
