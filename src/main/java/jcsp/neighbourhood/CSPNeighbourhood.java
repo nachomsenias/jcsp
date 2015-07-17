@@ -24,11 +24,11 @@ public abstract class CSPNeighbourhood implements Neighbourhood<CSPSolution>{
 	 * @param sequence
 	 * @return
 	 */
-	protected List<Integer> getValues(int pivot, int[] sequence) {
+	protected List<Integer> getValues(int pivot, int[] sequence, int jump) {
 		final int type = sequence[pivot];
 		List<Integer> indexes = new ArrayList<Integer>();
 		
-		int index = pivot-1;
+		int index = pivot-jump;
 		boolean typeFound = false;
 		//Bellow index
 		while(index>=0 && !typeFound) {
@@ -41,7 +41,7 @@ public abstract class CSPNeighbourhood implements Neighbourhood<CSPSolution>{
 			}
 		}
 		
-		index = pivot+1;
+		index = pivot+jump;
 		typeFound = false;
 		//Bellow index
 		while(index<sequence.length && !typeFound) {

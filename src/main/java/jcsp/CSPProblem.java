@@ -185,7 +185,7 @@ public class CSPProblem implements Problem<CSPSolution>{
 			}
 			
 			int endIndexFirst;
-			if(first+(q-1)<=carsDemand-q) {
+			if(first+(q-1)<=carsDemand) {
 				endIndexFirst = first;
 			} else {
 				endIndexFirst = carsDemand-q;
@@ -239,73 +239,228 @@ public class CSPProblem implements Problem<CSPSolution>{
 		
 		double fitness = prevFitness;
 		
+		
+		int[][] debugCollisions = createExcessMatrix(sequence);
+		
 		//For each options, the variation in the number of collisions 
 		//is counted.
 		for (int option=0; option<numOptions; option++) {
 			
 			int q = this.options[TOTAL_INDEX][option];
 			
-			int beginIndexFirst;
+			
+			boolean canRotate = false;
+			
+			int beginIndexOld;
 			if(oldPos-(q-1)<0) {
-				beginIndexFirst = 0;
+				beginIndexOld = 0;
 			} else {
-				beginIndexFirst = oldPos-(q-1);
+				beginIndexOld = oldPos-(q-1);
 			}
 			
-			int endIndexFirst;
-			if(oldPos+(q-1)<=carsDemand-q) {
-				endIndexFirst = oldPos+(q-1);
+			int endIndexOld;
+			if(oldPos+(q-1)<=carsDemand) {
+				endIndexOld = oldPos;
 			} else {
-				endIndexFirst = carsDemand-q;
+				endIndexOld = carsDemand-q;
 			}
 			
-			int prevCollisionsFirst=Functions.addArraySegment(
-					collisions[option], beginIndexFirst, endIndexFirst+1);
+//			int prevCollisionsOld=Functions.addArraySegment(
+//					collisions[option], beginIndexOld, endIndexOld+1);
 			
-			
-			int beginIndexSecond;
+			int beginIndexNew;
 			if(newPos-(q-1)<0) {
-				beginIndexSecond = 0;
+				beginIndexNew = 0;
 			} else {
-				beginIndexSecond = newPos-(q-1);
+				beginIndexNew = newPos-(q-1);
 			}
 			
-			int endIndexSecond;
-			if(newPos+(q-1)<=carsDemand-q) {
-				endIndexSecond = newPos+(q-1);
+			int endIndexNew;
+			if(newPos+(q-1)<carsDemand) {
+				endIndexNew = newPos;
 			} else {
-				endIndexSecond = carsDemand-q;
+				endIndexNew = carsDemand-q;
 			}
 			
-			if (beginIndexFirst<beginIndexSecond 
-					&& beginIndexSecond<endIndexFirst) {
-				beginIndexSecond = endIndexFirst+1;
-			} else if(beginIndexSecond<beginIndexFirst 
-					&& beginIndexFirst<endIndexSecond) {
-				endIndexSecond = beginIndexFirst-1;
+			if (beginIndexOld<beginIndexNew 
+					&& beginIndexNew<oldPos) {
+				beginIndexNew = endIndexOld+1;
+			} else if(beginIndexNew<beginIndexOld 
+					&& beginIndexOld<newPos) {
+				endIndexNew = beginIndexOld-1;
 			}
 
-			int prevCollisionsSecond=Functions.addArraySegment(
-					collisions[option], beginIndexSecond, endIndexSecond+1);
+//			int prevCollisionsNew=Functions.addArraySegment(
+//					collisions[option], beginIndexNew, endIndexNew+1);
+			
+			int prevCollisionsOld,currentCollisionsOld;
+			int prevCollisionsNew,currentCollisionsNew;
+			
+			int preCollisionsAsecas;
+			
+//			if (oldPos<newPos) {
+//				rotateCollisions(collisions, option, endIndexOld+1, beginIndexNew-1, false);
+//			} else {
+//				rotateCollisions(collisions, option, endIndexNew+1, beginIndexOld-1, true);
+//			}
+			
+			prevCollisionsOld=Functions.addArraySegment(
+					collisions[option], beginIndexOld, endIndexOld+1);
+			
+			int debugRotatePrev=0,debugRotateCurr=0;
 			
 			if (oldPos<newPos) {
-				rotateCollisions(collisions, option, oldPos, newPos, false);
+				preCollisionsAsecas = Functions.addArraySegment(
+						collisions[option], beginIndexOld, endIndexNew+1);
+				
+				//b+1 => e
+//				prevCollisionsNew=Functions.addArraySegment(
+//						collisions[option], beginIndexNew, endIndexNew+1);
+				
+				prevCollisionsNew=Functions.addArraySegment(
+						collisions[option], beginIndexNew+1, endIndexNew+1);
+				
+				
+				
+				
+//				if(newPos-oldPos<q) {
+//					System.out.println("Stop");
+//				}
+				
+//				if(newPos-oldPos>q-1) {
+//				if(beginIndexNew>endIndexOld) {
+					debugRotatePrev = Functions.addArraySegment(
+							collisions[option], endIndexOld+1, beginIndexNew+1);
+					
+					rotateCollisions(collisions[option], endIndexOld, beginIndexNew, false);
+					
+					debugRotateCurr = Functions.addArraySegment(
+							collisions[option], endIndexOld, beginIndexNew);
+					
+					canRotate=true;
+//				}
+				
+				int prev = prevCollisionsOld + prevCollisionsNew + debugRotatePrev;
+				
+				if(prev!=preCollisionsAsecas) {
+					System.out.println(":(");
+				}
+				
+				
+				
 			} else {
-				rotateCollisions(collisions, option, newPos, oldPos, true);
+				
+				
+				preCollisionsAsecas = Functions.addArraySegment(
+						collisions[option], beginIndexNew, endIndexOld+1);
+				
+				//nb => e-1
+				prevCollisionsNew=Functions.addArraySegment(
+						collisions[option], beginIndexNew, endIndexNew);
+				
+				
+				
+//				if(oldPos-newPos>q-1) {
+//				if(oldPos-newPos>q-1) {
+					debugRotatePrev = Functions.addArraySegment(
+							collisions[option], endIndexNew, beginIndexOld);
+					
+					rotateCollisions(collisions[option], endIndexNew, beginIndexOld, true);
+					
+					debugRotateCurr = Functions.addArraySegment(
+							collisions[option], endIndexNew+1, beginIndexOld+1);
+					
+					canRotate=true;
+//				}
+				
+				int prev = prevCollisionsOld + prevCollisionsNew + debugRotatePrev;
+				
+				if(prev!=preCollisionsAsecas) {
+					System.out.println(":(");
+				}
+				
+			}
+			
+			if(debugRotatePrev!=debugRotateCurr) {
+				System.out.println("Rotas de pena");
 			}
 
-			int currentCollisionsFirst = countCurrentCollisions(sequence, 
-					beginIndexFirst, endIndexFirst, option, collisions, q);
+//			int currentCollisionsOld = countCurrentCollisions(sequence, 
+//					beginIndexOld, endIndexOld, option, collisions, q);
+//			
+//			int debugCurrentCollisionsOld=Functions.addArraySegment(
+//					collisions[option], beginIndexOld, endIndexOld+1);
+//			
+//			int currentCollisionsNew = countCurrentCollisions(sequence, 
+//					beginIndexNew, endIndexNew, option, collisions, q);
+//			
+//			int debugCurrentCollisionsNew=Functions.addArraySegment(
+//					collisions[option], beginIndexNew, endIndexNew+1);
+			
+//			if(currentCollisionsFirst!=debugCurrentCollisionsFirst) {
+//				System.out.println("WTF?");
+//			}
+//			
+//			if(currentCollisionsSecond!=debugCurrentCollisionsSecond) {
+//				System.out.println("WTF?");
+//			}
+			
+			currentCollisionsNew = countCurrentCollisions(sequence, 
+					beginIndexNew, endIndexNew, option, collisions, q);
 			
 			
-			int currentCollisionsSecond = countCurrentCollisions(sequence, 
-					beginIndexSecond, endIndexSecond, option, collisions, q);
+			int currCollisionsAsecas;
 			
-			fitness-= (prevCollisionsFirst-currentCollisionsFirst);
+			if (oldPos<newPos) {
+				
+				
+				currentCollisionsOld = countCurrentCollisions(sequence, 
+						beginIndexOld, endIndexOld-1, option, collisions, q);
+				
+				currCollisionsAsecas = Functions.addArraySegment(
+						collisions[option], beginIndexOld, endIndexNew+1);
+				
+			} else {
+
+				currentCollisionsOld = countCurrentCollisions(sequence, 
+						beginIndexOld+1, endIndexOld, option, collisions, q);
+				
+				currCollisionsAsecas = Functions.addArraySegment(
+						collisions[option], beginIndexNew, endIndexOld+1);
+			}
 			
-			fitness-= (prevCollisionsSecond-currentCollisionsSecond);
+//			fitness-= (prevCollisionsOld-currentCollisionsOld);
+//			
+//			fitness-= (prevCollisionsNew-currentCollisionsNew);
+			
+			fitness-= (prevCollisionsOld+prevCollisionsNew-currentCollisionsNew-currentCollisionsOld);
+			
+//			fitness-= (preCollisionsAsecas-currCollisionsAsecas);
+			
+			
+			
+			int current = currentCollisionsOld+currentCollisionsNew+debugRotateCurr;
+			if(current!=currCollisionsAsecas) {	
+				System.out.println(":(");
+			}
+			
+			
+			int debugCollisionAtOption = Functions.addArraySegment(debugCollisions[option], 0, carsDemand);
+			
+			int collisionAtOption = Functions.addArraySegment(collisions[option], 0, carsDemand);
+			
+			if(debugCollisionAtOption!=collisionAtOption) {
+				System.out.println("WTF?");
+			}
 		}
 		
+		double debugFitness = Functions.addMatrix(collisions);
+		
+		if(debugFitness!=fitness) {
+			System.out.println("WTF?");
+		}
+		
+//		return fitness;
 		return fitness;
 	}
 	
@@ -316,14 +471,14 @@ public class CSPProblem implements Problem<CSPSolution>{
 	 * @param to
 	 * @param right
 	 */
-	private void rotateCollisions(int[][] collisions, int option, int from, int to, boolean right) {
+	private void rotateCollisions(int[] collisions, int from, int to, boolean right) {
 		if(right) {
 			for (int i=to; i>from; i--) {
-				collisions[option][i]=collisions[option][i-1];
+				collisions[i]=collisions[i-1];
 			}
 		} else {
 			for (int i=from; i<to; i++) {
-				collisions[option][i]=collisions[option][i+1];
+				collisions[i]=collisions[i+1];
 			}
 		}
 	}
@@ -353,6 +508,16 @@ public class CSPProblem implements Problem<CSPSolution>{
 //		return previousColissions;
 //	}
 	
+	/**
+	 * Both indexes are inclusive.
+	 * @param sequence
+	 * @param beginIndexFirst
+	 * @param endIndexFirst
+	 * @param option
+	 * @param excess
+	 * @param q
+	 * @return
+	 */
 	private int countCurrentCollisions(int[] sequence, int beginIndexFirst,
 			int endIndexFirst, int option, int[][] excess, int q
 		) {

@@ -22,7 +22,7 @@ public class CSPSwapNeighbourhood extends CSPNeighbourhood{
 		int demand = sequence.length;
 
 		for (int firstIndex=0; firstIndex<demand; firstIndex++) {
-			List<Integer> indexes = getValues(firstIndex, sequence);
+			List<Integer> indexes = getValues(firstIndex, sequence,1);
 			for (int secondIndex: indexes) {
 				allSwaps.add(new SingleSwap(firstIndex, secondIndex));
 			}

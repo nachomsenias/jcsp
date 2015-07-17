@@ -21,7 +21,7 @@ public class CSPInsertionNeighbourhood extends CSPNeighbourhood{
 		int demand = sequence.length;
 
 		for (int oldPos=0; oldPos<demand; oldPos++) {
-			List<Integer> indexes = getValues(oldPos, sequence);
+			List<Integer> indexes = getValues(oldPos, sequence,2);
 			for (int newPos: indexes) {
 				allInsertions.add(new SingleInsertion(oldPos, newPos));
 			}
@@ -40,7 +40,7 @@ public class CSPInsertionNeighbourhood extends CSPNeighbourhood{
 		
 		int oldPos = random.nextInt(sequenceLenght);
 
-		List<Integer> indexes = getValues(oldPos, sequence);
+		List<Integer> indexes = getValues(oldPos, sequence,2);
 		
 		if(indexes.isEmpty()) {
 			return null;
