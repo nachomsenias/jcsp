@@ -238,9 +238,6 @@ public class CSPProblem implements Problem<CSPSolution>{
 		
 		double fitness = prevFitness;
 		
-		
-//		int[][] debugCollisions = createExcessMatrix(sequence);
-		
 		//For each options, the variation in the number of collisions 
 		//is counted.
 		for (int option=0; option<numOptions; option++) {
@@ -258,16 +255,12 @@ public class CSPProblem implements Problem<CSPSolution>{
 			}
 			
 			int endIndexOld;
-//			if(oldPos+(q-1)<=carsDemand) {
 			if(oldPos+(q-1)<carsDemand) {
 				endIndexOld = oldPos;
 			} else {
 				endIndexOld = carsDemand-q;
 			}
-			
-//			int prevCollisionsOld=Functions.addArraySegment(
-//					collisions[option], beginIndexOld, endIndexOld+1);
-			
+
 			int beginIndexNew;
 			if(newPos-(q-1)<0) {
 				beginIndexNew = 0;
@@ -282,12 +275,10 @@ public class CSPProblem implements Problem<CSPSolution>{
 				endIndexNew = carsDemand-q;
 			}
 			
-//			if (beginIndexOld<beginIndexNew
 			if (endIndexOld<endIndexNew 
 					&& beginIndexNew<oldPos) {
 				beginIndexNew = endIndexOld+1;
 				canRotate=false;
-//			} else if(beginIndexNew<beginIndexOld
 			} else if(endIndexNew<endIndexOld 
 					&& beginIndexOld<newPos) {
 				endIndexNew = beginIndexOld-1;
@@ -301,54 +292,18 @@ public class CSPProblem implements Problem<CSPSolution>{
 				}
 			}
 
-//			int prevCollisionsNew=Functions.addArraySegment(
-//					collisions[option], beginIndexNew, endIndexNew+1);
-			
 			int prevCollisionsOld,currentCollisionsOld;
 			int prevCollisionsNew,currentCollisionsNew;
-			
-//			int preCollisionsAsecas;
-			
-//			if (oldPos<newPos) {
-//				rotateCollisions(collisions, option, endIndexOld+1, beginIndexNew-1, false);
-//			} else {
-//				rotateCollisions(collisions, option, endIndexNew+1, beginIndexOld-1, true);
-//			}
-			
+
 			prevCollisionsOld=Functions.addArraySegment(
 					collisions[option], beginIndexOld, endIndexOld+1);
-			
-//			int debugRotatePrev=0,debugRotateCurr=0;
-			
+
 			if (oldPos<newPos) {
-//				preCollisionsAsecas = Functions.addArraySegment(
-//						collisions[option], beginIndexOld, endIndexNew+1);
-				
-				//b+1 => e
-//				prevCollisionsNew=Functions.addArraySegment(
-//						collisions[option], beginIndexNew, endIndexNew+1);
-				
-//				prevCollisionsNew=Functions.addArraySegment(
-//						collisions[option], beginIndexNew+1, endIndexNew+1);
-				
-				
-				
-				
-//				if(newPos-oldPos<q) {
-//					System.out.println("Stop");
-//				}
-				
-//				if(newPos-oldPos>q-1) {
+
 				if(canRotate) {
-//					debugRotatePrev = Functions.addArraySegment(
-//							collisions[option], endIndexOld+1, beginIndexNew+1);
 					
 					rotateCollisions(collisions[option], endIndexOld, beginIndexNew, false);
-					
-//					debugRotateCurr = Functions.addArraySegment(
-//							collisions[option], endIndexOld, beginIndexNew);
-//					
-//					canRotate=true;
+					//b+1 => e
 					prevCollisionsNew=Functions.addArraySegment(
 							collisions[option], beginIndexNew+1, endIndexNew+1);
 				} else {
@@ -356,83 +311,24 @@ public class CSPProblem implements Problem<CSPSolution>{
 							collisions[option], beginIndexNew, endIndexNew+1);
 				}
 				
-//				int prev = prevCollisionsOld + prevCollisionsNew + debugRotatePrev;
-				
-//				if(prev!=preCollisionsAsecas) {
-//					System.out.println(":(");
-//				}
-				
-				
-				
 			} else {
-				
-//				
-//				preCollisionsAsecas = Functions.addArraySegment(
-//						collisions[option], beginIndexNew, endIndexOld+1);
-				
-				//nb => e-1
-				
-				
-				
-				
-//				if(oldPos-newPos>q-1) {
-//				if(oldPos-newPos>q-1) {
-//				if(beginIndexOld-endIndexNew>=q) {
+
 				if(canRotate) {
-//					debugRotatePrev = Functions.addArraySegment(
-//							collisions[option], endIndexNew, beginIndexOld);
-					
+
 					rotateCollisions(collisions[option], endIndexNew, beginIndexOld, true);
-					
-//					debugRotateCurr = Functions.addArraySegment(
-//							collisions[option], endIndexNew+1, beginIndexOld+1);
-					
-//					canRotate=true;
+					//nb => e-1
 					prevCollisionsNew=Functions.addArraySegment(
 							collisions[option], beginIndexNew, endIndexNew);
 				}else {
 					prevCollisionsNew=Functions.addArraySegment(
 							collisions[option], beginIndexNew, endIndexNew+1);
 				}
-				
-//				int prev = prevCollisionsOld + prevCollisionsNew + debugRotatePrev;
-				
-//				if(prev!=preCollisionsAsecas) {
-//					System.out.println(":(");
-//				}
-				
-			}
-			
-//			if(debugRotatePrev!=debugRotateCurr) {
-//				System.out.println("Rotas de pena");
-//			}
 
-//			int currentCollisionsOld = countCurrentCollisions(sequence, 
-//					beginIndexOld, endIndexOld, option, collisions, q);
-//			
-//			int debugCurrentCollisionsOld=Functions.addArraySegment(
-//					collisions[option], beginIndexOld, endIndexOld+1);
-//			
-//			int currentCollisionsNew = countCurrentCollisions(sequence, 
-//					beginIndexNew, endIndexNew, option, collisions, q);
-//			
-//			int debugCurrentCollisionsNew=Functions.addArraySegment(
-//					collisions[option], beginIndexNew, endIndexNew+1);
-			
-//			if(currentCollisionsFirst!=debugCurrentCollisionsFirst) {
-//				System.out.println("WTF?");
-//			}
-//			
-//			if(currentCollisionsSecond!=debugCurrentCollisionsSecond) {
-//				System.out.println("WTF?");
-//			}
-			
+			}
+
 			currentCollisionsNew = countCurrentCollisions(sequence, 
 					beginIndexNew, endIndexNew, option, collisions, q);
-			
-			
-//			int currCollisionsAsecas;
-			
+
 			if (oldPos<newPos) {
 				if(canRotate) {
 					currentCollisionsOld = countCurrentCollisions(sequence, 
@@ -441,11 +337,7 @@ public class CSPProblem implements Problem<CSPSolution>{
 					currentCollisionsOld = countCurrentCollisions(sequence, 
 							beginIndexOld, endIndexOld, option, collisions, q);
 				}
-				
-				
-//				currCollisionsAsecas = Functions.addArraySegment(
-//						collisions[option], beginIndexOld, endIndexNew+1);
-				
+
 			} else {
 				if(canRotate) {
 					currentCollisionsOld = countCurrentCollisions(sequence, 
@@ -454,44 +346,55 @@ public class CSPProblem implements Problem<CSPSolution>{
 					currentCollisionsOld = countCurrentCollisions(sequence, 
 							beginIndexOld, endIndexOld, option, collisions, q);
 				}
-				
-				
-//				currCollisionsAsecas = Functions.addArraySegment(
-//						collisions[option], beginIndexNew, endIndexOld+1);
+
 			}
-			
-//			fitness-= (prevCollisionsOld-currentCollisionsOld);
-//			
-//			fitness-= (prevCollisionsNew-currentCollisionsNew);
-			
+
 			fitness-= (prevCollisionsOld+prevCollisionsNew-currentCollisionsNew-currentCollisionsOld);
-			
-//			fitness-= (preCollisionsAsecas-currCollisionsAsecas);
-			
-			
-			
-//			int current = currentCollisionsOld+currentCollisionsNew+debugRotateCurr;
-//			if(current!=currCollisionsAsecas) {	
-//				System.out.println(":(");
-//			}
-			
-			
-//			int debugCollisionAtOption = Functions.addArraySegment(debugCollisions[option], 0, carsDemand);
-			
-//			int collisionAtOption = Functions.addArraySegment(collisions[option], 0, carsDemand);
-			
-//			if(debugCollisionAtOption!=collisionAtOption) {
-//				System.out.println("WTF?");
-//			}
 		}
 		
-//		double debugFitness = Functions.addMatrix(collisions);
-//		
-//		if(debugFitness!=fitness) {
-//			System.out.println("WTF?");
-//		}
+		return fitness;
+	}
+	
+	public double evalInvert(int[] sequence, int firstSequence, int lastSequence, 
+			double prevFitness, int[][] collisions
+		) {
+		double fitness = prevFitness;
 		
-//		return fitness;
+		//For each options, the variation in the number of collisions 
+		//is counted.
+		for (int option=0; option<numOptions; option++) {
+			
+			int q = this.options[TOTAL_INDEX][option];
+			
+			int beginSequence;
+			if(firstSequence-(q-1)<0) {
+				beginSequence = 0;
+			} else {
+				beginSequence = firstSequence-(q-1);
+			}
+
+			int endSequence;
+			if(lastSequence+(q-1)<carsDemand) {
+				endSequence = lastSequence;
+			} else {
+				endSequence = carsDemand-q;
+			}
+			
+			int prevCollisions = Functions.addArraySegment(
+					collisions[option], beginSequence, endSequence+1);
+			
+			int currentCollisions = countCurrentCollisions(sequence, 
+					beginSequence, endSequence, option, collisions, q);
+			
+			fitness -= (prevCollisions-currentCollisions);
+		}
+		
+		double debugFitness = evaluateRestrictions(sequence, carsDemand);
+		
+		if(debugFitness!=fitness) {
+			System.out.println("WTF??");
+		}
+		
 		return fitness;
 	}
 	

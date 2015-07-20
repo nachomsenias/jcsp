@@ -24,8 +24,7 @@ public class InvertSequence implements Move<CSPSolution>{
 
 	@Override
 	public void undo(CSPSolution solution) {
-		apply(solution);
-		
+		solution.invert(firstIndex, secondIndex);
 	}
 	
 	@Override

@@ -215,6 +215,23 @@ public class CSPSolution extends Solution{
 	public void invert(int begin, int end) {
 		//reverse uses the last position as a not inclusive one.
 		ArrayUtils.reverse(sequence,begin,end+1);
+		
+		fitness = csp.evalInvert(sequence, begin, end, fitness, exceedByQ);
+		
+//		double debugFitness = csp.evaluateRestrictions(sequence, lastIndex+1);
+//		
+////		double otherDebugFitness = csp.evaluate(this).getValue();
+//		
+//		if(fitness!=debugFitness) {
+////		if(fitness!=debugFitness || debugFitness!=otherDebugFitness) {
+////		if(fitness!=otherDebugFitness ) {
+//			System.out.println("###########");
+//			System.out.println("fitness:: "+fitness);
+//			System.out.println("debug fitness:: "+debugFitness);
+//			System.out.println("%%%%%%");
+//		}else {
+//			System.out.println("$$$$TODO OK$$$");
+//		}
 	}
 	
 	public void addCar(int typeClass) {

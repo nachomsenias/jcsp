@@ -30,22 +30,29 @@ public class CSPInvertionNeighbourhood extends CSPNeighbourhood{
 		return allInvertions;
 	}
 	
+	@Override
 	public Move<CSPSolution> getRandomMove(CSPSolution sol) {
 		Randomizer random = CSPProblem.random;
 		int sequenceLenght = sol.getSecuenceLength();
 		
-		int[] sequence = sol.getSequence();
+//		int[] sequence = sol.getSequence();
 		
 		int firstIndex = random.nextInt(sequenceLenght);
+		int lastIndex = random.nextInt(sequenceLenght);
+		
+		do {
+			firstIndex = random.nextInt(sequenceLenght);
+			lastIndex = random.nextInt(sequenceLenght);
+		}while(lastIndex<=firstIndex);
 
-		List<Integer> indexes = getIntervals(firstIndex, sequence);
+//		List<Integer> indexes = getIntervals(firstIndex, sequence);
+//		
+//		if(indexes.isEmpty()) {
+//			return null;
+//		}
 		
-		if(indexes.isEmpty()) {
-			return null;
-		}
-		
-		int numIndexes = indexes.size();
-		int lastIndex = indexes.get(random.nextInt(numIndexes));
+//		int numIndexes = indexes.size();
+//		int lastIndex = indexes.get(random.nextInt(numIndexes));
 		
 		return new InvertSequence(firstIndex, lastIndex);
 	}

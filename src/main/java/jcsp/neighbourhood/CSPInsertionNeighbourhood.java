@@ -39,15 +39,22 @@ public class CSPInsertionNeighbourhood extends CSPNeighbourhood{
 		int[] sequence = sol.getSequence();
 		
 		int oldPos = random.nextInt(sequenceLenght);
+		int newPos = random.nextInt(sequenceLenght);
+		
+		do {
+			oldPos = random.nextInt(sequenceLenght);
+			newPos = random.nextInt(sequenceLenght);
+		}while(Math.abs(oldPos-newPos)>1
+				|| sequence[oldPos]==sequence[newPos]);
 
-		List<Integer> indexes = getValues(oldPos, sequence,2);
+//		List<Integer> indexes = getValues(oldPos, sequence,2);
 		
-		if(indexes.isEmpty()) {
-			return null;
-		}
-		
-		int numPos = indexes.size();
-		int newPos = indexes.get(random.nextInt(numPos));
+//		if(indexes.isEmpty()) {
+//			return null;
+//		}
+//		
+//		int numPos = indexes.size();
+//		int newPos = indexes.get(random.nextInt(numPos));
 		
 		return new SingleInsertion(oldPos, newPos);
 	}
