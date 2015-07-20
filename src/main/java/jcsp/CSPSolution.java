@@ -152,39 +152,39 @@ public class CSPSolution extends Solution{
 				fitness, exceedByQ
 			);
 		
-		double debugFitness = csp.evaluateRestrictions(sequence, lastIndex+1);
-		
-//		double otherDebugFitness = csp.evaluate(this).getValue();
-		double otherDebugFitness = Functions.addMatrix(exceedByQ);
-		if(fitness!=debugFitness) {
-			
-//		if(fitness!=debugFitness || debugFitness!=otherDebugFitness) {
-//		if(fitness!=otherDebugFitness ) {
-			
-			int[][] debugCollisions = csp.createExcessMatrix(sequence);
-			
-			int debuCollisionsSum = Functions.addMatrix(debugCollisions);
-			
-			if(debuCollisionsSum!=debugFitness) {
-				System.out.println("WHAT??");
-			}
-			
-			if(debugFitness!=otherDebugFitness) {
-				System.out.println("NOOOOOOOOOOO");
-			}
-			
-			System.out.println("###########");
-			System.out.println("fitness:: "+fitness);
-			System.out.println("debug fitness:: "+debugFitness);
-			System.out.println("%%%%%%");
+//		double debugFitness = csp.evaluateRestrictions(sequence, lastIndex+1);
+//		
+////		double otherDebugFitness = csp.evaluate(this).getValue();
+//		double otherDebugFitness = Functions.addMatrix(exceedByQ);
+//		if(fitness!=debugFitness) {
+//			
+////		if(fitness!=debugFitness || debugFitness!=otherDebugFitness) {
+////		if(fitness!=otherDebugFitness ) {
+//			
+//			int[][] debugCollisions = csp.createExcessMatrix(sequence);
+//			
+//			int debuCollisionsSum = Functions.addMatrix(debugCollisions);
+//			
+//			if(debuCollisionsSum!=debugFitness) {
+//				System.out.println("WHAT??");
+//			}
+//			
+//			if(debugFitness!=otherDebugFitness) {
+//				System.out.println("NOOOOOOOOOOO");
+//			}
+//			
+//			System.out.println("###########");
+//			System.out.println("fitness:: "+fitness);
+//			System.out.println("debug fitness:: "+debugFitness);
+//			System.out.println("%%%%%%");
 //		} else {
 //			if(otherDebugFitness==fitness) {
 //				System.out.println("$$$$TODO OK$$$");
 //			} else {
 //				System.out.println("%%%%WTF? NO SO OK%%");
 //			}
-			
-		}
+//			
+//		}
 	}
 	
 	/**
