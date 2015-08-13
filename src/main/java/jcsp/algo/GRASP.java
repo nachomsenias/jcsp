@@ -15,6 +15,7 @@ import org.jamesframework.core.search.SingleNeighbourhoodSearch;
 import org.jamesframework.core.search.neigh.Neighbourhood;
 import org.jamesframework.core.search.stopcriteria.MaxSteps;
 
+import util.Functions;
 import util.random.Randomizer;
 
 public class GRASP {
@@ -29,6 +30,8 @@ public class GRASP {
 
 	//Neighbourhoods
 	private List<Neighbourhood<CSPSolution>> neighbourhoods;
+	private boolean random = false;
+	private boolean once = false;
 	
 	//Local search
 	private LocalSearch localSearch;
@@ -41,6 +44,17 @@ public class GRASP {
 	private boolean verbose;
 	
 	private boolean optimalFound = false;
+	
+	
+	private class GRASPResult {
+		final CSPSolution solution;
+		final double fitness;
+		
+		public GRASPResult(CSPSolution solution, double fitness) {
+			this.solution = solution;
+			this.fitness = fitness;
+		}
+	}
 	
 	public GRASP() {
 		
@@ -68,9 +82,12 @@ public class GRASP {
 		this.maxSteps = bean.maxSteps;
 		
 		this.localSearch = bean.localSearch;
-		this.neighbourhoods = new ArrayList<Neighbourhood<CSPSolution>>();
-		neighbourhoods.add(localSearch.getNeighbourhood());
+		this.random = bean.random;
+		this.once=bean.once;
 		
+		this.neighbourhoods = new ArrayList<Neighbourhood<CSPSolution>>();
+		neighbourhoods.addAll(localSearch.getNeighbourhoods());
+
 		this.verbose = verbose;
 	}
 	
@@ -94,64 +111,102 @@ public class GRASP {
 		    	 System.out.println("Built sequence fitness: " + 
 			        		improvedFitness);
 		    }
-
-		    int numNeighbourhoods = neighbourhoods.size();
 		    Randomizer random = CSPProblem.random;
 		    
-		    int neighbourMax = (int)Math.pow(2, numNeighbourhoods);
-		    int neighbourApplied = 0;
+//		    int neighbourMax = (int)Math.pow(2, numNeighbourhoods);
+//		    int neighbourApplied = 0;
 		    
-		    while(!optimalFound && neighbourApplied<neighbourMax) {
+//		    while(!optimalFound && neighbourApplied<neighbourMax) {
+//		    while(!optimalFound) {
+		    	
+		    GRASPResult result=null;
+		    CSPSolution solutionCopy=(CSPSolution)best.copy();
+		    Neighbourhood<CSPSolution> neighbourhood;
+		    
+		    //If only one random operator is
+		    if(once) {
+		    	neighbourhood = neighbourhoods.get(
+		    			random.nextInt(neighbourhoods.size()));
+		    	
+		    	result = runLocalSearch(neighbourhood, solutionCopy);
+		    } else {
+		    	if(this.random) {
+		    		//Neighbourhoods are applied at random.
+		    		int numNeigbours = neighbourhoods.size();
+		    		int[] indexes = new int[numNeigbours];
+		    		for (byte j=0; j<numNeigbours; j++) {
+		    			indexes[j]=j;
+		    		}
+		    		indexes = Functions.shuffleFast(numNeigbours, random);
+		    		
+		    		for (int index:indexes) {
+		    			neighbourhood = neighbourhoods.get(index);
+		    			result = runLocalSearch(neighbourhood, solutionCopy);
+		    			
+		    			solutionCopy = result.solution;
+		    		}
+		    	} else {
+		    		for (Neighbourhood<CSPSolution> n: neighbourhoods) {
+		    			result = runLocalSearch(n, solutionCopy);
+		    			solutionCopy = result.solution;
+			    	}
+		    	}
+		    	
+		    }
+		    
 
 //		    for (Neighbourhood<CSPSolution> neighbourhood: neighbourhoods) {
 		    	
-		    	Neighbourhood<CSPSolution> neighbourhood = neighbourhoods.get(
-		    			random.nextInt(numNeighbourhoods));
-		    	
-		    	SingleNeighbourhoodSearch<CSPSolution> searchAlgo = localSearch.createLocalSearch(csp, neighbourhood);
-
-//			    stocasticDescent.addStopCriterion(new MaxRuntime(timeLimit, TimeUnit.SECONDS));
-			    searchAlgo.addStopCriterion(new MaxSteps(maxSteps));
-			    if(verbose) {
-			    	searchAlgo.addSearchListener(new ProgressSearchListener());
-			    }
-			    
-			    //Try to improve constructed solution.
-			    searchAlgo.setCurrentSolution((CSPSolution)best.copy());
-			    
-			    //Improvement phase
-			    searchAlgo.start();
-			    
-			    CSPSolution improved = searchAlgo.getBestSolution();
-			    
-			    if(improved!=null) {
-			    	best=improved;
-			    	
-			    	improvedFitness = 
-			    			searchAlgo.getBestSolutionEvaluation().getValue();
-		    		// print results
-				    if(verbose) {
-		    			System.out.println("Improved sequence: " + Arrays.toString(
-		    					improved.getSequence()));
-				        System.out.println("Improved sequence fitness: " + 
-				        		improvedFitness);
-				    }
-			    } else if(verbose) {
-			    	System.out.println("No improving solution found...");
-			    }
-			    // dispose
-			    searchAlgo.dispose();
-			    neighbourApplied++;
-		    }
+//		    	Neighbourhood<CSPSolution> neighbourhood = neighbourhoods.get(
+//		    			random.nextInt(numNeighbourhoods));
+//		    	
+//		    	SingleNeighbourhoodSearch<CSPSolution> searchAlgo = localSearch.createLocalSearch(csp, neighbourhood);
+//
+////			    stocasticDescent.addStopCriterion(new MaxRuntime(timeLimit, TimeUnit.SECONDS));
+//			    searchAlgo.addStopCriterion(new MaxSteps(maxSteps));
+//			    if(verbose) {
+//			    	searchAlgo.addSearchListener(new ProgressSearchListener());
+//			    }
+//			    
+//			    //Try to improve constructed solution.
+//			    searchAlgo.setCurrentSolution((CSPSolution)best.copy());
+//			    
+//			    //Improvement phase
+//			    searchAlgo.start();
+//			    
+//			    CSPSolution improved = searchAlgo.getBestSolution();
+//			    
+//			    if(improved!=null) {
+//			    	best=improved;
+//			    	
+//			    	improvedFitness = 
+//			    			searchAlgo.getBestSolutionEvaluation().getValue();
+//		    		// print results
+//				    if(verbose) {
+//		    			System.out.println("Improved sequence: " + Arrays.toString(
+//		    					improved.getSequence()));
+//				        System.out.println("Improved sequence fitness: " + 
+//				        		improvedFitness);
+//				    }
+//			    } else if(verbose) {
+//			    	System.out.println("No improving solution found...");
+//			    }
+//			    // dispose
+//			    searchAlgo.dispose();
+//			    neighbourApplied++;
+//		    }
+		    
+		    best = result.solution;
+		    improvedFitness = result.fitness;
 		    
 	    	if(improvedFitness<bestFitness) {
 	    		bestFitness=improvedFitness;
 	    		bestFound=best;
 	    		 // print results
 			    if(verbose) {
-	    			System.out.println("Improved sequence: " + Arrays.toString(
+	    			System.out.println("Final iteration sequence: " + Arrays.toString(
 	    					best.getSequence()));
-			        System.out.println("Improved sequence fitness: " + 
+			        System.out.println("Final iteration fitness: " + 
 			        		improvedFitness);
 			    }
 	    	}
@@ -164,6 +219,46 @@ public class GRASP {
 	    	}
 		    
 		}
+	}
+	
+	private GRASPResult runLocalSearch(Neighbourhood<CSPSolution> neighbourhood, CSPSolution solutionCopy) {
+    	
+    	SingleNeighbourhoodSearch<CSPSolution> searchAlgo = localSearch.createLocalSearch(csp, neighbourhood);
+
+//	    stocasticDescent.addStopCriterion(new MaxRuntime(timeLimit, TimeUnit.SECONDS));
+	    searchAlgo.addStopCriterion(new MaxSteps(maxSteps));
+	    if(verbose) {
+	    	searchAlgo.addSearchListener(new ProgressSearchListener());
+	    }
+	    
+	    //Try to improve constructed solution.
+	    searchAlgo.setCurrentSolution(solutionCopy);
+	    
+	    //Improvement phase
+	    searchAlgo.start();
+	    
+	    CSPSolution improved = searchAlgo.getBestSolution();
+	    
+	    double improvedFitness = 
+    			searchAlgo.getBestSolutionEvaluation().getValue();
+	    
+	    GRASPResult result = new GRASPResult(improved, improvedFitness);
+
+		// print results
+	    if(verbose) {
+	    	if(improved!=null) {
+				System.out.println("Improved sequence: " + Arrays.toString(
+						improved.getSequence()));
+		        System.out.println("Improved sequence fitness: " + 
+		        		improvedFitness);
+	    	} else {
+	    		System.out.println("No improving solution found...");
+	    	}
+	    }
+	    // dispose
+	    searchAlgo.dispose();
+	    
+	    return result;
 	}
 	
 	public CSPSolution getBest() {

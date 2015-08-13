@@ -3,6 +3,8 @@ package jcsp.algo.beans;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import jcsp.CSPSolution;
 import jcsp.localsearch.BestImprovement;
@@ -23,22 +25,30 @@ public class GRASPBean {
 	final public int iterations;
 	final public double alpha;
 	final public long maxSteps;
+	final public boolean random;
+	final public boolean once;
 	
 	final public LocalSearch localSearch;
 
 	public GRASPBean(int iterations, double alpha, long maxSteps,
-			LocalSearch localSearch) {
+			LocalSearch localSearch, boolean random, boolean once) {
 		super();
 		this.iterations = iterations;
 		this.alpha = alpha;
 		this.maxSteps = maxSteps;
 		this.localSearch = localSearch;
+		
+		this.random=random;
+		this.once=once;
 	}
 	
 	public GRASPBean() {
 		alpha = 0.4;
         iterations = 50;
         maxSteps = 100000;
+        
+        random = false;
+        once = false;
         
         localSearch = new BestImprovement(null);
 	}
@@ -53,35 +63,51 @@ public class GRASPBean {
 		double alpha = reader.getParameterDouble("alpha");
 		int maxSteps = reader.getParameterInteger("maxSteps");
 				
-		String localSearh = reader.getParameterString("localSearch");
-		String neighbourhood = reader.getParameterString("neighbourhood");
+		String localSearh = reader.getParameterString("localSearch");		
+		String[] neighbourhood = reader.getParameterStringArray("neighbourhood");
+		
+		boolean random = false;
+		try {
+			random = reader.getParameterBoolean("random");
+		}catch (NullPointerException e) {
+			//Nothing is done, this config does not contain a random parameter
+		}
+		
+		boolean once = false;
+		try {
+			once=reader.getParameterBoolean("once");
+		}catch (NullPointerException e) {
+			//Nothing is done, this config does not contain a once parameter
+		}
 		
 		LocalSearch ls = createLocalSearch(localSearh, neighbourhood);
 
-		return new GRASPBean(iterations, alpha, maxSteps, ls);
+		return new GRASPBean(iterations, alpha, maxSteps, ls, random, once);
 	}
 	
-	private static LocalSearch createLocalSearch(String localSearh, String neighbourhood) {
+	private static LocalSearch createLocalSearch(String localSearh, String[] neighbourhoods) {
 		
-		Neighbourhood<CSPSolution> nh = null;
+		List<Neighbourhood<CSPSolution>> nh = new ArrayList<Neighbourhood<CSPSolution>>();
 		
-		if(neighbourhood!=null) {
-			switch (neighbourhood) {
-			case "swap":
-				nh = new CSPSwapNeighbourhood();
-				break;
-			case "insertion":
-				nh = new CSPInsertionNeighbourhood();
-				break;
-			case "inversion":
-				nh = new CSPInvertionNeighbourhood();
-				break;
-			case "shuffle":
-				nh = new CSPShuffleNeighbourhood();
-				break;
-			default:
-				throw new IllegalArgumentException(
-						"Illegal neighbourhood value: "+neighbourhood);
+		if(neighbourhoods!=null) {
+			for (String neighbourhood:neighbourhoods) {
+				switch (neighbourhood) {
+				case "swap":
+					nh.add(new CSPSwapNeighbourhood());
+					break;
+				case "insertion":
+					nh.add(new CSPInsertionNeighbourhood());
+					break;
+				case "inversion":
+					nh.add(new CSPInvertionNeighbourhood());
+					break;
+				case "shuffle":
+					nh.add(new CSPShuffleNeighbourhood());
+					break;
+				default:
+					throw new IllegalArgumentException(
+							"Illegal neighbourhood value: "+neighbourhood);
+				}
 			}
 		}
 		

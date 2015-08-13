@@ -1,5 +1,7 @@
 package jcsp.localsearch;
 
+import java.util.List;
+
 import jcsp.CSPProblem;
 import jcsp.CSPSolution;
 
@@ -9,7 +11,7 @@ import org.jamesframework.core.search.neigh.Neighbourhood;
 
 public class FirstImprovement extends LocalSearch{
 
-	public FirstImprovement(Neighbourhood<CSPSolution> neighbourhood) {
+	public FirstImprovement(List<Neighbourhood<CSPSolution>> neighbourhood) {
 		super(neighbourhood);
 	}
 
@@ -23,7 +25,7 @@ public class FirstImprovement extends LocalSearch{
 	public SingleNeighbourhoodSearch<CSPSolution> createLocalSearch(
 			CSPProblem csp) {
 		checkNeighbourhood();
-		return new RandomDescent<CSPSolution>(csp, neighbourhood);
+		return new RandomDescent<CSPSolution>(csp, neighbourhood.get(0));
 	}
 
 }

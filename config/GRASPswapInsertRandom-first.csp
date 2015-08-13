@@ -2,4 +2,6 @@ alpha=0.4
 iterations=50
 maxSteps=200000
 localSearch=first
-neighbourhood=swap
+neighbourhood=swap,insertion
+random=true
+once=false

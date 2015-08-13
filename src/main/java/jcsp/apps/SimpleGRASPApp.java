@@ -132,7 +132,7 @@ public class SimpleGRASPApp {
         double alpha = 0.4;
         int iterations = 50;
         long maxSteps = 100000;
-        boolean verbose = true;
+        boolean verbose = false;
 
         List<Neighbourhood<CSPSolution>> neighbourhoods = new ArrayList<Neighbourhood<CSPSolution>>();
         

@@ -1,5 +1,7 @@
 package jcsp.localsearch;
 
+import java.util.List;
+
 import jcsp.CSPProblem;
 import jcsp.CSPSolution;
 
@@ -8,9 +10,9 @@ import org.jamesframework.core.search.neigh.Neighbourhood;
 
 public abstract class LocalSearch {
 	
-	protected Neighbourhood<CSPSolution> neighbourhood = null;
+	protected List<Neighbourhood<CSPSolution>> neighbourhood = null;
 
-	public LocalSearch(Neighbourhood<CSPSolution> neighbourhood) {
+	public LocalSearch(List<Neighbourhood<CSPSolution>> neighbourhood) {
 		this.neighbourhood = neighbourhood;
 	}
 	
@@ -23,11 +25,11 @@ public abstract class LocalSearch {
 	public abstract SingleNeighbourhoodSearch<CSPSolution> createLocalSearch(CSPProblem csp, Neighbourhood<CSPSolution> neighbourhood);
 	public abstract SingleNeighbourhoodSearch<CSPSolution> createLocalSearch(CSPProblem csp);
 
-	public Neighbourhood<CSPSolution> getNeighbourhood() {
+	public List<Neighbourhood<CSPSolution>> getNeighbourhoods() {
 		return neighbourhood;
 	}
 
-	public void setNeighbourhood(Neighbourhood<CSPSolution> neighbourhood) {
+	public void setNeighbourhood(List<Neighbourhood<CSPSolution>> neighbourhood) {
 		this.neighbourhood = neighbourhood;
 	}
 }

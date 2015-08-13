@@ -1,0 +1,7 @@
+alpha=0.4
+iterations=50
+maxSteps=200000
+localSearch=first
+neighbourhood=swap,insertion,inversion
+random=false
+once=false
