@@ -1,0 +1,6 @@
+maxSteps=200000
+maxSeconds=600
+neighbourhood=inversion,swap,insertion
+maxShaking=10
+shakers=randomSwap
+greedyInitialSolution=false

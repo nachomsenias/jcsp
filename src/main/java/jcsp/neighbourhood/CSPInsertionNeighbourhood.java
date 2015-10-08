@@ -34,27 +34,18 @@ public class CSPInsertionNeighbourhood extends CSPNeighbourhood{
 	@Override
 	public Move<CSPSolution> getRandomMove(CSPSolution sol) {
 		Randomizer random = CSPProblem.random;
-		int sequenceLenght = sol.getSecuenceLength();
 		
 		int[] sequence = sol.getSequence();
+		int sequenceLenght = sequence.length;
 		
-		int oldPos = random.nextInt(sequenceLenght);
-		int newPos = random.nextInt(sequenceLenght);
+		int oldPos;
+		int newPos;
 		
 		do {
 			oldPos = random.nextInt(sequenceLenght);
 			newPos = random.nextInt(sequenceLenght);
 		}while(Math.abs(oldPos-newPos)>1
 				|| sequence[oldPos]==sequence[newPos]);
-
-//		List<Integer> indexes = getValues(oldPos, sequence,2);
-		
-//		if(indexes.isEmpty()) {
-//			return null;
-//		}
-//		
-//		int numPos = indexes.size();
-//		int newPos = indexes.get(random.nextInt(numPos));
 		
 		return new SingleInsertion(oldPos, newPos);
 	}

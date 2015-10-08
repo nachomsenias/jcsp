@@ -9,6 +9,8 @@ log=/results
 config=./config/GRASPswap-first.csp
 dateMark="$(date +%s)"
 
+alpha=0.15
+
 
 for j in $(seq 1 $num_sequences)
 do
@@ -16,7 +18,7 @@ do
 
 	customLog="${customDir}${log}"
 
-	java -jar javaCSP.jar ${customDir} ${customLog} ${config} >> "${customLog}/${dateMark}.log"
+	java -jar javaCSP.jar ${customDir} ${customLog} ${config} ${alpha} >> "${customLog}/${dateMark}.log"
 done;
 
 echo "############################################"

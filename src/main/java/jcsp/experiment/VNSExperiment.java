@@ -4,27 +4,34 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import jcsp.CSPProblem;
 import jcsp.CSPSolution;
-import jcsp.algo.GRASP;
-import jcsp.experiment.beans.GRASPBean;
+import jcsp.experiment.beans.VNSBean;
 import jcsp.util.CSPParser;
+import jcsp.util.ProgressSearchListener;
+
+import org.jamesframework.core.search.algo.vns.VariableNeighbourhoodSearch;
+import org.jamesframework.core.search.neigh.Neighbourhood;
+import org.jamesframework.core.search.stopcriteria.MaxRuntime;
+import org.jamesframework.core.search.stopcriteria.MaxSteps;
+
 import util.Functions;
 import util.random.RandomizerFactory;
 import util.random.RandomizerFactory.RandomizerAlgorithm;
 import util.random.RandomizerUtils;
 
-public class GRASPExperiment {
-
+public class VNSExperiment {
 	private static BufferedWriter csvWriter = null;
 
 	public static void main(String[] args) throws IOException {
-		if (args.length != 3 && args.length != 4) {
+		if (args.length != 3) {
 			throw new IllegalArgumentException(
 				"This application requires a directory with sequence files, "
 					+ "a folder for writing the experiment log and a experiment "
-					+ "config file. (alpha double increment is optional)");
+					+ "config file.");
 		}
 
 		String sourceDir = args[0];
@@ -32,24 +39,14 @@ public class GRASPExperiment {
 		// Create result files and folders.
 		String logFolder = args[1];
 		new File(logFolder).mkdirs();
-
+		
 		String experimentFile = args[2];
 		
-		double alphaIncrement = 0;
-		if(args.length==4) {
-			alphaIncrement = Double.parseDouble(args[3]);
-		}
-		
-		final double trueAlpha = alphaIncrement;
-
-		do {
-			runExperiment(logFolder,experimentFile,sourceDir,alphaIncrement);
-			alphaIncrement+=trueAlpha;
-		} while (alphaIncrement!=0 && alphaIncrement<Functions.IDENTITY_SCALE);
+		runExperiment(logFolder,experimentFile,sourceDir);
 	}
 	
 	private static void runExperiment(String logFolder, String experimentFile, 
-			String sourceDir, double alpha) throws IOException {
+			String sourceDir) throws IOException {
 		
 		File dir = new File(sourceDir);
 
@@ -59,16 +56,11 @@ public class GRASPExperiment {
 		}
 		
 		String timestamp = String.valueOf(System.currentTimeMillis());
-
-		File experimentConfig = new File(experimentFile);
 		
-		String alphaStrign ="";
-		if(alpha!=0) {
-			alphaStrign = "_"+alpha;
-		}
+		File experimentConfig = new File(experimentFile);
 
-		String resulPath = logFolder + "/" + experimentConfig.getName() 
-				+ alphaStrign + "_" + timestamp + ".csv";
+		String resulPath = logFolder + "/"+ experimentConfig.getName() 
+				+ "_" + timestamp + ".csv";
 
 		csvWriter = new BufferedWriter(new FileWriter(resulPath, false));
 
@@ -93,7 +85,7 @@ public class GRASPExperiment {
 
 			csvWriter.write(name);
 
-			runGrasp(config.getAbsolutePath(), timestamp, experimentConfig, alpha);
+			runVNS(config.getAbsolutePath(), timestamp, experimentConfig);
 			csvWriter.newLine();
 			csvWriter.flush();
 		}
@@ -101,37 +93,51 @@ public class GRASPExperiment {
 		csvWriter.close();
 	}
 
-	private static void runGrasp(String sequenceFile, String signature,
-			File experimentFile, double alpha) throws IOException {
+	private static void runVNS(String sequenceFile, String signature, 
+			File experimentConfig ) throws IOException {
 		String message = "Starting experiment with file: " + sequenceFile
 				+ "\n";
 		System.out.print(message);
 
 		CSPProblem csp = CSPParser.load(sequenceFile);
-
-		GRASPBean bean = GRASPBean.readConfigFile(experimentFile);
-		if(alpha!=0) {
-			bean.alpha=alpha;
-		}
-		boolean verbose = false;
+		
+		VNSBean bean = VNSBean.readConfigFile(experimentConfig);
+		
+		//Greedy solution is deterministic, so
+		CSPSolution greedySolution = csp.createGreedy(0.0);
+		
 
 		for (int seedIndex = 0; seedIndex < 30; seedIndex++) {
 
 			message = "Seed: " + seedIndex + "\n";
 			System.out.print(message);
-			// fw.write(message);
 
 			CSPProblem.random = RandomizerFactory.createRandomizer(
 					RandomizerAlgorithm.XOR_SHIFT_128_PLUS_FAST,
-					RandomizerUtils.PRIME_SEEDS[seedIndex]);
+					RandomizerUtils.PRIME_SEEDS[seedIndex]
+							);
 
-			GRASP grasp = new GRASP(csp, bean, verbose);
-			grasp.optimize();
+			List<Neighbourhood<CSPSolution>> shakers = bean.shakers;
+        	List<Neighbourhood<CSPSolution>> improvers = bean.improvers;
+        	
+        	VariableNeighbourhoodSearch<CSPSolution> vns = 
+        			new VariableNeighbourhoodSearch<CSPSolution>(csp, shakers, improvers);
+        	
+        	vns.addStopCriterion(new MaxSteps(bean.maxSteps));
+        	vns.addStopCriterion(new MaxRuntime(bean.maxSeconds, TimeUnit.SECONDS));
+        	if(bean.greedyInitialSolution) {
+        		vns.setCurrentSolution((CSPSolution)greedySolution.copy());
+        	} else {
+        		vns.setCurrentSolution(csp.createRandomSolution());
+        	}
+        	
+        	vns.addSearchListener(new ProgressSearchListener());
+        	vns.start();
 
-			CSPSolution best = grasp.getBest();
+			CSPSolution best = vns.getBestSolution();
 			// Best solution should never be null because at least one solution
 			// must be returned.
-			message = "GRASP SOLUTION::\n";
+			message = "VNS SOLUTION::\n";
 			System.out.print(message);
 			// fw.write(message);
 
@@ -139,11 +145,11 @@ public class GRASPExperiment {
 			System.out.print(message);
 			// fw.write(message);
 
-			message = "GRASP FINAL FITNESS::\n";
+			message = "VNS FITNESS::\n";
 			System.out.print(message);
 			// fw.write(message);
 
-			double fitness = grasp.getFinalFitness();
+			double fitness = vns.getBestSolutionEvaluation().getValue();
 
 			csvWriter.write("," + fitness);
 

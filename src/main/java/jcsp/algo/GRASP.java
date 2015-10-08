@@ -6,7 +6,7 @@ import java.util.List;
 
 import jcsp.CSPProblem;
 import jcsp.CSPSolution;
-import jcsp.algo.beans.GRASPBean;
+import jcsp.experiment.beans.GRASPBean;
 import jcsp.localsearch.FirstImprovement;
 import jcsp.localsearch.LocalSearch;
 import jcsp.util.ProgressSearchListener;
@@ -42,8 +42,6 @@ public class GRASP {
 	
 	//Time printing
 	private boolean verbose;
-	
-	private boolean optimalFound = false;
 	
 	
 	private class GRASPResult {
@@ -85,7 +83,7 @@ public class GRASP {
 		this.random = bean.random;
 		this.once=bean.once;
 		
-		this.neighbourhoods = new ArrayList<Neighbourhood<CSPSolution>>();
+		neighbourhoods = new ArrayList<Neighbourhood<CSPSolution>>();
 		neighbourhoods.addAll(localSearch.getNeighbourhoods());
 
 		this.verbose = verbose;
@@ -112,12 +110,6 @@ public class GRASP {
 			        		improvedFitness);
 		    }
 		    Randomizer random = CSPProblem.random;
-		    
-//		    int neighbourMax = (int)Math.pow(2, numNeighbourhoods);
-//		    int neighbourApplied = 0;
-		    
-//		    while(!optimalFound && neighbourApplied<neighbourMax) {
-//		    while(!optimalFound) {
 		    	
 		    GRASPResult result=null;
 		    CSPSolution solutionCopy=(CSPSolution)best.copy();
@@ -154,48 +146,6 @@ public class GRASP {
 		    	
 		    }
 		    
-
-//		    for (Neighbourhood<CSPSolution> neighbourhood: neighbourhoods) {
-		    	
-//		    	Neighbourhood<CSPSolution> neighbourhood = neighbourhoods.get(
-//		    			random.nextInt(numNeighbourhoods));
-//		    	
-//		    	SingleNeighbourhoodSearch<CSPSolution> searchAlgo = localSearch.createLocalSearch(csp, neighbourhood);
-//
-////			    stocasticDescent.addStopCriterion(new MaxRuntime(timeLimit, TimeUnit.SECONDS));
-//			    searchAlgo.addStopCriterion(new MaxSteps(maxSteps));
-//			    if(verbose) {
-//			    	searchAlgo.addSearchListener(new ProgressSearchListener());
-//			    }
-//			    
-//			    //Try to improve constructed solution.
-//			    searchAlgo.setCurrentSolution((CSPSolution)best.copy());
-//			    
-//			    //Improvement phase
-//			    searchAlgo.start();
-//			    
-//			    CSPSolution improved = searchAlgo.getBestSolution();
-//			    
-//			    if(improved!=null) {
-//			    	best=improved;
-//			    	
-//			    	improvedFitness = 
-//			    			searchAlgo.getBestSolutionEvaluation().getValue();
-//		    		// print results
-//				    if(verbose) {
-//		    			System.out.println("Improved sequence: " + Arrays.toString(
-//		    					improved.getSequence()));
-//				        System.out.println("Improved sequence fitness: " + 
-//				        		improvedFitness);
-//				    }
-//			    } else if(verbose) {
-//			    	System.out.println("No improving solution found...");
-//			    }
-//			    // dispose
-//			    searchAlgo.dispose();
-//			    neighbourApplied++;
-//		    }
-		    
 		    best = result.solution;
 		    improvedFitness = result.fitness;
 		    
@@ -211,7 +161,6 @@ public class GRASP {
 			    }
 	    	}
 	    	if(improvedFitness==CSPProblem.FEASIBLE_FITNESS) {
-	    		optimalFound=true;
 	    		if(verbose) {
 	    			System.out.println("Feasible solution found at iteration "
 	    					+i+", ending process.");
@@ -224,8 +173,7 @@ public class GRASP {
 	private GRASPResult runLocalSearch(Neighbourhood<CSPSolution> neighbourhood, CSPSolution solutionCopy) {
     	
     	SingleNeighbourhoodSearch<CSPSolution> searchAlgo = localSearch.createLocalSearch(csp, neighbourhood);
-
-//	    stocasticDescent.addStopCriterion(new MaxRuntime(timeLimit, TimeUnit.SECONDS));
+    	
 	    searchAlgo.addStopCriterion(new MaxSteps(maxSteps));
 	    if(verbose) {
 	    	searchAlgo.addSearchListener(new ProgressSearchListener());

@@ -104,8 +104,6 @@ public class CSPProblem implements Problem<CSPSolution>{
 				}
 			}
 		}
-		
-//		baseError = numOptions*carsDemand;
 	}
 	
 	public CSPSolution createRandomSolution() {
@@ -113,8 +111,7 @@ public class CSPProblem implements Problem<CSPSolution>{
 		
 		int classByDemand = 0;
 		int ocurrences = 0;
-		
-		
+
 		for (int i=0; i<carsDemand; i++) {
 			sequence[i] = classByDemand;
 			ocurrences++;
@@ -388,13 +385,6 @@ public class CSPProblem implements Problem<CSPSolution>{
 			
 			fitness -= (prevCollisions-currentCollisions);
 		}
-		
-		double debugFitness = evaluateRestrictions(sequence, carsDemand);
-		
-		if(debugFitness!=fitness) {
-			System.out.println("WTF??");
-		}
-		
 		return fitness;
 	}
 	
@@ -416,31 +406,6 @@ public class CSPProblem implements Problem<CSPSolution>{
 			}
 		}
 	}
-	
-//	private int countPreviousCollisions( int first, 
-//				int option, int[][] excess
-//			) {
-//		int q = this.options[TOTAL_INDEX][option];
-//		
-//		int beginIndexFirst;
-//		if(first-(q-1)<0) {
-//			beginIndexFirst = 0;
-//		} else {
-//			beginIndexFirst = first-(q-1);
-//		}
-//		
-//		int endIndexFirst;
-//		if(first+(q-1)<=carsDemand-q) {
-//			endIndexFirst = first+(q-1);
-//		} else {
-//			endIndexFirst = carsDemand-q;
-//		}
-//		
-//		int previousColissions=Functions.addArraySegment(
-//				excess[option], beginIndexFirst, endIndexFirst);
-//		
-//		return previousColissions;
-//	}
 	
 	/**
 	 * Both indexes are inclusive.
@@ -491,65 +456,6 @@ public class CSPProblem implements Problem<CSPSolution>{
 		return currentColissions;
 	}
 	
-	
-//	private double collisionVariance(int[] sequence, int first, 
-//			int option, int[][] excess
-//		) {
-//		int q = this.options[TOTAL_INDEX][option];
-//		
-//		int beginIndexFirst;
-//		if(first-(q-1)<0) {
-//			beginIndexFirst = 0;
-//		} else {
-//			beginIndexFirst = first-(q-1);
-//		}
-//		
-//		int endIndexFirst;
-//		if(first+(q-1)<=carsDemand-q) {
-//			endIndexFirst = first+(q-1);
-//		} else {
-//			endIndexFirst = carsDemand-q;
-//		}
-//		
-////		if(endIndexFirst<beginIndexFirst) {
-////			throw new IllegalStateException("Crappy indexes!! lower bound cant be beyond upper one!");
-////		}
-//		
-//		int previousColissions=Functions.addArraySegment(
-//				excess[option], beginIndexFirst, endIndexFirst);
-//
-//		int currentColissions = 0;
-//		
-//		int p = this.options[POSSIBLE_FROM][option];
-//		
-//		for (int car=beginIndexFirst; car<=endIndexFirst; car++) {
-//			
-//			int occurrences = 0;
-//			
-//			int nextCar = 0;
-//			while(nextCar<q) {
-//				occurrences+=requirements[sequence[car+nextCar]][option];
-//				nextCar++;
-//			}
-//			
-//			//P+
-//			if (occurrences>p) {
-//				int collisions = occurrences-p;
-//				excess[option][car]=collisions;
-//				currentColissions+=collisions;
-//			} else {
-//				excess[option][car]=0;
-//			}
-//		}
-//		
-//		//New fitness is equal to previous fitness minus the different 
-//		//between previous and the current collisions. 
-//		
-//		//If new collisions are fewer than the previous ones, the 
-//		//fitness is lower (better).
-//		return previousColissions-currentColissions;
-//	}
-	
 	public int[][] createExcessMatrix(int[] sequence) {
 		int[][] excesses = new int [numOptions][carsDemand];
 		
@@ -582,8 +488,7 @@ public class CSPProblem implements Problem<CSPSolution>{
 		return excesses;
 	}
 	
-	//TODO This is meant to be private, is public for debug purposes
-	public double evaluateRestrictions(int[] sequence, int lastIndex) {
+	private double evaluateRestrictions(int[] sequence, int lastIndex) {
 		double fitness =0;
 		
 		for (int car=0; car<lastIndex; car++) {
@@ -615,7 +520,7 @@ public class CSPProblem implements Problem<CSPSolution>{
 		return fitness;
 	}
 	
-	public double evaluateRestrictionsPartialSequence(int[] sequence, int lastIndex) {
+	private double evaluateRestrictionsPartialSequence(int[] sequence, int lastIndex) {
 		double fitness = 0;
 		
 		for (int car=0; car<lastIndex; car++) {
@@ -674,30 +579,6 @@ public class CSPProblem implements Problem<CSPSolution>{
 	
 	@SuppressWarnings("unused")
 	private double dynamicUtilizationRateSum(CSPSolution sol) {
-//		double totalDur = 0;
-//		int [] availableByClass = sol.getRemainingClasses();
-//		
-//		int lastAssigned = sol.getLastIndex();
-//		
-//		int carsLeft = carsDemand-lastAssigned;
-//
-//		
-//		for (int i=0; i<numOptions; i++) {
-//			
-//			//Ni(PI) - Ni(PIj) => Because Ni(PIj) = Ni(PI) - (Not assigned using i)
-//			// This expression equals : Not assigned using i.
-//			int notAssigned = 0;
-//			for (int j=0; j<numClasses; j++) {
-//				if(requirements[j][i]>0) {
-//					notAssigned+=availableByClass[j];
-//				}
-//			}
-//			
-//			double dur = ratioPossibleTotal[i]*((double)notAssigned/carsLeft);
-//			totalDur+=dur;
-//		}
-//		
-//		return totalDur;
 		
 		double totalDur = 0;
 
@@ -727,28 +608,12 @@ public class CSPProblem implements Problem<CSPSolution>{
 		
 		return requiringLeft;
 	}
-	
-//	private double dynamicUtilizationRateMax(CSPSolution sol) {
-//		double totalDur = 0;
-//
-//		int lastAssigned = sol.getLastCar();
-//		
-//		for (int i=0; i<numOptions; i++) {
-//			if(requirements[lastAssigned][i]>0) {
-//				double dur = staticUtilizationRate(i);
-//				totalDur+=dur;
-//			}
-//		}
-//		
-//		return totalDur;
-//	}
-	
+
 	public CSPSolution createGreedy(double alpha) {
 		CSPSolution initial = createEmptySolution();
 		CSPGreedyNeighbourhood neighbourhood = new CSPGreedyNeighbourhood(this,alpha);
 		
 		while(initial.getLastIndex()<carsDemand-1) {
-//			initial = getMaxDurSum(initial, neighbourhood);
 			initial = applyNext(initial, neighbourhood);
 		}
 		
@@ -762,14 +627,10 @@ public class CSPProblem implements Problem<CSPSolution>{
 		
 		//Every possible new car
 		List<AddCar> everyMove = neighbourhood.getEveryMove(sol);
-//		int totalMoves = everyMove.size();
-		
-		
 		//Check new violations
 		
 		for (AddCar move: everyMove) {
 			move.apply(sol);
-//			double violations = evaluate(sol).getValue();
 			double violations = evaluateRestrictionsPartialSequence(
 					sol.getSequence(), sol.getLastIndex()+1);
 			
@@ -803,25 +664,6 @@ public class CSPProblem implements Problem<CSPSolution>{
 			move.apply(sol);
 			return sol;
 		}
-		
-		
-//		if(neighbourhood.getAlpha()!=0.0) {
-//			List<AddCar> besties = neighbourhood.selectBesties(minHeap, totalMoves);
-//			int howManyBesties = besties.size();
-//			
-//			AddCar move = besties.get(random.nextInt(howManyBesties));
-//			move.apply(sol);
-//			
-//			return sol;
-//			
-//		} else {
-//			FitnessBean fb = (FitnessBean)minHeap.pop();
-//			
-//			fb.move.apply(sol);
-//			
-//			return sol;
-//		}	
-		
 	}
 	
 	private CSPSolution getMaxDurSum(CSPSolution sol, List<AddCar> moves, double alpha) {
@@ -831,8 +673,6 @@ public class CSPProblem implements Problem<CSPSolution>{
 		
 		for (AddCar move: moves) {
 			move.apply(sol);
-//			double dur = dynamicUtilizationRateSum(sol);
-//			double dur = dynamicUtilizationRateMax(sol);
 			double dur = staticUtilizationRateSum(sol);
 			move.undo(sol);
 			bh.add(new FitnessBean(dur, move));
@@ -857,55 +697,7 @@ public class CSPProblem implements Problem<CSPSolution>{
 		
 	}
 	
-//	private CSPSolution getMaxDurSum(CSPSolution sol, CSPGreedyNeighbourhood neighbourhood) {
-//		BinaryHeap bh = new BinaryHeap(false, FitnessBean.beanComparator());
-//		
-//		List<AddCar> everyMove = neighbourhood.getEveryMove(sol);
-//		int totalMoves = everyMove.size();
-//		
-//		for (AddCar move: everyMove) {
-//			move.apply(sol);
-//			double dur = dynamicUtilizationRateSum(sol);
-//			move.undo(sol);
-//			bh.add(new FitnessBean(dur, move));
-//		}
-//		
-//		if(neighbourhood.getAlpha()!=0.0) {
-//			List<AddCar> besties = CSPGreedyNeighbourhood.selectBesties(bh, totalMoves, neighbourhood.getAlpha());
-//			int howManyBesties = besties.size();
-//			
-//			AddCar move = besties.get(random.nextInt(howManyBesties));
-//			move.apply(sol);
-//			
-//			return sol;
-//			
-//		} else {
-//			FitnessBean fb = (FitnessBean)bh.pop();
-//			
-//			fb.move.apply(sol);
-//			
-//			return sol;
-//		}
-//	}
-	
-	public Evaluation evaluate(CSPSolution sol) {		
-//		int[] sequence = sol.getSequence();
-//		
-//		int lastIndex = sol.getLastIndex();
-//		
-//		int invalidCars = carsDemand-(lastIndex+1);
-//		
-//		if (invalidCars>0) {
-//			double dur = dynamicUtilizationRateSum(sol);
-//			
-//			double fitness = ((double)carsDemand) / dur;
-//			fitness+=baseError;
-//			
-//			return new SimpleEvaluation(fitness);
-//		} else {
-//			return new SimpleEvaluation(
-//					evaluateRestrictions(sequence, carsDemand));
-//		}
+	public Evaluation evaluate(CSPSolution sol) {
 		
 		int lastIndex = sol.getLastIndex();
 		

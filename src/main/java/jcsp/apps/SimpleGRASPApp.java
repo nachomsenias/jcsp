@@ -135,18 +135,10 @@ public class SimpleGRASPApp {
         boolean verbose = false;
 
         List<Neighbourhood<CSPSolution>> neighbourhoods = new ArrayList<Neighbourhood<CSPSolution>>();
-        
-        Neighbourhood<CSPSolution> swapNeighbourhood = new CSPSwapNeighbourhood();
-        neighbourhoods.add(swapNeighbourhood);
-        
-        Neighbourhood<CSPSolution> insertNeighbourhood = new CSPInsertionNeighbourhood();
-        neighbourhoods.add(insertNeighbourhood);
-        
-        Neighbourhood<CSPSolution> invertNeighbourhood = new CSPInvertionNeighbourhood();
-        neighbourhoods.add(invertNeighbourhood);
-        
-        Neighbourhood<CSPSolution> shuffleNeighbourhood = new CSPShuffleNeighbourhood();
-        neighbourhoods.add(shuffleNeighbourhood);
+        neighbourhoods.add(new CSPSwapNeighbourhood());
+        neighbourhoods.add(new CSPInsertionNeighbourhood());
+        neighbourhoods.add(new CSPInvertionNeighbourhood());
+        neighbourhoods.add(new CSPShuffleNeighbourhood());
         
         
         for (int seedIndex = 0; seedIndex<30; seedIndex++) { 

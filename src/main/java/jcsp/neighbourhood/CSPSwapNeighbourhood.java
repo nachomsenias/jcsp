@@ -31,7 +31,6 @@ public class CSPSwapNeighbourhood extends CSPNeighbourhood{
 		return allSwaps;
 	}
 	
-	//TODO This method is meant to try "Brute" strategies.
 	@Override
 	public Move<CSPSolution> getRandomMove(CSPSolution sol) {
 		Randomizer random = CSPProblem.random;

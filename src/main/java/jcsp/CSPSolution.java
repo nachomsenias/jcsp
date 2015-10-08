@@ -10,32 +10,19 @@ import util.Functions;
 
 public class CSPSolution extends Solution{
 
-	private final CSPProblem csp; 
-	
-	
+	private final CSPProblem csp;
 	private final int[] sequence;
-	
-//	private final int numClasses;
 	
 	private int[] availableClasses;
 	
 	private int lastIndex =-1;
 	private int lastType = -1;
 	private int prevType = -1;
-	
-//	private boolean building = true;
-	
-	
+
 	//Evaluation
 	private double fitness = Double.MAX_VALUE;
-//	private double undoFitness = Double.MAX_VALUE;
 	
 	private int [][] exceedByQ;
-	
-//	private int [][] previousExceedSequence;
-//	
-//	private int [][] previousExceedFirstInd;
-//	private int [][] previousExceedSecondInd;
 	
 	
 	public CSPSolution(
@@ -113,21 +100,6 @@ public class CSPSolution extends Solution{
 				sequence, i, j, 
 				fitness, exceedByQ
 			);
-		
-//		double debugFitness = csp.evaluateRestrictions(sequence, lastIndex+1);
-//		
-////		double otherDebugFitness = csp.evaluate(this).getValue();
-//		
-//		if(fitness!=debugFitness) {
-////		if(fitness!=debugFitness || debugFitness!=otherDebugFitness) {
-////		if(fitness!=otherDebugFitness ) {
-//			System.out.println("###########");
-//			System.out.println("fitness:: "+fitness);
-//			System.out.println("debug fitness:: "+debugFitness);
-//			System.out.println("%%%%%%");
-//		}else {
-//			System.out.println("$$$$TODO OK$$$");
-//		}
 	}
 	
 	public void insert(int oldPos, int newPos) {
@@ -151,40 +123,6 @@ public class CSPSolution extends Solution{
 				sequence, oldPos, newPos, 
 				fitness, exceedByQ
 			);
-		
-//		double debugFitness = csp.evaluateRestrictions(sequence, lastIndex+1);
-//		
-////		double otherDebugFitness = csp.evaluate(this).getValue();
-//		double otherDebugFitness = Functions.addMatrix(exceedByQ);
-//		if(fitness!=debugFitness) {
-//			
-////		if(fitness!=debugFitness || debugFitness!=otherDebugFitness) {
-////		if(fitness!=otherDebugFitness ) {
-//			
-//			int[][] debugCollisions = csp.createExcessMatrix(sequence);
-//			
-//			int debuCollisionsSum = Functions.addMatrix(debugCollisions);
-//			
-//			if(debuCollisionsSum!=debugFitness) {
-//				System.out.println("WHAT??");
-//			}
-//			
-//			if(debugFitness!=otherDebugFitness) {
-//				System.out.println("NOOOOOOOOOOO");
-//			}
-//			
-//			System.out.println("###########");
-//			System.out.println("fitness:: "+fitness);
-//			System.out.println("debug fitness:: "+debugFitness);
-//			System.out.println("%%%%%%");
-//		} else {
-//			if(otherDebugFitness==fitness) {
-//				System.out.println("$$$$TODO OK$$$");
-//			} else {
-//				System.out.println("%%%%WTF? NO SO OK%%");
-//			}
-//			
-//		}
 	}
 	
 	/**
@@ -197,9 +135,6 @@ public class CSPSolution extends Solution{
 		for (int i=0;  i<subsequence.length; i++) {
 			sequence[i+begin] = subsequence[i];
 		}
-//		for (int i=begin;  i<=end; i++) {
-//			sequence[i] = subsequence[i];
-//		}
 	}
 	
 	/**
@@ -217,21 +152,6 @@ public class CSPSolution extends Solution{
 		ArrayUtils.reverse(sequence,begin,end+1);
 		
 		fitness = csp.evalInvert(sequence, begin, end, fitness, exceedByQ);
-		
-//		double debugFitness = csp.evaluateRestrictions(sequence, lastIndex+1);
-//		
-////		double otherDebugFitness = csp.evaluate(this).getValue();
-//		
-//		if(fitness!=debugFitness) {
-////		if(fitness!=debugFitness || debugFitness!=otherDebugFitness) {
-////		if(fitness!=otherDebugFitness ) {
-//			System.out.println("###########");
-//			System.out.println("fitness:: "+fitness);
-//			System.out.println("debug fitness:: "+debugFitness);
-//			System.out.println("%%%%%%");
-//		}else {
-//			System.out.println("$$$$TODO OK$$$");
-//		}
 	}
 	
 	public void addCar(int typeClass) {
@@ -253,14 +173,6 @@ public class CSPSolution extends Solution{
 	}
 
 	// GETTERS & SETTERS
-	
-//	public void setImproving() {
-//		building = false;
-//	}
-//	
-//	public boolean isBuilding() {
-//		return building;
-//	}
 
 	public int getNumClasses() {
 		return csp.getNumClasses();
@@ -273,14 +185,6 @@ public class CSPSolution extends Solution{
 	public void setCurrentFitness(double currentFitness) {
 		this.fitness = currentFitness;
 	}
-
-//	public double getUndoFitness() {
-//		return undoFitness;
-//	}
-//
-//	public void setUndoFitness(double undoFitness) {
-//		this.undoFitness = undoFitness;
-//	}
 
 	public int[] getSequence() {
 		return sequence;
@@ -300,6 +204,10 @@ public class CSPSolution extends Solution{
 	
 	public int[] getRemainingClasses() {
 		return availableClasses;
+	}
+	
+	public int[][] getColissionMatrix() {
+		return exceedByQ;
 	}
 
 	@Override

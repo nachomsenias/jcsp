@@ -2,12 +2,14 @@
 
 dir=./instances
 
-sequences=(90 classical 200)
+sequences=(classical 200 90)
 num_sequences=3
 
 log=/results
-config=./config/GRASPswapInsertRandom-first.csp
+#config=./config/GRASPswapInsertRandom-first.csp
+config=./config/$1
 dateMark="$(date +%s)"
+alpha=0.15
 
 
 for j in $(seq 1 $num_sequences)
@@ -20,7 +22,7 @@ do
 	
 	echo ${customLog}
 
-	/usr/java/jdk1.8.0_45/bin/java -jar javaCSP.jar ${customDir} ${customLog} ${config} >> "${customLog}/${dateMark}.log"
+	/usr/java/jdk1.8.0_45/bin/java -jar javaCSP.jar ${customDir} ${customLog} ${config} ${alpha} >> "${customLog}/${dateMark}.log"
 
 done;
 

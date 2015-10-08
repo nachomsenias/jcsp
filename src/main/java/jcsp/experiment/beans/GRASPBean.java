@@ -1,29 +1,18 @@
-package jcsp.algo.beans;
+package jcsp.experiment.beans;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-import jcsp.CSPSolution;
 import jcsp.localsearch.BestImprovement;
-import jcsp.localsearch.FirstImprovement;
 import jcsp.localsearch.LocalSearch;
-import jcsp.neighbourhood.CSPInsertionNeighbourhood;
-import jcsp.neighbourhood.CSPInvertionNeighbourhood;
-import jcsp.neighbourhood.CSPShuffleNeighbourhood;
-import jcsp.neighbourhood.CSPSwapNeighbourhood;
-
-import org.jamesframework.core.search.neigh.Neighbourhood;
-
 import util.io.ConfigFileReader;
 
 public class GRASPBean {
 
 	//GRASP parameters
 	final public int iterations;
-	final public double alpha;
+	public double alpha;
 	final public long maxSteps;
 	final public boolean random;
 	final public boolean once;
@@ -80,47 +69,8 @@ public class GRASPBean {
 			//Nothing is done, this config does not contain a once parameter
 		}
 		
-		LocalSearch ls = createLocalSearch(localSearh, neighbourhood);
+		LocalSearch ls = LocalSearch.createLocalSearch(localSearh, neighbourhood);
 
 		return new GRASPBean(iterations, alpha, maxSteps, ls, random, once);
-	}
-	
-	private static LocalSearch createLocalSearch(String localSearh, String[] neighbourhoods) {
-		
-		List<Neighbourhood<CSPSolution>> nh = new ArrayList<Neighbourhood<CSPSolution>>();
-		
-		if(neighbourhoods!=null) {
-			for (String neighbourhood:neighbourhoods) {
-				switch (neighbourhood) {
-				case "swap":
-					nh.add(new CSPSwapNeighbourhood());
-					break;
-				case "insertion":
-					nh.add(new CSPInsertionNeighbourhood());
-					break;
-				case "inversion":
-					nh.add(new CSPInvertionNeighbourhood());
-					break;
-				case "shuffle":
-					nh.add(new CSPShuffleNeighbourhood());
-					break;
-				default:
-					throw new IllegalArgumentException(
-							"Illegal neighbourhood value: "+neighbourhood);
-				}
-			}
-		}
-		
-		switch (localSearh) {
-		case "first":
-			return new FirstImprovement(nh);
-			
-		case "best":
-			return new BestImprovement(nh);
-
-		default:
-			throw new IllegalArgumentException(
-					"Illegal local search value: "+localSearh);
-		}
 	}
 }
