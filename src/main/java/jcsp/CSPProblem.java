@@ -9,6 +9,7 @@ import jcsp.neighbourhood.CSPGreedyNeighbourhood;
 import jcsp.util.FitnessBean;
 
 import org.apache.commons.collections.BinaryHeap;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.jamesframework.core.problems.Problem;
 import org.jamesframework.core.problems.constraints.validations.SimpleValidation;
 import org.jamesframework.core.problems.constraints.validations.Validation;
@@ -520,8 +521,8 @@ public class CSPProblem implements Problem<CSPSolution>{
 		return fitness;
 	}
 	
-	private double evaluateRestrictionsPartialSequence(int[] sequence, int lastIndex) {
-		double fitness = 0;
+	public int evaluateRestrictionsPartialSequence(int[] sequence, int lastIndex) {
+		int fitness = 0;
 		
 		for (int car=0; car<lastIndex; car++) {
 			for (int option=0; option<numOptions; option++) {
@@ -562,10 +563,8 @@ public class CSPProblem implements Problem<CSPSolution>{
 		return dur;
 	}
 	
-	private double staticUtilizationRateSum(CSPSolution sol) {
+	public double staticUtilizationRateSum(int lastAssigned) {
 		double totalDur = 0;
-
-		int lastAssigned = sol.getLastCar();
 		
 		for (int i=0; i<numOptions; i++) {
 			if(requirements[lastAssigned][i]>0) {
@@ -673,7 +672,7 @@ public class CSPProblem implements Problem<CSPSolution>{
 		
 		for (AddCar move: moves) {
 			move.apply(sol);
-			double dur = staticUtilizationRateSum(sol);
+			double dur = staticUtilizationRateSum(sol.getLastCar());
 			move.undo(sol);
 			bh.add(new FitnessBean(dur, move));
 		}
@@ -748,11 +747,23 @@ public class CSPProblem implements Problem<CSPSolution>{
 		return carsDemand;
 	}
 	
+	public int[] getDemandByClasses() {
+		return demandByClasses;
+	}
+	
 	public int getNumClasses() {
 		return numClasses;
 	}
 	
 	public int getNumOptions() {
 		return numOptions;
+	}
+	
+	public int getMaxQ() {
+		return NumberUtils.max(options[TOTAL_INDEX]);
+	}
+	
+	public int[] getQs() {
+		return options[TOTAL_INDEX];
 	}
 }

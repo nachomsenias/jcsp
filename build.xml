@@ -8,7 +8,7 @@
                 <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
                 <attribute name="Rsrc-Main-Class" value="jcsp.experiment.GRASPExperiment"/>
                 <attribute name="Class-Path" value="."/>
-                <attribute name="Rsrc-Class-Path" value="./ junit.jar gs-algo-1.2.jar gs-ui-1.2.jar gs-core-1.2.jar itext-1.2.jar jcommon-1.0.16.jar jfreechart-1.0.13.jar jmf.jar mason.17.jar portfolio.jar commons-lang3-3.3.1.jar slf4j-api-1.7.6.jar slf4j-log4j12-1.7.6.jar log4j-1.2.17.jar org.hamcrest.core_1.3.0.v201303031735.jar opencsv-2.0.jar trove-3.0.3.jar xmlbeans-2.6.0.jar poi-3.11-20141221.jar poi-ooxml-3.11-20141221.jar poi-ooxml-schemas-3.11-20141221.jar commons-math-2.2.jar commons-math3-3.5.jar james-core-0.2.jar slf4j-api-1.7.7.jar james-extensions-0.2.1.jar mjson-1.3.jar commons-collections-3.2.1.jar commons-lang3-3.2.jar"/>
+                <attribute name="Rsrc-Class-Path" value="./ junit.jar gs-algo-1.2.jar gs-ui-1.2.jar gs-core-1.2.jar jcommon-1.0.16.jar jfreechart-1.0.13.jar jmf.jar mason.17.jar commons-lang3-3.3.1.jar slf4j-api-1.7.6.jar log4j-1.2.17.jar org.hamcrest.core_1.3.0.v201303031735.jar opencsv-2.0.jar trove-3.0.3.jar commons-math3-3.5.jar commons-math-2.2.jar uncommons-maths-1.2.3.jar ecj.23.jar guava-18.0.jar slf4j-log4j12-1.7.6.jar poi-3.11-20141221.jar poi-ooxml-3.11-20141221.jar poi-ooxml-schemas-3.11-20141221.jar xmlbeans-2.6.0.jar james-core-0.2.jar slf4j-api-1.7.7.jar james-extensions-0.2.1.jar mjson-1.3.jar commons-collections-3.2.1.jar commons-lang3-3.2.jar"/>
             </manifest>
             <zipfileset src="jar-in-jar-loader.zip"/>
             <fileset dir="/home/ECSC/imoya/xcsp/javaCSP/target/classes"/>
@@ -17,25 +17,26 @@
             <zipfileset dir="/home/ECSC/imoya/anotherabm/abm4marketing/libraries" includes="gs-algo-1.2.jar"/>
             <zipfileset dir="/home/ECSC/imoya/anotherabm/abm4marketing/libraries" includes="gs-ui-1.2.jar"/>
             <zipfileset dir="/home/ECSC/imoya/anotherabm/abm4marketing/libraries" includes="gs-core-1.2.jar"/>
-            <zipfileset dir="/home/ECSC/imoya/anotherabm/abm4marketing/libraries" includes="itext-1.2.jar"/>
             <zipfileset dir="/home/ECSC/imoya/anotherabm/abm4marketing/libraries" includes="jcommon-1.0.16.jar"/>
             <zipfileset dir="/home/ECSC/imoya/anotherabm/abm4marketing/libraries" includes="jfreechart-1.0.13.jar"/>
             <zipfileset dir="/home/ECSC/imoya/anotherabm/abm4marketing/libraries" includes="jmf.jar"/>
             <zipfileset dir="/home/ECSC/imoya/anotherabm/abm4marketing/libraries" includes="mason.17.jar"/>
-            <zipfileset dir="/home/ECSC/imoya/anotherabm/abm4marketing/libraries" includes="portfolio.jar"/>
             <zipfileset dir="/home/ECSC/imoya/anotherabm/abm4marketing/libraries" includes="commons-lang3-3.3.1.jar"/>
             <zipfileset dir="/home/ECSC/imoya/anotherabm/abm4marketing/libraries" includes="slf4j-api-1.7.6.jar"/>
-            <zipfileset dir="/home/ECSC/imoya/anotherabm/abm4marketing/libraries" includes="slf4j-log4j12-1.7.6.jar"/>
             <zipfileset dir="/home/ECSC/imoya/anotherabm/abm4marketing/libraries" includes="log4j-1.2.17.jar"/>
             <zipfileset dir="/home/ECSC/imoya/Downloads/eclipse/plugins" includes="org.hamcrest.core_1.3.0.v201303031735.jar"/>
             <zipfileset dir="/home/ECSC/imoya/anotherabm/abm4marketing/libraries" includes="opencsv-2.0.jar"/>
             <zipfileset dir="/home/ECSC/imoya/anotherabm/abm4marketing/libraries" includes="trove-3.0.3.jar"/>
-            <zipfileset dir="/home/ECSC/imoya/anotherabm/abm4marketing/libraries" includes="xmlbeans-2.6.0.jar"/>
+            <zipfileset dir="/home/ECSC/imoya/anotherabm/abm4marketing/libraries" includes="commons-math3-3.5.jar"/>
+            <zipfileset dir="/home/ECSC/imoya/anotherabm/abm4marketing/libraries" includes="commons-math-2.2.jar"/>
+            <zipfileset dir="/home/ECSC/imoya/anotherabm/abm4marketing/libraries" includes="uncommons-maths-1.2.3.jar"/>
+            <zipfileset dir="/home/ECSC/imoya/anotherabm/abm4marketing/libraries" includes="ecj.23.jar"/>
+            <zipfileset dir="/home/ECSC/imoya/anotherabm/abm4marketing/libraries" includes="guava-18.0.jar"/>
+            <zipfileset dir="/home/ECSC/imoya/anotherabm/abm4marketing/libraries" includes="slf4j-log4j12-1.7.6.jar"/>
             <zipfileset dir="/home/ECSC/imoya/anotherabm/abm4marketing/libraries" includes="poi-3.11-20141221.jar"/>
             <zipfileset dir="/home/ECSC/imoya/anotherabm/abm4marketing/libraries" includes="poi-ooxml-3.11-20141221.jar"/>
             <zipfileset dir="/home/ECSC/imoya/anotherabm/abm4marketing/libraries" includes="poi-ooxml-schemas-3.11-20141221.jar"/>
-            <zipfileset dir="/home/ECSC/imoya/anotherabm/abm4marketing/libraries" includes="commons-math-2.2.jar"/>
-            <zipfileset dir="/home/ECSC/imoya/anotherabm/abm4marketing/libraries" includes="commons-math3-3.5.jar"/>
+            <zipfileset dir="/home/ECSC/imoya/anotherabm/abm4marketing/libraries" includes="xmlbeans-2.6.0.jar"/>
             <zipfileset dir="/home/ECSC/imoya/.m2/repository/org/jamesframework/james-core/0.2" includes="james-core-0.2.jar"/>
             <zipfileset dir="/home/ECSC/imoya/.m2/repository/org/slf4j/slf4j-api/1.7.7" includes="slf4j-api-1.7.7.jar"/>
             <zipfileset dir="/home/ECSC/imoya/.m2/repository/org/jamesframework/james-extensions/0.2.1" includes="james-extensions-0.2.1.jar"/>

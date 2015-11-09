@@ -21,7 +21,6 @@ public class GRASPBean {
 
 	public GRASPBean(int iterations, double alpha, long maxSteps,
 			LocalSearch localSearch, boolean random, boolean once) {
-		super();
 		this.iterations = iterations;
 		this.alpha = alpha;
 		this.maxSteps = maxSteps;
