@@ -31,7 +31,7 @@ public class SimpleVNSApp {
         CSPProblem csp = CSPParser.load(exampleFile);
         long maxSteps = 100000;
         
-        System.out.println("Starting experiment with file: " + exampleFile);
+        System.out.println("Starting VNS experiment with file: " + exampleFile);
 
         for (int seedIndex = 0; seedIndex<30; seedIndex++) { 
         

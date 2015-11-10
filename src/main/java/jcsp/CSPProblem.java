@@ -762,8 +762,4 @@ public class CSPProblem implements Problem<CSPSolution>{
 	public int getMaxQ() {
 		return NumberUtils.max(options[TOTAL_INDEX]);
 	}
-	
-	public int[] getQs() {
-		return options[TOTAL_INDEX];
-	}
 }

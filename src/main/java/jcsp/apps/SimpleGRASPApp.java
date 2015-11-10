@@ -117,7 +117,7 @@ public class SimpleGRASPApp {
 		
 		CSPProblem csp = CSPParser.load(sequenceFile);
         
-		String message = "Starting experiment with file: " + sequenceFile+"\n";
+		String message = "Starting GRASP experiment with file: " + sequenceFile+"\n";
         System.out.print(message);
         fw.write(message);
         
