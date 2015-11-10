@@ -3,13 +3,9 @@ package jcsp.apps;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
-import org.jamesframework.core.search.neigh.Neighbourhood;
-
-import util.random.RandomizerFactory;
-import util.random.RandomizerUtils;
-import util.random.RandomizerFactory.RandomizerAlgorithm;
 import jcsp.CSPProblem;
 import jcsp.CSPSolution;
 import jcsp.algo.ACO;
@@ -18,6 +14,12 @@ import jcsp.localsearch.LocalSearch;
 import jcsp.neighbourhood.CSPInvertionNeighbourhood;
 import jcsp.neighbourhood.CSPSwapNeighbourhood;
 import jcsp.util.CSPParser;
+
+import org.jamesframework.core.search.neigh.Neighbourhood;
+
+import util.random.RandomizerFactory;
+import util.random.RandomizerFactory.RandomizerAlgorithm;
+import util.random.RandomizerUtils;
 
 public class SimpleACOApp {
 
@@ -44,11 +46,11 @@ public class SimpleACOApp {
 		double localRho = 0.99;
 		double globalRho = 0.99;
 		
-		long maxSteps = 2000;
+//		long maxSteps = 2000;
 		
 		List<Neighbourhood<CSPSolution>> localNeighbourhood = new ArrayList<Neighbourhood<CSPSolution>>();
-		localNeighbourhood.add(new CSPSwapNeighbourhood());
-//		localNeighbourhood.add(new CSPInvertionNeighbourhood());
+//		localNeighbourhood.add(new CSPSwapNeighbourhood());
+		localNeighbourhood.add(new CSPInvertionNeighbourhood());
 		
 		LocalSearch localSearch = new FirstImprovement(localNeighbourhood);
 		
@@ -60,7 +62,7 @@ public class SimpleACOApp {
 		System.out.println("Starting ACO experiment with file: " + exampleFile);
 
 		for (int seedIndex = 0; seedIndex<30; seedIndex++) { 
-	        
+	        System.out.println(new Date().toString());
         	System.out.println("Seed: " + seedIndex);
         	
         	CSPProblem.random = RandomizerFactory.createRandomizer(
@@ -69,8 +71,7 @@ public class SimpleACOApp {
 			);
         	
         	ACO aco = new ACO(csp, ants, maxCycles, alpha, beta, delta, q0, 
-        			tau0, localRho, globalRho, localSearch, overAllSearch, 
-        			maxSteps);
+        			tau0, localRho, globalRho, localSearch, overAllSearch);
         	aco.setVerbose(verbose);
         	aco.optimize();
         	
