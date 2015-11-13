@@ -97,11 +97,15 @@ public class CSPProblem implements Problem<CSPSolution>{
 		//Create datastructs
 		ratioPossibleTotal = new double[numOptions];
 		for (int i=0; i<numOptions; i++) {
-			ratioPossibleTotal[i] = (double) options[0][i] / (double) options[1][i];
+//			ratioPossibleTotal[i] = (double) options[POSSIBLE_INDEX][i] 
+//					/ (double) options[TOTAL_INDEX][i];
+//			
+			ratioPossibleTotal[i] = (double) options[TOTAL_INDEX][i] 
+					/ (double) options[POSSIBLE_INDEX][i];
 			
 			for (int j=0; j<numClasses; j++) {
 				if(requirements[j][i]>0) {
-					carsRequiring[i]+=demandByClasses[i];
+					carsRequiring[i]+=demandByClasses[j];
 				}
 			}
 		}
@@ -239,17 +243,17 @@ public class CSPProblem implements Problem<CSPSolution>{
 		return sur;
 	}
 	
-	private double dynamicUtilizationRate(int option, int currentRequiring) {
-		double dur = currentRequiring * ratioPossibleTotal[option];
+	private double dynamicUtilizationRate(int option, int dynamicRequiring, int dynamicDemand) {
+		double dur = (dynamicRequiring * ratioPossibleTotal[option]) / dynamicDemand;
 		
 		return dur;
 	}
 	
-	public double staticUtilizationRateSum(int lastAssigned) {
+	public double staticUtilizationRateSum(int givenClass) {
 		double totalDur = 0;
 		
 		for (int i=0; i<numOptions; i++) {
-			if(requirements[lastAssigned][i]>0) {
+			if(requirements[givenClass][i]>0) {
 				double dur = staticUtilizationRate(i);
 				totalDur+=dur;
 			}
@@ -258,37 +262,53 @@ public class CSPProblem implements Problem<CSPSolution>{
 		return totalDur;
 	}
 	
-	@SuppressWarnings("unused")
-	private double dynamicUtilizationRateSum(CSPSolution sol) {
+	
+//	public double dynamicUtilizationRateSum(CSPSolution sol) {
+	public double dynamicUtilizationRateSum(int[] carsRequiring, 
+			int dynamicDemand, int targetClass) {
 		
-		double totalDur = 0;
-
-		int lastAssigned = sol.getLastCar();
+//		double[] durSumByClass = new double [numClasses];
+		double durSumByClass = 0;
+//		double[] durByOption = new double [numOptions];
 		
-		int carsLeft = carsDemand-lastAssigned;
 		
-		for (int i=0; i<numOptions; i++) {
-			if(requirements[lastAssigned][i]>0) {
-				double dur = dynamicUtilizationRate(i, calculateRequiringLeft(sol, i))/carsLeft;
-				totalDur+=dur;
-			}
+//		int carsLeft = carsDemand-lastAssigned;
+		
+		for (int o =0; o<numOptions; o++) {
+//			double durByOption = dynamicUtilizationRate(o, carsRequiring[o], dynamicDemand);
+//			for (int c =0; c<numClasses; c++) {
+				if(requirements[targetClass][o]>0) {
+					durSumByClass += dynamicUtilizationRate(
+							o, carsRequiring[o], dynamicDemand);
+				}
+//			}
 		}
 		
-		return totalDur;
+//		for (int c =0; c<numClasses; c++) {
+//			double durByClass = 0;
+//			for (int o=0; o<numOptions; o++) {
+//				if(requirements[c][o]>0) {					
+//					durByClass+=durByOption[o];
+//				}
+//			}
+//			durSumByClass[c] = durByClass;
+//		}
+		
+		return durSumByClass;
 	}
 	
-	private int calculateRequiringLeft(CSPSolution sol, int option) {
-		int [] availableByClass = sol.getRemainingClasses();
-		int requiringLeft = 0;
-		
-		for (int i=0; i<numClasses; i++) {
-			if (requirements[i][option]>0) {
-				requiringLeft+=availableByClass[option];
-			}
-		}
-		
-		return requiringLeft;
-	}
+//	private int calculateRequiringLeft(CSPSolution sol, int option) {
+//		int [] availableByClass = sol.getRemainingClasses();
+//		int requiringLeft = 0;
+//		
+//		for (int i=0; i<numClasses; i++) {
+//			if (requirements[i][option]>0) {
+//				requiringLeft+=availableByClass[option];
+//			}
+//		}
+//		
+//		return requiringLeft;
+//	}
 
 	public CSPSolution createGreedy(double alpha) {
 		CSPSolution initial = createEmptySolution();
@@ -437,6 +457,10 @@ public class CSPProblem implements Problem<CSPSolution>{
 	
 	public int[] getDemandByClasses() {
 		return demandByClasses;
+	}
+	
+	public int[] getCarsRequiring() {
+		return carsRequiring;
 	}
 	
 	public int getNumClasses() {

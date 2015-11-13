@@ -25,9 +25,10 @@ public class SimpleACOApp {
 
 	public static void main(String[] args) throws IOException {
 //		String exampleFile="../xCSP/instances/test_10_cars.txt";
-		String exampleFile="../xCSP/instances/60/pb_60-05.txt";
+//		String exampleFile="../xCSP/instances/60/pb_60-05.txt";
 //		String exampleFile="../xCSP/instances/90/pb_90-05.txt";
 //		String exampleFile="../xCSP/instances/classical/p41_66.txt";
+		String exampleFile="./instances/200/pb_200_01.txt";
 
 		CSPProblem csp = CSPParser.load(exampleFile);
 		boolean verbose = false;
