@@ -24,7 +24,25 @@ public class CSPSolution extends Solution{
 	
 	private int [][] exceedByQ;
 	
+	private CSPSolution(
+			int[] sequence,
+			int[] availableClasses,
+			CSPProblem csp
+		) {
+		super();
+		this.sequence=sequence;
+		this.availableClasses = availableClasses;
+		this.csp=csp;
+	}
 	
+	public static CSPSolution createEmpty(
+			int[] sequence,
+			int[] availableClasses,
+			CSPProblem csp
+		) {
+		return new CSPSolution(sequence, availableClasses, csp);
+	}
+
 	public CSPSolution(
 			int[][] excess,
 			CSPProblem csp,
@@ -44,17 +62,6 @@ public class CSPSolution extends Solution{
 		}
 	}
 	
-	public CSPSolution(
-			int[] sequence,
-			int[] availableClasses,
-			CSPProblem csp
-		) {
-		super();
-		this.sequence=sequence;
-		this.availableClasses = availableClasses;
-		this.csp=csp;
-	}
-
 	@Override
 	public Solution copy() {
 		return new CSPSolution(
@@ -96,10 +103,9 @@ public class CSPSolution extends Solution{
 		sequence[i]=sequence[j];
 		sequence[j]=tmp;
 		
-		fitness = csp.evalSwap(
-				sequence, i, j, 
-				fitness, exceedByQ
-			);
+		fitness = CSPEvaluation.evalSwap(csp, sequence, 
+				i, j, fitness, exceedByQ
+					);
 	}
 	
 	public void insert(int oldPos, int newPos) {
@@ -119,10 +125,9 @@ public class CSPSolution extends Solution{
 		}
 		sequence[newPos] = type;
 		
-		fitness = csp.evalInsert(
-				sequence, oldPos, newPos, 
-				fitness, exceedByQ
-			);
+		fitness = CSPEvaluation.evalInsert(csp, sequence, 
+				oldPos, newPos, fitness, exceedByQ
+					);
 	}
 	
 	/**
@@ -151,7 +156,9 @@ public class CSPSolution extends Solution{
 		//reverse uses the last position as a not inclusive one.
 		ArrayUtils.reverse(sequence,begin,end+1);
 		
-		fitness = csp.evalInvert(sequence, begin, end, fitness, exceedByQ);
+		fitness = CSPEvaluation.evalInvert(csp, sequence, 
+				begin, end, fitness, exceedByQ
+					);
 	}
 	
 	public void addCar(int typeClass) {
@@ -180,10 +187,6 @@ public class CSPSolution extends Solution{
 	
 	public double getFitness() {
 		return fitness;
-	}
-
-	public void setCurrentFitness(double currentFitness) {
-		this.fitness = currentFitness;
 	}
 
 	public int[] getSequence() {

@@ -25,7 +25,8 @@ public class SimpleACOApp {
 
 	public static void main(String[] args) throws IOException {
 //		String exampleFile="../xCSP/instances/test_10_cars.txt";
-		String exampleFile="../xCSP/instances/90/pb_90-05.txt";
+		String exampleFile="../xCSP/instances/60/pb_60-05.txt";
+//		String exampleFile="../xCSP/instances/90/pb_90-05.txt";
 //		String exampleFile="../xCSP/instances/classical/p41_66.txt";
 
 		CSPProblem csp = CSPParser.load(exampleFile);
@@ -34,12 +35,17 @@ public class SimpleACOApp {
 		//ACO Parameters
 		int ants = 15;
 //		int ants = 3;
+//		int ants = 8;
 		int maxCycles = 1000;
 //		int maxCycles = 50;
+//		int maxCycles = 250;
 		
+//		double alpha = 4;
 		double alpha = 4;
 		double beta = 6;
 		double delta = 3;
+//		double beta = 1;
+//		double delta = 1;
 		
 		double q0 = 0.9;
 		double tau0 = 0.005;

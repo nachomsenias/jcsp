@@ -71,7 +71,7 @@ public class GRASP extends Algorithm{
 			//Constructive phase: best initial solution
 		    CSPSolution best = constructivePhase();		    
 		    double improvedFitness = csp.evaluate(best).getValue();
-		    
+
 		    if(verbose) {
 		    	System.out.println("Built sequence: " + Arrays.toString(
     					best.getSequence()));

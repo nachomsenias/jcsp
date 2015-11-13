@@ -12,6 +12,7 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
+      <version>4.12</version>
     </dependency>
     <!-- James Core -->
 	<dependency>
@@ -55,15 +56,4 @@
 		<version>3.0.1</version>
 	</dependency>
   </dependencies>
-  <dependencyManagement>
-  	<dependencies>
-  		<!-- JUnit -->
-  		<dependency>
-  			<groupId>junit</groupId>
-  			<artifactId>junit</artifactId>
-  			<version>3.8.1</version>
-  		</dependency>
-  		
-  	</dependencies>
-  </dependencyManagement>
 </project>

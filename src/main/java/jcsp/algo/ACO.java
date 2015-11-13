@@ -3,6 +3,7 @@ package jcsp.algo;
 import gnu.trove.list.array.TIntArrayList;
 
 import java.util.Arrays;
+import java.util.Date;
 
 import jcsp.CSPProblem;
 import jcsp.CSPSolution;
@@ -11,6 +12,8 @@ import jcsp.localsearch.LocalSearch;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.math3.stat.StatUtils;
+
+import util.Functions;
 
 public class ACO extends Algorithm{
 	
@@ -35,8 +38,14 @@ public class ACO extends Algorithm{
 	private double[][][] trail;
 	
 	//Local search
+	@SuppressWarnings("unused")
 	private LocalSearch localSearch;
+	@SuppressWarnings("unused")
 	private LocalSearch overAllSearch;
+	
+	//CSP values
+	private final int numClasses;
+	private final int maxQ;
 	
 	private class Ant {
 		int[] sequence;
@@ -97,12 +106,12 @@ public class ACO extends Algorithm{
 		this.localSearch = localSearch;
 		this.overAllSearch = overAllSearch;
 		this.maxSteps = 2*maxCycles;
+		
+		this.maxQ = csp.getMaxQ();
+		this.numClasses = csp.getNumClasses();
 	}
 	
 	private void initializeTrail() {
-		int numClasses = csp.getNumClasses(); 
-		int maxQ = csp.getMaxQ();
-		
 		trail = new double [numClasses][numClasses][maxQ];
 		
 		for (int i=0; i<numClasses; i++) {
@@ -113,7 +122,6 @@ public class ACO extends Algorithm{
 	}
 	
 	private Ant[] createAnts() {
-		int numClasses = csp.getNumClasses();
 		int demand = csp.getCarsDemand();
 		
 		Ant[] ants = new Ant [this.ants];
@@ -130,11 +138,12 @@ public class ACO extends Algorithm{
 		return ants;
 	}
 	
+	/**
+	 * Performs global trail update.
+	 * @param sequence
+	 * @param fitness
+	 */
 	private void evapore(int[] sequence, double fitness) {
-		
-		//Global evaporation
-		int numClasses = csp.getNumClasses();
-		int maxQ = csp.getMaxQ();
 		
 		for (int i=0; i<numClasses; i++) {
 			for (int j=0; j<numClasses; j++) {
@@ -145,27 +154,23 @@ public class ACO extends Algorithm{
 		}
 		
 		//Best solution update
-		int qMax = csp.getMaxQ();
 		
-		for (int i=0; i<sequence.length; i++) {
-			int classI = sequence[i];
-			int q = 1;
-			int j = i+1;
-			while (j<sequence.length && q<=qMax) {
-				int classJ = sequence[j];
+		for (int position=0; position<sequence.length; position++) {
+			int classI = sequence[position];
+			int y = 1;
+//			int j = position+1;
+			while (position+y<sequence.length && y<=maxQ) {
+				int classJ = sequence[position+y];
 				
-				trail[classI][classJ][q-1] += (1-globalRho) * (1/fitness);
+				trail[classI][classJ][y-1] += (1.0-globalRho) * (1.0/fitness);
 				
-				q++;
-				j++;
+				y++;
+//				j++;
 			}
 		}
 	}
 	
 	private double[] calculateValues(Ant z, int position) {
-		int numClasses = csp.getNumClasses();
-		int qMax = csp.getMaxQ();
-		
 		int[] classes = z.availableClasses.toArray();
 //		int numClasses = classes.length;
 		int[] sequence = z.sequence;
@@ -178,10 +183,13 @@ public class ACO extends Algorithm{
 //				continue;
 //			}
 			int j =1;
-			while(j<=qMax && position-j>=0){
-				trailValues[i]+=trail[i][sequence[position-j]][j-1];
+			while(j<=maxQ && position-j>=0){
+				//TRAIL IS CHECKED AT j-1 because 0 position means distance 1.
+//				trailValues[i]+=trail[i][sequence[position-j]][j-1];
+				trailValues[i]+=trail[sequence[position-j]][i][j-1];
 				j++;
 			}
+//			trailValues[i] = Functions.pow(trailValues[i], alpha);
 			trailValues[i] = Math.pow(trailValues[i], alpha);
 		}
 		
@@ -190,7 +198,8 @@ public class ACO extends Algorithm{
 //		for (int c = 0; c < numClasses; c++) {
 		for (int c : classes) {
 //			if(insertedVehicules[c]<demand[c]) {
-				heuristicValues[c]=Math.pow(csp.staticUtilizationRateSum(c),delta);
+//				heuristicValues[c]=Functions.pow(csp.staticUtilizationRateSum(c),delta);
+			heuristicValues[c]=Math.pow(csp.staticUtilizationRateSum(c),delta);
 //			}
 		}
 		
@@ -202,8 +211,13 @@ public class ACO extends Algorithm{
 		for (int c : classes) {
 //			if(insertedVehicules[c]<demand[c]) {
 				sequence[position]=c;
-				newColissions[c] = csp.evaluateRestrictionsPartialSequence(sequence, position) - previousColissions;
-				colissionsValues[c]=Math.pow(1.0/(double)(1+newColissions[c]),beta);
+				
+				newColissions[c] = csp.evaluateRestrictionsPartialSequence(sequence, position+1);
+				
+				int colDifference = newColissions[c]- previousColissions;
+//				colissionsValues[c]=Functions.pow(1.0/(double)(1+colDifference),beta);
+				double colissionsValue = 1.0/(double)(1+colDifference);
+				colissionsValues[c]=Math.pow(colissionsValue,beta);
 //			}
 		}
 		z.tempColissions = newColissions;
@@ -211,10 +225,12 @@ public class ACO extends Algorithm{
 		double [] values = new double [numClasses];
 		
 		for (int c = 0; c<values.length; c++) {
-			values[c] = trailValues[c] * colissionsValues[c] * heuristicValues[c];
+//			values[c] = trailValues[c] * colissionsValues[c] * heuristicValues[c];
+			values[c] = trailValues[c] * colissionsValues[c];
 		}
 		
 		return values;
+//		return trailValues;
 	}
 	
 	private void choose(Ant z, int position) {
@@ -230,7 +246,6 @@ public class ACO extends Algorithm{
 		if(random<=q0) {
 			//Deterministic - Select Max values
 			chosenClass = ArrayUtils.indexOf(values, NumberUtils.max(values));
-			
 		} else {
 			//Probabilistic - Create roulette with max values
 			
@@ -249,16 +264,26 @@ public class ACO extends Algorithm{
 
 		}
 		//Local trail update after selecting one class
+		
+		if(values[chosenClass]==0 || !z.availableClasses.contains(chosenClass)) {
+			System.out.println("WTF!");
+		}
 //		insertedVehicules[chosenClass]++;
 //		sequence[position]=chosenClass;
 		z.addCar(chosenClass, position);
 		z.setFitness(chosenClass);
-		
+
 		int[] sequence = z.sequence;
 		
-		int qMax = csp.getMaxQ();
+//		double tempFitness = csp.evaluateRestrictions(sequence, position+1);
+		
+//		if(tempFitness!=z.colissions) {
+//			System.out.println("WTF!");
+//		}
+		
+		//Local trail update
 		int i=1;
-		while(position-i>=0 && i<=qMax) {
+		while(position-i>=0 && i<=maxQ) {
 			int prevClass = sequence[position-i];
 			
 //			trail[prevClass][chosenClass][i-1] *= localRho;
@@ -277,7 +302,7 @@ public class ACO extends Algorithm{
 	public void optimize() {
 		initializeTrail();
 		int step = 0;
-		while (bestFitness>0 && step<maxCycles) {
+		while (bestFitness>CSPProblem.FEASIBLE_FITNESS && step<maxCycles) {
 			//Initialize Ants
 //			int[][] ants = createAnts();
 			Ant[] ants = createAnts();
@@ -292,6 +317,7 @@ public class ACO extends Algorithm{
 				for (int a = 0; a<this.ants; a++) {
 //					ants[a][p] = choose(p, insertedVehicules[a], ants[a], colissionsByAnt[a]);
 					choose(ants[a],p);
+					//Update fitness
 					colissionsByAnt[a] = ants[a].colissions;
 				}
 			}
@@ -300,48 +326,70 @@ public class ACO extends Algorithm{
 			int bestFitness = NumberUtils.min(colissionsByAnt);
 			int bestAnt = ArrayUtils.indexOf(colissionsByAnt, bestFitness);
 			
+//			System.out.println(bestFitness);
+			
+//			double debugFitness = csp.evaluateRestrictionsPartialSequence(ants[bestAnt].sequence, ants[bestAnt].sequence.length);
+//			double otherDebugFitness = csp.evaluateRestrictions(ants[bestAnt].sequence, ants[bestAnt].sequence.length);
+//			double moarFitness = new CSPSolution(null, csp, ants[bestAnt].sequence).getFitness();
+//			
+//			if(!Functions.equals(
+//					bestFitness,
+//					moarFitness,
+//					Functions.DOUBLE_EQUALS_DELTA)
+//				){
+//				System.out.println("WTF!");
+//			}
+			
 			if(verbose) {
 				System.out.println("Best ant before LS: "+bestFitness);
 			}
 			
-			Result localResult = runLocalSearch(localSearch, 
-					localSearch.getNeighbourhoods().get(0), 
-						new CSPSolution(null, csp, ants[bestAnt].sequence));
+//			Result localResult = runLocalSearch(localSearch, 
+//					localSearch.getNeighbourhoods().get(0), 
+//						new CSPSolution(null, csp, ants[bestAnt].sequence));
 //			Result localResult = new Result(new CSPSolution(null, csp, ants[bestAnt].sequence), bestFitness);
 			
 //			System.out.println(step);
 //			System.out.println(localResult.fitness);
 			
-			if(verbose) {
-				System.out.println("Best ant after LS: "+localResult.fitness);
-				System.out.println("Best ant sequence: "
-						+Arrays.toString(localResult.solution.getSequence()));
-			}
+//			if(verbose) {
+//				System.out.println("Best ant after LS: "+localResult.fitness);
+//				System.out.println("Best ant sequence: "
+//						+Arrays.toString(localResult.solution.getSequence()));
+//			}
 			
-			evapore(localResult.solution.getSequence(), localResult.fitness);
+//			evapore(localResult.solution.getSequence(), localResult.fitness);
+			evapore(ants[bestAnt].sequence, bestFitness);
 			
 			//Best overall
-			if(localResult.fitness<this.bestFitness) {
-				this.bestFitness = localResult.fitness;
-				this.bestFound = localResult.solution;
+//			if(localResult.fitness<this.bestFitness) {
+//				this.bestFitness = localResult.fitness;
+//				this.bestFound = localResult.solution;
+//			}
+			if(bestFitness<this.bestFitness) {
+				this.bestFitness = bestFitness;
+				this.bestFound = new CSPSolution(null, csp, ants[bestAnt].sequence);
 			}
 			
 			//Next cycle
 			step++;
 		}
 		
+		System.out.println("Best ant : "+bestFitness);
+		System.out.println(new Date().toString());
+		
 		//Over All Local Search
-		if(this.bestFitness>0.0) {
-			maxSteps = 2000 * maxCycles;
-			
-			Result finalResult = runLocalSearch(overAllSearch, 
-					overAllSearch.getNeighbourhoods().get(0), 
-						bestFound);
-			
-			if(finalResult.fitness<this.bestFitness) {
-				this.bestFitness = finalResult.fitness;
-				this.bestFound = finalResult.solution;
-			}
-		}		
+//		if(this.bestFitness>CSPProblem.FEASIBLE_FITNESS) {
+//			maxSteps = 2000 * maxCycles;
+//			
+//			Result finalResult = runLocalSearch(overAllSearch, 
+//					overAllSearch.getNeighbourhoods().get(0), 
+//						bestFound);
+//			
+//			if(finalResult.fitness<this.bestFitness) {
+//				this.bestFitness = finalResult.fitness;
+//				this.bestFound = finalResult.solution;
+//			}
+//		}		
 	}
 }

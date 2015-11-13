@@ -2,14 +2,14 @@ package jcsp.algo;
 
 import java.util.Arrays;
 
-import org.jamesframework.core.search.SingleNeighbourhoodSearch;
-import org.jamesframework.core.search.neigh.Neighbourhood;
-import org.jamesframework.core.search.stopcriteria.MaxSteps;
-
 import jcsp.CSPProblem;
 import jcsp.CSPSolution;
 import jcsp.localsearch.LocalSearch;
 import jcsp.util.ProgressSearchListener;
+
+import org.jamesframework.core.search.SingleNeighbourhoodSearch;
+import org.jamesframework.core.search.neigh.Neighbourhood;
+import org.jamesframework.core.search.stopcriteria.MaxSteps;
 
 public abstract class Algorithm {
 	
@@ -61,7 +61,7 @@ public abstract class Algorithm {
 	    
 	    double improvedFitness = 
     			searchAlgo.getBestSolutionEvaluation().getValue();
-	    
+
 	    Result result = new Result(improved, improvedFitness);
 
 		// print results
