@@ -1,3 +1,4 @@
+algorithm=VNS
 maxSteps=200000
 maxSeconds=600
 neighbourhood=inversion,swap,insertion

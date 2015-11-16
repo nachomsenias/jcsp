@@ -1,3 +1,4 @@
+algorithm=GRASP
 alpha=0.4
 iterations=50
 maxSteps=100000

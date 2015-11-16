@@ -6,8 +6,8 @@ import java.util.List;
 
 import jcsp.CSPProblem;
 import jcsp.CSPSolution;
+import jcsp.experiment.beans.AlgorithmBean;
 import jcsp.experiment.beans.GRASPBean;
-import jcsp.localsearch.FirstImprovement;
 import jcsp.localsearch.LocalSearch;
 
 import org.jamesframework.core.search.neigh.Neighbourhood;
@@ -28,22 +28,11 @@ public class GRASP extends Algorithm{
 	
 	//Local search
 	private LocalSearch localSearch;
-
-	public GRASP(CSPProblem csp, int iterations, double alpha, long maxSteps,
-			List<Neighbourhood<CSPSolution>> neighbourhoods, boolean verbose) {
-		this.csp = csp;
-		this.iterations = iterations;
-		this.alpha = alpha;
-		this.maxSteps = maxSteps;
-		
-		this.neighbourhoods = neighbourhoods;
-		localSearch = new FirstImprovement(null);
-		
-		this.verbose = verbose;
-	}
 	
-	public GRASP(CSPProblem csp, GRASPBean bean, boolean verbose) {
-		this.csp = csp;
+	public GRASP(CSPProblem csp, AlgorithmBean algBean, boolean verbose) {
+		super(csp,algBean,verbose);
+		GRASPBean bean = (GRASPBean)algBean;
+		
 		this.iterations = bean.iterations;
 		this.alpha = bean.alpha;
 		this.maxSteps = bean.maxSteps;
@@ -54,8 +43,6 @@ public class GRASP extends Algorithm{
 		
 		neighbourhoods = new ArrayList<Neighbourhood<CSPSolution>>();
 		neighbourhoods.addAll(localSearch.getNeighbourhoods());
-
-		this.verbose = verbose;
 	}
 	
 	private CSPSolution constructivePhase() {
@@ -135,9 +122,6 @@ public class GRASP extends Algorithm{
 	    					+i+", ending process.");
 	    		}
 	    	}
-		    
 		}
 	}
-	
-	
 }

@@ -14,6 +14,7 @@ public class CSPSolution extends Solution{
 	private final int[] sequence;
 	
 	private int[] availableClasses;
+	private int[] requiringByClass;
 	
 	private int lastIndex =-1;
 	private int lastType = -1;
@@ -33,6 +34,9 @@ public class CSPSolution extends Solution{
 		this.sequence=sequence;
 		this.availableClasses = availableClasses;
 		this.csp=csp;
+		
+		requiringByClass = Arrays.copyOf(
+				csp.getCarsRequiring(),csp.getNumOptions());
 	}
 	
 	public static CSPSolution createEmpty(
@@ -171,12 +175,26 @@ public class CSPSolution extends Solution{
 		
 		availableClasses[typeClass]--;
 		lastType=typeClass;
+		
+		int[][] requirements = csp.getRequirements();
+		for (int r=0; r<csp.getNumOptions(); r++) {
+			if(requirements[typeClass][r]>0) {
+				requiringByClass[r]--;
+			}
+		}
 	}
 	
 	public void removeLast() {
 		sequence[lastIndex]=prevType;
 		lastIndex--;
 		availableClasses[lastType]++;
+		
+		int[][] requirements = csp.getRequirements();
+		for (int r=0; r<csp.getNumOptions(); r++) {
+			if(requirements[lastType][r]>0) {
+				requiringByClass[r]++;
+			}
+		}
 	}
 
 	// GETTERS & SETTERS
@@ -201,8 +219,8 @@ public class CSPSolution extends Solution{
 		return lastIndex;
 	}
 	
-	public int getLastCar() {
-		return sequence[lastIndex];
+	public int getLastType() {
+		return lastType;
 	}
 	
 	public int[] getRemainingClasses() {
@@ -211,6 +229,10 @@ public class CSPSolution extends Solution{
 	
 	public int[][] getColissionMatrix() {
 		return exceedByQ;
+	}
+	
+	public int[] getRequiring() {
+		return requiringByClass;
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import jcsp.CSPProblem;
 import jcsp.CSPSolution;
+import jcsp.experiment.beans.AlgorithmBean;
 import jcsp.localsearch.LocalSearch;
 import jcsp.util.ProgressSearchListener;
 
@@ -37,6 +38,11 @@ public abstract class Algorithm {
 			this.solution = solution;
 			this.fitness = fitness;
 		}
+	}
+	
+	public Algorithm(CSPProblem csp, AlgorithmBean bean, boolean verbose) {
+		this.csp = csp;
+		this.verbose = verbose;
 	}
 	
 	public abstract void optimize();

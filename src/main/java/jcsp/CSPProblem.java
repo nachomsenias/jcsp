@@ -237,11 +237,11 @@ public class CSPProblem implements Problem<CSPSolution>{
 	}
 	
 	
-	private double staticUtilizationRate(int option) {
-		double sur = (carsRequiring[option] * ratioPossibleTotal[option])/carsDemand;
-		
-		return sur;
-	}
+//	private double staticUtilizationRate(int option) {
+//		double sur = (carsRequiring[option] * ratioPossibleTotal[option])/carsDemand;
+//		
+//		return sur;
+//	}
 	
 	private double dynamicUtilizationRate(int option, int dynamicRequiring, int dynamicDemand) {
 		double dur = (dynamicRequiring * ratioPossibleTotal[option]) / dynamicDemand;
@@ -249,66 +249,36 @@ public class CSPProblem implements Problem<CSPSolution>{
 		return dur;
 	}
 	
-	public double staticUtilizationRateSum(int givenClass) {
-		double totalDur = 0;
-		
-		for (int i=0; i<numOptions; i++) {
-			if(requirements[givenClass][i]>0) {
-				double dur = staticUtilizationRate(i);
-				totalDur+=dur;
-			}
-		}
-		
-		return totalDur;
+//	public double staticUtilizationRateSum(int givenClass) {
+//		double totalDur = 0;
+//		
+//		for (int i=0; i<numOptions; i++) {
+//			if(requirements[givenClass][i]>0) {
+//				double dur = staticUtilizationRate(i);
+//				totalDur+=dur;
+//			}
+//		}
+//		
+//		return totalDur;
+//	}
+	
+	public double dynamicUtilizationRateSum(CSPSolution sol) {
+		int last = sol.getLastIndex()+1;
+
+		return dynamicUtilizationRateSum(sol.getRequiring(), carsDemand-last, sol.getLastType());
 	}
-	
-	
-//	public double dynamicUtilizationRateSum(CSPSolution sol) {
 	public double dynamicUtilizationRateSum(int[] carsRequiring, 
 			int dynamicDemand, int targetClass) {
-		
-//		double[] durSumByClass = new double [numClasses];
 		double durSumByClass = 0;
-//		double[] durByOption = new double [numOptions];
-		
-		
-//		int carsLeft = carsDemand-lastAssigned;
-		
+
 		for (int o =0; o<numOptions; o++) {
-//			double durByOption = dynamicUtilizationRate(o, carsRequiring[o], dynamicDemand);
-//			for (int c =0; c<numClasses; c++) {
 				if(requirements[targetClass][o]>0) {
 					durSumByClass += dynamicUtilizationRate(
 							o, carsRequiring[o], dynamicDemand);
 				}
-//			}
 		}
-		
-//		for (int c =0; c<numClasses; c++) {
-//			double durByClass = 0;
-//			for (int o=0; o<numOptions; o++) {
-//				if(requirements[c][o]>0) {					
-//					durByClass+=durByOption[o];
-//				}
-//			}
-//			durSumByClass[c] = durByClass;
-//		}
-		
 		return durSumByClass;
 	}
-	
-//	private int calculateRequiringLeft(CSPSolution sol, int option) {
-//		int [] availableByClass = sol.getRemainingClasses();
-//		int requiringLeft = 0;
-//		
-//		for (int i=0; i<numClasses; i++) {
-//			if (requirements[i][option]>0) {
-//				requiringLeft+=availableByClass[option];
-//			}
-//		}
-//		
-//		return requiringLeft;
-//	}
 
 	public CSPSolution createGreedy(double alpha) {
 		CSPSolution initial = createEmptySolution();
@@ -368,19 +338,19 @@ public class CSPProblem implements Problem<CSPSolution>{
 	}
 	
 	private CSPSolution getMaxDurSum(CSPSolution sol, List<AddCar> moves, double alpha) {
-		BinaryHeap bh = new BinaryHeap(false, FitnessBean.beanComparator());
+		BinaryHeap maxHeap = new BinaryHeap(false, FitnessBean.beanComparator());
 		
 		int totalMoves = moves.size();
 		
 		for (AddCar move: moves) {
 			move.apply(sol);
-			double dur = staticUtilizationRateSum(sol.getLastCar());
+			double dur = dynamicUtilizationRateSum(sol);
 			move.undo(sol);
-			bh.add(new FitnessBean(dur, move));
+			maxHeap.add(new FitnessBean(dur, move));
 		}
 		
 		if(alpha!=0.0) {
-			List<AddCar> besties = CSPGreedyNeighbourhood.selectBesties(bh, totalMoves, alpha);
+			List<AddCar> besties = CSPGreedyNeighbourhood.selectBesties(maxHeap, totalMoves, alpha);
 			int howManyBesties = besties.size();
 			
 			AddCar move = besties.get(random.nextInt(howManyBesties));
@@ -389,7 +359,7 @@ public class CSPProblem implements Problem<CSPSolution>{
 			return sol;
 			
 		} else {
-			FitnessBean fb = (FitnessBean)bh.pop();
+			FitnessBean fb = (FitnessBean)maxHeap.pop();
 			
 			fb.move.apply(sol);
 			

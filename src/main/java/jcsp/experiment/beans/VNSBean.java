@@ -1,12 +1,12 @@
 package jcsp.experiment.beans;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import jcsp.CSPProblem;
 import jcsp.CSPSolution;
+import jcsp.algo.Algorithm;
+import jcsp.algo.VNS;
 import jcsp.localsearch.LocalSearch;
 import jcsp.neighbourhood.CSPRandomShakingInsert;
 import jcsp.neighbourhood.CSPRandomShakingSwap;
@@ -15,27 +15,17 @@ import org.jamesframework.core.search.neigh.Neighbourhood;
 
 import util.io.ConfigFileReader;
 
-public class VNSBean {
+public class VNSBean extends AlgorithmBean{
 
 	//VNS parameters
-	final public int maxSteps;
-	final public int maxSeconds;
+	public int maxSteps;
+	public int maxSeconds;
 	
-	final public boolean greedyInitialSolution;
+	public boolean greedyInitialSolution;
 	
-	final public List<Neighbourhood<CSPSolution>> improvers;
+	public List<Neighbourhood<CSPSolution>> improvers;
 	
-	final public List<Neighbourhood<CSPSolution>> shakers;
-
-	public VNSBean(boolean greedy, int maxSteps, int maxSeconds, 
-			List<Neighbourhood<CSPSolution>> localSearch, 
-			List<Neighbourhood<CSPSolution>> shakers) {
-		this.greedyInitialSolution = greedy;
-		this.maxSteps = maxSteps;
-		this.maxSeconds = maxSeconds;
-		this.improvers = localSearch;
-		this.shakers = shakers;
-	}
+	public List<Neighbourhood<CSPSolution>> shakers;
 	
 	private static List<Neighbourhood<CSPSolution>> readShakers(
 			String[] shakers, int max) {
@@ -62,25 +52,24 @@ public class VNSBean {
 		return sh;
 	}
 	
-	public static VNSBean readConfigFile(File configFile) throws FileNotFoundException, IOException {
-
-		ConfigFileReader reader = new ConfigFileReader();
+	public void readConfigFile(ConfigFileReader reader) {
 		
-		reader.readConfigFile(configFile);
+		greedyInitialSolution = reader.getParameterBoolean("greedyInitialSolution");
 		
-		boolean greedy = reader.getParameterBoolean("greedyInitialSolution");
-		
-		int maxSteps = reader.getParameterInteger("maxSteps");
-		int maxSeconds = reader.getParameterInteger("maxSeconds");
+		maxSteps = reader.getParameterInteger("maxSteps");
+		maxSeconds = reader.getParameterInteger("maxSeconds");
 	
 		String[] neighbourhood = reader.getParameterStringArray("neighbourhood");
-		List<Neighbourhood<CSPSolution>> neighbours = LocalSearch.createNeighbourhoods(neighbourhood);
+		improvers = LocalSearch.createNeighbourhoods(neighbourhood);
 		
 		int maxShaking = reader.getParameterInteger("maxShaking");
-		String[] shakers = reader.getParameterStringArray("shakers");
+		String[] shaking = reader.getParameterStringArray("shakers");
 		
-		List<Neighbourhood<CSPSolution>> shaking = readShakers(shakers, maxShaking);
+		shakers = readShakers(shaking, maxShaking);
+	}
 
-		return new VNSBean(greedy,maxSteps, maxSeconds,neighbours, shaking);
+	@Override
+	public Algorithm createAlgorithmInstance(CSPProblem csp, boolean verbose) {
+		return new VNS(csp, this, verbose);
 	}
 }

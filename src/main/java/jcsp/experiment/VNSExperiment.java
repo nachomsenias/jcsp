@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import jcsp.CSPProblem;
 import jcsp.CSPSolution;
+import jcsp.experiment.beans.AlgorithmBean;
 import jcsp.experiment.beans.VNSBean;
 import jcsp.util.CSPParser;
 import jcsp.util.ProgressSearchListener;
@@ -101,7 +102,13 @@ public class VNSExperiment {
 
 		CSPProblem csp = CSPParser.load(sequenceFile);
 		
-		VNSBean bean = VNSBean.readConfigFile(experimentConfig);
+		VNSBean bean = null;
+		try {
+			bean = (VNSBean) AlgorithmBean.getBean(experimentConfig);
+		} catch (InstantiationException | IllegalAccessException
+				| ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		
 		//Greedy solution is deterministic, so
 		CSPSolution greedySolution = csp.createGreedy(0.0);

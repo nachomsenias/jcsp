@@ -9,6 +9,8 @@ import java.util.List;
 import jcsp.CSPProblem;
 import jcsp.CSPSolution;
 import jcsp.algo.GRASP;
+import jcsp.experiment.beans.GRASPBean;
+import jcsp.localsearch.FirstImprovement;
 import jcsp.neighbourhood.CSPInsertionNeighbourhood;
 import jcsp.neighbourhood.CSPInvertionNeighbourhood;
 import jcsp.neighbourhood.CSPShuffleNeighbourhood;
@@ -134,12 +136,15 @@ public class SimpleGRASPApp {
         long maxSteps = 100000;
         boolean verbose = false;
 
-        List<Neighbourhood<CSPSolution>> neighbourhoods = new ArrayList<Neighbourhood<CSPSolution>>();
+        List<Neighbourhood<CSPSolution>> neighbourhoods 
+        	= new ArrayList<Neighbourhood<CSPSolution>>();
         neighbourhoods.add(new CSPSwapNeighbourhood());
         neighbourhoods.add(new CSPInsertionNeighbourhood());
         neighbourhoods.add(new CSPInvertionNeighbourhood());
         neighbourhoods.add(new CSPShuffleNeighbourhood());
         
+        final GRASPBean bean = new GRASPBean(iterations, alpha, maxSteps, 
+        		false, false, new FirstImprovement(neighbourhoods));
         
         for (int seedIndex = 0; seedIndex<30; seedIndex++) { 
         
@@ -151,7 +156,7 @@ public class SimpleGRASPApp {
 		    		RandomizerAlgorithm.XOR_SHIFT_128_PLUS_FAST, RandomizerUtils.PRIME_SEEDS[seedIndex]
 			); 
         	
-        	GRASP grasp = new GRASP(csp, iterations, alpha, maxSteps, neighbourhoods, verbose);
+        	GRASP grasp = new GRASP(csp, bean, verbose);
         	grasp.optimize();
         	
         	CSPSolution best = grasp.getBest();
