@@ -4,8 +4,6 @@ import gnu.trove.list.array.TIntArrayList;
 
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
-
 import jcsp.CSPProblem;
 import jcsp.CSPSolution;
 import jcsp.experiment.beans.ACOBean;
@@ -15,8 +13,6 @@ import jcsp.localsearch.LocalSearch;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.math3.stat.StatUtils;
-import org.jamesframework.core.search.neigh.Neighbourhood;
-
 import util.Functions;
 
 public class ACO extends Algorithm{
@@ -146,7 +142,7 @@ public class ACO extends Algorithm{
 			//Create every Ant
 			ants[a] = new Ant();
 			//Randomly chooses first class
-			ants[a].addCar(CSPProblem.random.nextInt(numClasses), 0);
+			ants[a].addCar(csp.random.nextInt(numClasses), 0);
 		}
 		
 		return ants;
@@ -241,7 +237,7 @@ public class ACO extends Algorithm{
 		
 		int chosenClass = -1;
 		
-		double random = CSPProblem.random.nextDouble();
+		double random = csp.random.nextDouble();
 		
 		if(random<=q0) {
 			//Deterministic - Select Max values
@@ -252,7 +248,7 @@ public class ACO extends Algorithm{
 			double total = StatUtils.sum(values);
 			
 			double probAccumulada = 0;
-			double roulette = CSPProblem.random.nextDouble();
+			double roulette = csp.random.nextDouble();
 			
 			do {
 				chosenClass++;
@@ -308,17 +304,16 @@ public class ACO extends Algorithm{
 			evapore(bestSequence, bestFitness);
 
 			if(localSearch!=null) {
-				Result localResult = null;
-				List<Neighbourhood<CSPSolution>> neighbourhoods 
-					= localSearch.getNeighbourhoods();
-				CSPSolution solution = new CSPSolution(null, csp, bestSequence); 
-				for (Neighbourhood<CSPSolution> n: neighbourhoods) {
-					localResult = runLocalSearch(localSearch, n, solution);
-					solution = localResult.solution;
-		    	}
+				Result localResult = iterateLocalSearch(
+						localSearch, 
+						new CSPSolution(null, csp, bestSequence)
+					);
 				if(localResult.solution!=null && localResult.fitness<bestFitness) {
 					bestFitness = (int)localResult.fitness;
 					bestSequence = localResult.solution.getSequence();
+				}
+				if(verbose) {
+					System.out.println("Best ant after LS: "+bestFitness);
 				}
 			}
 			
@@ -333,24 +328,18 @@ public class ACO extends Algorithm{
 
 		//Over All Local Search
 		if(overAllSearch!=null && this.bestFitness>CSPProblem.FEASIBLE_FITNESS) {
-			System.out.println("Best ant before local search : "+bestFitness);
-			System.out.println("Final iteration sequence: " + Arrays.toString(
-					bestFound.getSequence()));
-			
+			if(verbose) {
+				System.out.println("Best ant before local search : "+bestFitness);
+				System.out.println("Final iteration sequence: " + Arrays.toString(
+						bestFound.getSequence()));
+			}
+			//Final solution is searched more deeply.
 			maxSteps = 2000 * maxCycles;
 			
-			Result finalResult = null;
-			List<Neighbourhood<CSPSolution>> neighbourhoods 
-				= overAllSearch.getNeighbourhoods();
-					
-			for (Neighbourhood<CSPSolution> n: neighbourhoods) {
-				finalResult = runLocalSearch(localSearch, n, bestFound);
-				bestFound = finalResult.solution;
-	    	}
-					
-					runLocalSearch(overAllSearch, 
-					overAllSearch.getNeighbourhoods().get(0), 
-						bestFound);
+			Result finalResult = iterateLocalSearch(
+					localSearch, 
+					bestFound
+				);
 			
 			if(finalResult.fitness<this.bestFitness) {
 				this.bestFitness = finalResult.fitness;

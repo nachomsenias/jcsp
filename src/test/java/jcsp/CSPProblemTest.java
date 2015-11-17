@@ -108,7 +108,11 @@ public class CSPProblemTest {
 				2, 13, 2, 11, 13, 2, 13, 10, 6, 2, 13, 11, 6, 2, 6, 13, 2, 11, 
 				6, 9, 13}));
 		
-		CSPProblem.random = RandomizerFactory.createRandomizer(
+		easyCSP.random = RandomizerFactory.createRandomizer(
+				RandomizerAlgorithm.XOR_SHIFT_128_PLUS_FAST,
+				RandomizerUtils.PRIME_SEEDS[0]);
+		
+		mediumCSP.random = RandomizerFactory.createRandomizer(
 				RandomizerAlgorithm.XOR_SHIFT_128_PLUS_FAST,
 				RandomizerUtils.PRIME_SEEDS[0]);
 	}

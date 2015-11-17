@@ -66,7 +66,7 @@ public class CSPGreedyNeighbourhood implements Neighbourhood<CSPSolution>{
 	public List<AddCar> getEveryMove(CSPSolution sol) {
 		List<AddCar> allMoves = new ArrayList<AddCar>();
 		int[] remaining = sol.getRemainingClasses();
-		for(int i=0; i<sol.getNumClasses(); i++) {
+		for(int i=0; i<sol.getProblem().getNumClasses(); i++) {
 			if(remaining[i]>0) {
 				allMoves.add(new AddCar(i));
 			}
@@ -81,7 +81,7 @@ public class CSPGreedyNeighbourhood implements Neighbourhood<CSPSolution>{
 			return null;
 		} else {
 			int moves = allMoves.size();
-			return allMoves.get(CSPProblem.random.nextInt(moves));
+			return allMoves.get(problem.random.nextInt(moves));
 		}
 	}
 	

@@ -107,7 +107,7 @@ public class Experiment {
 			message = "Seed: " + seedIndex + "\n";
 			System.out.print(message);
 
-			CSPProblem.random = RandomizerFactory.createRandomizer(
+			csp.random = RandomizerFactory.createRandomizer(
 					RandomizerAlgorithm.XOR_SHIFT_128_PLUS_FAST,
 					RandomizerUtils.PRIME_SEEDS[seedIndex]
 							);

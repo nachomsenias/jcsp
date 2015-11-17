@@ -3,7 +3,6 @@ package jcsp.neighbourhood;
 import java.util.ArrayList;
 import java.util.List;
 
-import jcsp.CSPProblem;
 import jcsp.CSPSolution;
 import jcsp.move.SingleSwap;
 
@@ -33,7 +32,7 @@ public class CSPSwapNeighbourhood extends CSPNeighbourhood{
 	
 	@Override
 	public Move<CSPSolution> getRandomMove(CSPSolution sol) {
-		Randomizer random = CSPProblem.random;
+		Randomizer random = sol.getProblem().random;
 		int sequenceLenght = sol.getSecuenceLength();
 		
 		int[] sequence = sol.getSequence();

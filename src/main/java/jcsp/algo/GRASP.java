@@ -12,7 +12,6 @@ import jcsp.localsearch.LocalSearch;
 
 import org.jamesframework.core.search.neigh.Neighbourhood;
 
-import util.Functions;
 import util.random.Randomizer;
 
 public class GRASP extends Algorithm{
@@ -65,7 +64,7 @@ public class GRASP extends Algorithm{
 		    	 System.out.println("Built sequence fitness: " + 
 			        		improvedFitness);
 		    }
-		    Randomizer random = CSPProblem.random;
+		    Randomizer random = csp.random;
 		    	
 		    Result result=null;
 		    CSPSolution solutionCopy=(CSPSolution)best.copy();
@@ -79,25 +78,9 @@ public class GRASP extends Algorithm{
 		    	result = runLocalSearch(localSearch, neighbourhood, solutionCopy);
 		    } else {
 		    	if(this.random) {
-		    		//Neighbourhoods are applied at random.
-		    		int numNeigbours = neighbourhoods.size();
-		    		int[] indexes = new int[numNeigbours];
-		    		for (byte j=0; j<numNeigbours; j++) {
-		    			indexes[j]=j;
-		    		}
-		    		indexes = Functions.shuffleFast(numNeigbours, random);
-		    		
-		    		for (int index:indexes) {
-		    			neighbourhood = neighbourhoods.get(index);
-		    			result = runLocalSearch(localSearch, neighbourhood, solutionCopy);
-		    			
-		    			solutionCopy = result.solution;
-		    		}
+		    		result = iterateRandomizedLocalSearch(localSearch, solutionCopy);
 		    	} else {
-		    		for (Neighbourhood<CSPSolution> n: neighbourhoods) {
-		    			result = runLocalSearch(localSearch, n, solutionCopy);
-		    			solutionCopy = result.solution;
-			    	}
+		    		result = iterateLocalSearch(localSearch, solutionCopy);
 		    	}
 		    	
 		    }

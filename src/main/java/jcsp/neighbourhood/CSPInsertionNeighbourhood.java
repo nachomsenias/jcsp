@@ -3,7 +3,6 @@ package jcsp.neighbourhood;
 import java.util.ArrayList;
 import java.util.List;
 
-import jcsp.CSPProblem;
 import jcsp.CSPSolution;
 import jcsp.move.SingleInsertion;
 
@@ -33,7 +32,7 @@ public class CSPInsertionNeighbourhood extends CSPNeighbourhood{
 	//TODO This method is meant to try "Brute" strategies.
 	@Override
 	public Move<CSPSolution> getRandomMove(CSPSolution sol) {
-		Randomizer random = CSPProblem.random;
+		Randomizer random = sol.getProblem().random;
 		
 		int[] sequence = sol.getSequence();
 		int sequenceLenght = sequence.length;

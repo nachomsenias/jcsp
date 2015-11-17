@@ -34,7 +34,7 @@ public class GreedySwapApp {
         
         	System.out.println("Seed: " + seedIndex);
         	
-		    CSPProblem.random = RandomizerFactory.createRandomizer(
+		    csp.random = RandomizerFactory.createRandomizer(
 		    		RandomizerAlgorithm.XOR_SHIFT_128_PLUS_FAST, RandomizerUtils.PRIME_SEEDS[seedIndex]
 			); 
 		    

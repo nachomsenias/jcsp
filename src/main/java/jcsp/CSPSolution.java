@@ -152,7 +152,7 @@ public class CSPSolution extends Solution{
 	 * @param end
 	 */
 	public void shuffle(int begin, int end) {
-		Functions.partialShuffle(sequence, CSPProblem.random, begin, end);
+		Functions.partialShuffle(sequence, csp.random, begin, end);
 	}
 	
 	
@@ -199,8 +199,8 @@ public class CSPSolution extends Solution{
 
 	// GETTERS & SETTERS
 
-	public int getNumClasses() {
-		return csp.getNumClasses();
+	public CSPProblem getProblem() {
+		return csp;
 	}
 	
 	public double getFitness() {

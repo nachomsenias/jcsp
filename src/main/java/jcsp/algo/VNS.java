@@ -54,7 +54,10 @@ public class VNS extends Algorithm{
     		vns.setCurrentSolution(csp.createRandomSolution());
     	}
     	
-    	vns.addSearchListener(new ProgressSearchListener());
+    	if(verbose) {
+    		vns.addSearchListener(new ProgressSearchListener());
+    	}
+    	
     	vns.start();
     	
     	bestFound = vns.getBestSolution();

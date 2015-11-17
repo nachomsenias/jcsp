@@ -22,30 +22,12 @@ import util.random.Randomizer;
 @SuppressWarnings("deprecation")
 public class CSPProblem implements Problem<CSPSolution>{
 
-	/**
-	 * Default xCSP weights are those used by the CSP, that 
-	 * means, only considering Upper Over Assignement (P+).
-	 */
-//	public final static double [] DEFAULT_WEIGHTS = {
-//		1.0, //UOA //P+
-//		0.0, //UUA //P-
-//		0.0, //LOA //R+
-//		0.0  //LUA //R-
-//	};
-	
 	public final static int EMPTY_CAR = -1;
 	
 	public final static double FEASIBLE_FITNESS = 0.0;
 	
 	public static final byte POSSIBLE_INDEX = 0;
 	public static final byte TOTAL_INDEX = 1;
-	
-//	private static final byte P_PLUS_INDEX = 0;
-//	private static final byte P_MINUS_INDEX = 1;
-//	private static final byte R_PLUS_INDEX = 2;
-//	private static final byte R_MINUS_INDEX = 3;
-	
-//	private static final byte NUM_RESTRICTIONS = 2;
 
 	//First Line
 	private int carsDemand; 
@@ -65,17 +47,8 @@ public class CSPProblem implements Problem<CSPSolution>{
 	private double [] ratioPossibleTotal;
 	private int [] carsRequiring;
 	
-//	private double baseError;
-	
-	//xCSP weights
-	//0 Upper Over Assignement // P+
-	//1 Under Over Assignement // P-
-	//2 Lower Over Assignement // R+
-	//3 Lower Under Assignement //R-
-//	private double [] weights = DEFAULT_WEIGHTS;
-	
 	//Randomizer
-	public static Randomizer random;
+	public Randomizer random;
 	
 	
 	public CSPProblem(
@@ -97,9 +70,6 @@ public class CSPProblem implements Problem<CSPSolution>{
 		//Create datastructs
 		ratioPossibleTotal = new double[numOptions];
 		for (int i=0; i<numOptions; i++) {
-//			ratioPossibleTotal[i] = (double) options[POSSIBLE_INDEX][i] 
-//					/ (double) options[TOTAL_INDEX][i];
-//			
 			ratioPossibleTotal[i] = (double) options[TOTAL_INDEX][i] 
 					/ (double) options[POSSIBLE_INDEX][i];
 			

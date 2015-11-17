@@ -129,7 +129,7 @@ public class GRASPExperiment {
 			System.out.print(message);
 			// fw.write(message);
 
-			CSPProblem.random = RandomizerFactory.createRandomizer(
+			csp.random = RandomizerFactory.createRandomizer(
 					RandomizerAlgorithm.XOR_SHIFT_128_PLUS_FAST,
 					RandomizerUtils.PRIME_SEEDS[seedIndex]);
 

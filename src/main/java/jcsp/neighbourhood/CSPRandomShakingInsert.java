@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import jcsp.CSPProblem;
 import jcsp.CSPSolution;
 import jcsp.move.MultipleMoves;
 import jcsp.move.SingleInsertion;
@@ -52,7 +51,7 @@ public class CSPRandomShakingInsert extends CSPNeighbourhood{
 		
 		Move<CSPSolution>[] moves = new SingleInsertion[numInserts];
 		
-		Randomizer random = CSPProblem.random;
+		Randomizer random = sol.getProblem().random;
 		int[] sequence = sol.getSequence();
 		int sequenceLenght = sequence.length;
 		

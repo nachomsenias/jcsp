@@ -1,6 +1,7 @@
 package jcsp.algo;
 
 import java.util.Arrays;
+import java.util.List;
 
 import jcsp.CSPProblem;
 import jcsp.CSPSolution;
@@ -11,6 +12,8 @@ import jcsp.util.ProgressSearchListener;
 import org.jamesframework.core.search.SingleNeighbourhoodSearch;
 import org.jamesframework.core.search.neigh.Neighbourhood;
 import org.jamesframework.core.search.stopcriteria.MaxSteps;
+
+import util.Functions;
 
 public abstract class Algorithm {
 	
@@ -85,6 +88,41 @@ public abstract class Algorithm {
 	    searchAlgo.dispose();
 	    
 	    return result;
+	}
+	
+	protected Result iterateLocalSearch(LocalSearch localSearch, 
+			CSPSolution solution
+		) {
+		Result localResult = null;
+		List<Neighbourhood<CSPSolution>> neighbourhoods 
+				= localSearch.getNeighbourhoods();
+		for (Neighbourhood<CSPSolution> n: neighbourhoods) {
+			localResult = runLocalSearch(localSearch, n, solution);
+			solution = localResult.solution;
+    	}
+		return localResult;
+	}
+	
+	//TODO This method should be integrated into the uppder method using a boolean variable
+	protected Result iterateRandomizedLocalSearch(LocalSearch localSearch, 
+			CSPSolution solution
+		) {
+		Result result = null;
+		List<Neighbourhood<CSPSolution>> neighbourhoods 
+				= localSearch.getNeighbourhoods();
+		
+		int numNeigbours = neighbourhoods.size();
+		
+		int[] indexes = Functions.shuffleFast(numNeigbours, csp.random);
+		
+		for (int index:indexes) {
+			Neighbourhood<CSPSolution> neighbourhood = neighbourhoods.get(index);
+			result = runLocalSearch(localSearch, neighbourhood, solution);
+			
+			solution = result.solution;
+		}
+		
+		return result;
 	}
 
 	public CSPSolution getBest() {

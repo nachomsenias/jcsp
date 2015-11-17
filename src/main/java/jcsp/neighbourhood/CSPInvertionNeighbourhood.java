@@ -3,7 +3,6 @@ package jcsp.neighbourhood;
 import java.util.ArrayList;
 import java.util.List;
 
-import jcsp.CSPProblem;
 import jcsp.CSPSolution;
 import jcsp.move.InvertSequence;
 
@@ -32,11 +31,9 @@ public class CSPInvertionNeighbourhood extends CSPNeighbourhood{
 	
 	@Override
 	public Move<CSPSolution> getRandomMove(CSPSolution sol) {
-		Randomizer random = CSPProblem.random;
+		Randomizer random = sol.getProblem().random;
 		int sequenceLenght = sol.getSecuenceLength();
-		
-//		int[] sequence = sol.getSequence();
-		
+
 		int firstIndex = random.nextInt(sequenceLenght);
 		int lastIndex = random.nextInt(sequenceLenght);
 		
@@ -45,15 +42,6 @@ public class CSPInvertionNeighbourhood extends CSPNeighbourhood{
 			lastIndex = random.nextInt(sequenceLenght);
 		}while(lastIndex<=firstIndex);
 
-//		List<Integer> indexes = getIntervals(firstIndex, sequence);
-//		
-//		if(indexes.isEmpty()) {
-//			return null;
-//		}
-		
-//		int numIndexes = indexes.size();
-//		int lastIndex = indexes.get(random.nextInt(numIndexes));
-		
 		return new InvertSequence(firstIndex, lastIndex);
 	}
 }
