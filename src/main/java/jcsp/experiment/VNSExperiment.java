@@ -111,7 +111,7 @@ public class VNSExperiment {
 		}
 		
 		//Greedy solution is deterministic, so
-		CSPSolution greedySolution = csp.createGreedy(0.0);
+		CSPSolution greedySolution = csp.createHeuristic(0.0);
 		
 
 		for (int seedIndex = 0; seedIndex < 30; seedIndex++) {

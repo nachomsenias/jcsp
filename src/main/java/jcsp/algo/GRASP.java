@@ -45,7 +45,10 @@ public class GRASP extends Algorithm{
 	}
 	
 	private CSPSolution constructivePhase() {
-		return csp.createGreedy(alpha);
+		CSPSolution greedy = csp.createHeuristic(alpha);
+		greedy.fullEvaluation();
+		
+		return greedy;
 	}
 	
 	public void optimize() {

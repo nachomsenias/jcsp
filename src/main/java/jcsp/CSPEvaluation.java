@@ -25,17 +25,19 @@ public class CSPEvaluation {
 		int currentColissions = 0;
 
 		int[][] requirements = csp.getRequirements();
+		final int carsDemand = csp.getCarsDemand();
 		
 		for (int car=beginIndexFirst; car<=endIndexFirst; car++) {
-			
-			if(car+q>sequence.length) {
-				break;
+
+			if(requirements[sequence[car]][option] == 0) {
+				excess[option][car]=0;
+				continue;
 			}
 			
 			int occurrences = 0;
 			
 			int nextCar = 0;
-			while(nextCar<q) {
+			while(nextCar<q && car+nextCar < carsDemand) {
 				occurrences+=requirements[sequence[car+nextCar]][option];
 				nextCar++;
 			}
@@ -83,8 +85,6 @@ public class CSPEvaluation {
 		
 		int[][] requirements = csp.getRequirements();
 		
-		int carsDemand = csp.getCarsDemand();
-		
 		//For each options, the variation in the number of collisions 
 		//is counted.
 		for (int option=0; option<csp.getNumOptions(); option++) {
@@ -106,13 +106,8 @@ public class CSPEvaluation {
 				beginIndexFirst = first-(q-1);
 			}
 			
-			int endIndexFirst;
-			if(first+(q-1)<=carsDemand) {
-				endIndexFirst = first;
-			} else {
-				endIndexFirst = carsDemand-q;
-			}
-			
+			int endIndexFirst = first;
+
 			int prevCollisionsFirst=Functions.addArraySegment(
 					excess[option], beginIndexFirst, endIndexFirst+1);
 			
@@ -126,12 +121,7 @@ public class CSPEvaluation {
 				beginIndexSecond = second-(q-1);
 			}
 			
-			int endIndexSecond;
-			if(second+(q-1)<carsDemand) {
-				endIndexSecond = second;
-			} else {
-				endIndexSecond = carsDemand-q;
-			}
+			int endIndexSecond = second;
 			
 			if (beginIndexFirst<beginIndexSecond 
 					&& beginIndexSecond<first) {
@@ -162,8 +152,6 @@ public class CSPEvaluation {
 		) {
 		double fitness = prevFitness;
 		
-		int carsDemand = csp.getCarsDemand();
-		
 		//For each options, the variation in the number of collisions 
 		//is counted.
 		for (int option=0; option<csp.getNumOptions(); option++) {
@@ -180,12 +168,7 @@ public class CSPEvaluation {
 				beginIndexOld = oldPos-(q-1);
 			}
 			
-			int endIndexOld;
-			if(oldPos+(q-1)<carsDemand) {
-				endIndexOld = oldPos;
-			} else {
-				endIndexOld = carsDemand-q;
-			}
+			int endIndexOld = oldPos;
 
 			int beginIndexNew;
 			if(newPos-(q-1)<0) {
@@ -194,12 +177,7 @@ public class CSPEvaluation {
 				beginIndexNew = newPos-(q-1);
 			}
 			
-			int endIndexNew;
-			if(newPos+(q-1)<carsDemand) {
-				endIndexNew = newPos;
-			} else {
-				endIndexNew = carsDemand-q;
-			}
+			int endIndexNew = newPos;
 			
 			if (endIndexOld<endIndexNew 
 					&& beginIndexNew<oldPos) {
@@ -285,7 +263,6 @@ public class CSPEvaluation {
 			int lastSequence, double prevFitness, int[][] collisions
 		) {
 		double fitness = prevFitness;
-		int carsDemand = csp.getCarsDemand();
 		
 		//For each options, the variation in the number of collisions 
 		//is counted.
@@ -300,19 +277,12 @@ public class CSPEvaluation {
 			} else {
 				beginSequence = firstSequence-(q-1);
 			}
-
-			int endSequence;
-			if(lastSequence+(q-1)<carsDemand) {
-				endSequence = lastSequence;
-			} else {
-				endSequence = carsDemand-q;
-			}
 			
 			int prevCollisions = Functions.addArraySegment(
-					collisions[option], beginSequence, endSequence+1);
+					collisions[option], beginSequence, lastSequence+1);
 			
 			int currentCollisions = countCollisions(csp, sequence, 
-					beginSequence, endSequence, option, collisions, p, q);
+					beginSequence, lastSequence, option, collisions, p, q);
 			
 			fitness -= (prevCollisions-currentCollisions);
 		}

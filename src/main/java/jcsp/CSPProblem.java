@@ -1,12 +1,10 @@
 package jcsp;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import gnu.trove.list.array.TIntArrayList;
 
-import jcsp.move.AddCar;
-import jcsp.neighbourhood.CSPGreedyNeighbourhood;
-import jcsp.util.FitnessBean;
+import java.util.Arrays;
+
+import jcsp.util.HeapBean;
 
 import org.apache.commons.collections.BinaryHeap;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -123,13 +121,13 @@ public class CSPProblem implements Problem<CSPSolution>{
 				int possible = this.options[POSSIBLE_INDEX][option];
 				
 				int occurrences = 0;
-				
-				if(car+(total-1)>=carsDemand) {
+
+				if(requirements[sequence[car]][option] == 0) {
 					continue;
 				}
 				
 				int nextCar = 0;
-				while(nextCar<total) {
+				while(nextCar<total && car+nextCar < carsDemand) {
 					occurrences+=requirements[sequence[car+nextCar]][option];
 					nextCar++;
 				}
@@ -155,13 +153,13 @@ public class CSPProblem implements Problem<CSPSolution>{
 				int possible = this.options[POSSIBLE_INDEX][option];
 				
 				int occurrences = 0;
-				
-				if(car+(total-1)>carsDemand-1) {
+
+				if(requirements[sequence[car]][option] == 0) {
 					continue;
 				}
 				
 				int nextCar = 0;
-				while(nextCar<total) {
+				while(nextCar<total && car+nextCar < carsDemand) {
 					occurrences+=requirements[sequence[car+nextCar]][option];
 					nextCar++;
 				}
@@ -188,6 +186,10 @@ public class CSPProblem implements Problem<CSPSolution>{
 				
 				int occurrences = 0;
 				
+				if(requirements[sequence[car]][option] == 0) {
+					continue;
+				}
+				
 				int nextCar = 0;
 				while(nextCar<total && car+nextCar<lastIndex 
 						&& sequence[car+nextCar]!=EMPTY_CAR) {
@@ -206,32 +208,12 @@ public class CSPProblem implements Problem<CSPSolution>{
 		return fitness;
 	}
 	
-	
-//	private double staticUtilizationRate(int option) {
-//		double sur = (carsRequiring[option] * ratioPossibleTotal[option])/carsDemand;
-//		
-//		return sur;
-//	}
-	
 	private double dynamicUtilizationRate(int option, int dynamicRequiring, int dynamicDemand) {
 		double dur = (dynamicRequiring * ratioPossibleTotal[option]) / dynamicDemand;
 		
 		return dur;
 	}
-	
-//	public double staticUtilizationRateSum(int givenClass) {
-//		double totalDur = 0;
-//		
-//		for (int i=0; i<numOptions; i++) {
-//			if(requirements[givenClass][i]>0) {
-//				double dur = staticUtilizationRate(i);
-//				totalDur+=dur;
-//			}
-//		}
-//		
-//		return totalDur;
-//	}
-	
+
 	public double dynamicUtilizationRateSum(CSPSolution sol) {
 		int last = sol.getLastIndex()+1;
 
@@ -250,92 +232,57 @@ public class CSPProblem implements Problem<CSPSolution>{
 		return durSumByClass;
 	}
 
-	public CSPSolution createGreedy(double alpha) {
+	public CSPSolution createHeuristic(double alpha) {
 		CSPSolution initial = createEmptySolution();
-		CSPGreedyNeighbourhood neighbourhood = new CSPGreedyNeighbourhood(this,alpha);
 		
-		while(initial.getLastIndex()<carsDemand-1) {
-			initial = applyNext(initial, neighbourhood);
+		int pos = 0;
+		
+		while(pos<carsDemand) {
+			int[] fitness = initial.checkPosition(pos);
+			
+			int minimum = NumberUtils.min(fitness);
+			
+			TIntArrayList lowest = new TIntArrayList();
+			for (int carClass = 0; carClass<numClasses; carClass++) {
+				int colissions = fitness[carClass];
+				if(colissions == minimum) {
+					lowest.add(carClass);
+				}
+			}
+			
+			int[] filteredClasses = lowest.toArray();
+			
+			double[] heuristicValues = 
+					initial.checkHeuristicValues(filteredClasses, pos);
+			int next = getBestRandomized(filteredClasses, heuristicValues, alpha);
+			initial.addCar(next);
+			
+			pos++;
 		}
-		
-		initial.fullEvaluation();
 		
 		return initial;
 	}
 	
-	private CSPSolution applyNext(CSPSolution sol, CSPGreedyNeighbourhood neighbourhood) {
-		BinaryHeap minHeap = new BinaryHeap(true, FitnessBean.beanComparator());
+	private int getBestRandomized(int[] filteredClasses, 
+			double[] heuristicValues, double alpha
+		) {
 		
-		//Every possible new car
-		List<AddCar> everyMove = neighbourhood.getEveryMove(sol);
-		//Check new violations
+		int numValues = filteredClasses.length;
 		
-		for (AddCar move: everyMove) {
-			move.apply(sol);
-			double violations = evaluateRestrictionsPartialSequence(
-					sol.getSequence(), sol.getLastIndex()+1);
-			
-			move.undo(sol);
-			minHeap.add(new FitnessBean(violations, move));
+		int numCandidates = (int)(numValues * alpha)+1;
+		
+		BinaryHeap maxHeap = new BinaryHeap(false, HeapBean.beanComparator());
+		for (int c = 0; c<numValues; c++) {
+			maxHeap.add(new HeapBean(heuristicValues[c], filteredClasses[c]));
 		}
 		
-		//Retrieve cars with minimum violations (could be more than one)
-		
-		FitnessBean top = (FitnessBean)minHeap.pop();		
-		double topFitness = top.fitness;
-		
-		List<AddCar> toBeAdded = new ArrayList<AddCar>();
-		toBeAdded.add(top.move);
-		
-		//While fitness is as good as top, add new moves
-		if(!minHeap.isEmpty()) {
-			top = (FitnessBean)minHeap.pop();
+		HeapBean[] candidates = new HeapBean[numCandidates];
+		for (int i = 0; i<numCandidates; i++) {
+			candidates[i] = (HeapBean)maxHeap.pop();
 		}
+		int selectedClass = candidates[random.nextInt(numCandidates)].carClass;
 		
-		while(top.fitness == topFitness && !minHeap.isEmpty()) {
-			toBeAdded.add(top.move);
-			top = (FitnessBean)minHeap.pop();
-		}
-		
-		//If various
-		if(toBeAdded.size()>1) {
-			return getMaxDurSum(sol, toBeAdded, neighbourhood.getAlpha());
-		} else {
-			AddCar move = toBeAdded.get(0);
-			move.apply(sol);
-			return sol;
-		}
-	}
-	
-	private CSPSolution getMaxDurSum(CSPSolution sol, List<AddCar> moves, double alpha) {
-		BinaryHeap maxHeap = new BinaryHeap(false, FitnessBean.beanComparator());
-		
-		int totalMoves = moves.size();
-		
-		for (AddCar move: moves) {
-			move.apply(sol);
-			double dur = dynamicUtilizationRateSum(sol);
-			move.undo(sol);
-			maxHeap.add(new FitnessBean(dur, move));
-		}
-		
-		if(alpha!=0.0) {
-			List<AddCar> besties = CSPGreedyNeighbourhood.selectBesties(maxHeap, totalMoves, alpha);
-			int howManyBesties = besties.size();
-			
-			AddCar move = besties.get(random.nextInt(howManyBesties));
-			move.apply(sol);
-			
-			return sol;
-			
-		} else {
-			FitnessBean fb = (FitnessBean)maxHeap.pop();
-			
-			fb.move.apply(sol);
-			
-			return sol;
-		}	
-		
+		return selectedClass;
 	}
 	
 	public Evaluation evaluate(CSPSolution sol) {

@@ -153,7 +153,8 @@ public class SimpleGRASPApp {
             fw.write(message);
         	
         	csp.random = RandomizerFactory.createRandomizer(
-		    		RandomizerAlgorithm.XOR_SHIFT_128_PLUS_FAST, RandomizerUtils.PRIME_SEEDS[seedIndex]
+		    		RandomizerAlgorithm.XOR_SHIFT_128_PLUS_FAST, 
+		    		RandomizerUtils.PRIME_SEEDS[seedIndex]
 			); 
         	
         	GRASP grasp = new GRASP(csp, bean, verbose);

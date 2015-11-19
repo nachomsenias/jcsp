@@ -49,7 +49,7 @@ public class VNS extends Algorithm{
     	vns.addStopCriterion(new MaxRuntime(maxSeconds, TimeUnit.SECONDS));
     	
     	if(greedyInitialSolution) {
-    		vns.setCurrentSolution((CSPSolution)csp.createGreedy(0.0));
+    		vns.setCurrentSolution((CSPSolution)csp.createHeuristic(0.0));
     	} else {
     		vns.setCurrentSolution(csp.createRandomSolution());
     	}

@@ -184,7 +184,6 @@ public class ACO extends Algorithm{
 		int[] sequence = z.sequence;
 		
 		double [] trailValues = new double [numClasses];
-		
 
 		for (int i : classes) {
 			int j =1;
@@ -217,7 +216,7 @@ public class ACO extends Algorithm{
 			
 			int colDifference = newColissions[c]- previousColissions;
 			double colissionsValue = 1.0/(double)(1+colDifference);
-//				colissionsValues[c]=Math.pow(colissionsValue,beta);
+//			colissionsValues[c]=Math.pow(colissionsValue,beta);
 			colissionsValues[c]=Functions.pow(colissionsValue,beta);
 		}
 		z.tempColissions = newColissions;

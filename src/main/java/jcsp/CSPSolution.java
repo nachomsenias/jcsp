@@ -1,5 +1,7 @@
 package jcsp;
 
+import gnu.trove.list.array.TIntArrayList;
+
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -13,30 +15,45 @@ public class CSPSolution extends Solution{
 	private final CSPProblem csp;
 	private final int[] sequence;
 	
-	private int[] availableClasses;
-	private int[] requiringByClass;
+	private int[] demandByClass;
+	private int[] requiringByOption;
+	private TIntArrayList availableClasses;
 	
 	private int lastIndex =-1;
 	private int lastType = -1;
-	private int prevType = -1;
 
 	//Evaluation
 	private double fitness = Double.MAX_VALUE;
 	
+	private int[] colissionsByOption;
+	private int[][] tempColissionsByClassAndOption;
+	
 	private int [][] exceedByQ;
+	private int [][] debugExceedByQ;
 	
 	private CSPSolution(
 			int[] sequence,
-			int[] availableClasses,
+			int[] demandByClass,
 			CSPProblem csp
 		) {
 		super();
 		this.sequence=sequence;
-		this.availableClasses = availableClasses;
+		this.demandByClass = demandByClass;
 		this.csp=csp;
 		
-		requiringByClass = Arrays.copyOf(
+		requiringByOption = Arrays.copyOf(
 				csp.getCarsRequiring(),csp.getNumOptions());
+		
+		int numClasses = csp.getNumClasses();
+		availableClasses = new TIntArrayList(numClasses);
+		for (int i=0; i<numClasses; i++) {
+			availableClasses.add(i);
+		}
+		
+		int numOptions = csp.getNumOptions();
+		colissionsByOption = new int[numOptions];
+		tempColissionsByClassAndOption = new int[numClasses][numOptions];
+		debugExceedByQ = new int[numOptions][csp.getCarsDemand()];
 	}
 	
 	public static CSPSolution createEmpty(
@@ -55,7 +72,7 @@ public class CSPSolution extends Solution{
 		super();
 		this.sequence=sequence;
 		this.csp=csp;
-		availableClasses = null;
+		demandByClass = null;
 		lastIndex =sequence.length-1;
 		
 		if(excess==null) {
@@ -144,6 +161,7 @@ public class CSPSolution extends Solution{
 		for (int i=0;  i<subsequence.length; i++) {
 			sequence[i+begin] = subsequence[i];
 		}
+		fullEvaluation();
 	}
 	
 	/**
@@ -153,6 +171,7 @@ public class CSPSolution extends Solution{
 	 */
 	public void shuffle(int begin, int end) {
 		Functions.partialShuffle(sequence, csp.random, begin, end);
+		fullEvaluation();
 	}
 	
 	
@@ -170,31 +189,100 @@ public class CSPSolution extends Solution{
 			throw new IllegalStateException(
 					"No more cars can be scheduled:Sequence is already full.");
 		lastIndex++;
-		prevType = sequence[lastIndex];
 		sequence[lastIndex]=typeClass;
 		
-		availableClasses[typeClass]--;
+		demandByClass[typeClass]--;
+		
+		if(demandByClass[typeClass]==0) {
+			disableCarClass(typeClass);
+		}
+		
 		lastType=typeClass;
+
+		
+		fitness = 0;
 		
 		int[][] requirements = csp.getRequirements();
 		for (int r=0; r<csp.getNumOptions(); r++) {
 			if(requirements[typeClass][r]>0) {
-				requiringByClass[r]--;
+				requiringByOption[r]--;
 			}
+			//Update Options
+			colissionsByOption[r] = tempColissionsByClassAndOption[typeClass][r];
+			//Update fitness
+			fitness+=colissionsByOption[r];
+			debugExceedByQ[r][lastIndex]=colissionsByOption[r];
 		}
 	}
 	
-	public void removeLast() {
-		sequence[lastIndex]=prevType;
-		lastIndex--;
-		availableClasses[lastType]++;
-		
-		int[][] requirements = csp.getRequirements();
-		for (int r=0; r<csp.getNumOptions(); r++) {
-			if(requirements[lastType][r]>0) {
-				requiringByClass[r]++;
-			}
+	public int[] checkPosition(int pos) {
+		if(lastIndex+1<pos) {
+			throw new IllegalArgumentException(
+					"Car checking should skip no position.");
 		}
+		int[] fitness = new int[csp.getNumClasses()];
+		Arrays.fill(fitness, Integer.MAX_VALUE);
+		
+		int[] classes = availableClasses.toArray();
+		
+		for (int car : classes) {
+			fitness[car] = checkClassAtPosition(car,pos);
+		}
+		
+		return fitness;
+	}
+	
+	private void disableCarClass(int carClass) {
+		if(!availableClasses.remove(carClass)) {
+			throw new IllegalArgumentException(
+					"Given class was already removed: "+carClass);
+		}
+	}
+	
+	private int checkClassAtPosition(int carClass, int pos) {
+		int colissions = 0;
+		
+		final int[][] requirements = csp.getRequirements();
+		
+		for (int o = 0; o<csp.getNumOptions(); o++) {
+			int currentColissionsForOption = colissionsByOption[o];
+			
+			if(requirements[carClass][o]>0) {
+				final int p = csp.getP(o);
+				final int q = csp.getQ(o);
+				
+				int occurrences = 1;
+				
+				int i=1;
+				while (i<q && pos-i>=0) {
+					occurrences+=requirements[sequence[pos-i]][o];
+					i++;
+				}
+				
+				if (occurrences>p) {
+					int newColissions = occurrences-p;
+					currentColissionsForOption+=newColissions;
+				}
+			}
+			
+			tempColissionsByClassAndOption[carClass][o] = currentColissionsForOption;
+			colissions += currentColissionsForOption;
+		}
+		
+		return colissions;
+	}
+	
+	public double[] checkHeuristicValues(int [] classes, int position) {
+		
+		int filteredClasses = classes.length;
+		double[] heuristicValues = new double [filteredClasses];
+		
+		for (int i = 0; i<filteredClasses; i++) {
+			heuristicValues[i] = csp.dynamicUtilizationRateSum(
+					requiringByOption, csp.getCarsDemand()-position, i);
+		}
+		
+		return heuristicValues;
 	}
 
 	// GETTERS & SETTERS
@@ -224,7 +312,7 @@ public class CSPSolution extends Solution{
 	}
 	
 	public int[] getRemainingClasses() {
-		return availableClasses;
+		return demandByClass;
 	}
 	
 	public int[][] getColissionMatrix() {
@@ -232,7 +320,7 @@ public class CSPSolution extends Solution{
 	}
 	
 	public int[] getRequiring() {
-		return requiringByClass;
+		return requiringByOption;
 	}
 
 	@Override
