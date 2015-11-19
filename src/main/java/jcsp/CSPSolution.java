@@ -239,7 +239,7 @@ public class CSPSolution extends Solution{
 		}
 	}
 	
-	private int checkClassAtPosition(int carClass, int pos) {
+	public int checkClassAtPosition(int carClass, int pos) {
 		int colissions = 0;
 		
 		final int[][] requirements = csp.getRequirements();
@@ -313,6 +313,10 @@ public class CSPSolution extends Solution{
 	
 	public int[] getRemainingClasses() {
 		return demandByClass;
+	}
+	
+	public TIntArrayList getAvailableClasses() {
+		return availableClasses;
 	}
 	
 	public int[][] getColissionMatrix() {

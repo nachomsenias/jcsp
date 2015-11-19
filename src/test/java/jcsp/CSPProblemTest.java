@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import jcsp.algo.ACO;
 import jcsp.algo.GRASP;
+import jcsp.experiment.beans.ACOBean;
 import jcsp.experiment.beans.GRASPBean;
 import jcsp.localsearch.FirstImprovement;
 import jcsp.neighbourhood.CSPInsertionNeighbourhood;
@@ -362,6 +364,83 @@ public class CSPProblemTest {
 		    if(!assertion) {
 		    	fail();
 		    }
+	    }
+	}
+	
+	@Test
+	public void ACOEvaluation() {
+		
+		//ACO Parameters
+		int ants = 15;
+		int maxCycles = 1000;
+		double alpha = 4;
+		double beta = 6;
+		double delta = 3;
+		
+		double q0 = 0.9;
+		double tau0 = 0.005;
+		double localRho = 0.99;
+		double globalRho = 0.99;
+    
+	    final ACOBean bean = new ACOBean(ants, maxCycles, alpha, beta, delta, 
+				q0, tau0, localRho, globalRho, null, null);
+	    
+	    boolean assertion = true;
+	    
+	    for (int seedIndex = 0; seedIndex<30; seedIndex++) {
+	    	
+	    	mediumCSP.random = RandomizerFactory.createRandomizer(
+		    		RandomizerAlgorithm.XOR_SHIFT_128_PLUS_FAST, 
+		    		RandomizerUtils.PRIME_SEEDS[seedIndex]
+			); 
+	    	
+	    	ACO aco = new ACO(mediumCSP, bean, false);
+        	aco.optimize();
+		    
+		    CSPSolution best = aco.getBest();
+		    
+		    int[] sequence = best.getSequence();
+		    
+		    double debugFitness = Functions.addMatrix(mediumCSP.createExcessMatrix(sequence));
+		    assertion &= debugFitness == best.getFitness();
+		    if(!assertion) {
+		    	fail();
+		    }
+	    }
+	}
+	
+	@Test
+	public void ACOConstruction() {
+		
+		//ACO Parameters
+		int ants = 15;
+		int maxCycles = 1000;
+		double alpha = 4;
+		double beta = 6;
+		double delta = 3;
+		
+		double q0 = 0.9;
+		double tau0 = 0.005;
+		double localRho = 0.99;
+		double globalRho = 0.99;
+    
+	    final ACOBean bean = new ACOBean(ants, maxCycles, alpha, beta, delta, 
+				q0, tau0, localRho, globalRho, null, null);
+	    
+	    for (int seedIndex = 0; seedIndex<30; seedIndex++) {
+	    	
+	    	mediumCSP.random = RandomizerFactory.createRandomizer(
+		    		RandomizerAlgorithm.XOR_SHIFT_128_PLUS_FAST, 
+		    		RandomizerUtils.PRIME_SEEDS[seedIndex]
+			); 
+	    	
+	    	ACO aco = new ACO(mediumCSP, bean, false);
+        	
+	    	try {
+				aco.checkAnts();
+			} catch (Exception e) {
+				fail();
+			}
 	    }
 	}
 }
