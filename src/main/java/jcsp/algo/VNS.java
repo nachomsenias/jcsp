@@ -48,11 +48,14 @@ public class VNS extends Algorithm{
 		vns.addStopCriterion(new MaxSteps(maxSteps));
     	vns.addStopCriterion(new MaxRuntime(maxSeconds, TimeUnit.SECONDS));
     	
+    	CSPSolution initial;
     	if(greedyInitialSolution) {
-    		vns.setCurrentSolution((CSPSolution)csp.createHeuristic(0.0));
+    		initial = csp.createHeuristic(0.0);
+    		initial.fullEvaluation();
     	} else {
-    		vns.setCurrentSolution(csp.createRandomSolution());
+    		initial = csp.createRandomSolution();
     	}
+    	vns.setCurrentSolution(initial);
     	
     	if(verbose) {
     		vns.addSearchListener(new ProgressSearchListener());

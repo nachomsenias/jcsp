@@ -98,7 +98,8 @@ public class Experiment {
 		} catch (InstantiationException | IllegalAccessException
 				| ClassNotFoundException e) {
 			throw new IllegalArgumentException(
-					"Error when loading algorithm configuration");
+					"Error when loading algorithm configuration: " 
+							+ e.getMessage());
 		}
 		boolean verbose = false;
 
