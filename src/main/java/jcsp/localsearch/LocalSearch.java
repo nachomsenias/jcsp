@@ -71,6 +71,9 @@ public abstract class LocalSearch {
 			case "inversion":
 				nh.add(new CSPInvertionNeighbourhood());
 				break;
+			case "smartInvertion":
+				nh.add(new CSPInvertionNeighbourhood());
+				break;
 			case "shuffle":
 				nh.add(new CSPShuffleNeighbourhood());
 				break;

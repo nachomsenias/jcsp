@@ -8,6 +8,8 @@ import jcsp.move.ShuffleSequence;
 
 import org.jamesframework.core.search.neigh.Move;
 
+import util.random.Randomizer;
+
 public class CSPShuffleNeighbourhood extends CSPNeighbourhood{
 
 	@Override
@@ -29,5 +31,21 @@ public class CSPShuffleNeighbourhood extends CSPNeighbourhood{
 		}
 		
 		return allShuffles;
+	}
+
+	@Override
+	public Move<CSPSolution> getRandomMove(CSPSolution solution) {
+		Randomizer random = solution.getProblem().random;
+		int sequenceLenght = solution.getSecuenceLength();
+
+		int firstIndex = random.nextInt(sequenceLenght);
+		int lastIndex = random.nextInt(sequenceLenght);
+		
+		do {
+			firstIndex = random.nextInt(sequenceLenght);
+			lastIndex = random.nextInt(sequenceLenght);
+		}while(lastIndex<=firstIndex);
+
+		return new ShuffleSequence(firstIndex, lastIndex);
 	}
 }

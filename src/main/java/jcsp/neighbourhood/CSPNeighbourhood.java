@@ -1,11 +1,13 @@
 package jcsp.neighbourhood;
 
+import gnu.trove.list.array.TIntArrayList;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import jcsp.CSPProblem;
 import jcsp.CSPSolution;
 
 import org.jamesframework.core.search.neigh.Move;
@@ -83,18 +85,30 @@ public abstract class CSPNeighbourhood implements Neighbourhood<CSPSolution>{
 		
 		return indexes;
 	}
-
-	@Override
-	public Move<CSPSolution> getRandomMove(CSPSolution sol) {
+	
+	protected int[] getConflicted(CSPSolution sol) {
+		int[][] colissions = sol.getColissionMatrix();
 		
-		if(moveRepository.isEmpty()) {
-			List<Move<CSPSolution>> allSwaps = getAllMoves(sol);
-			Collections.shuffle(allSwaps);
-			
-			moveRepository.addAll(allSwaps);
+		CSPProblem problem = sol.getProblem();
+		int demand = problem.getCarsDemand();
+		int options = problem.getNumOptions();
+		
+		TIntArrayList intList = new TIntArrayList(sol.getProblem().getCarsDemand());
+		
+		for (int pos = 0; pos<demand; pos++) {
+			int o = 0;
+			while(o<options) {
+				if (colissions[pos][o]==0) {
+					o++;
+				} else {
+					intList.add(pos);
+					break;
+				}
+			}
 		}
+		int[] conflicted = intList.toArray();
 		
-		return moveRepository.remove();
+		return conflicted;
 	}
 
 	@Override

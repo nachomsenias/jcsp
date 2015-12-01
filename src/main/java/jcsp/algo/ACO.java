@@ -150,13 +150,29 @@ public class ACO extends Algorithm{
 		double[] colissionsValues = new double [numClasses];
 		int previousColissions = (int)z.getFitness();
 		
+		int[] colissionDifferences = new int [numClasses];
+		Arrays.fill(colissionDifferences, Integer.MAX_VALUE);
+		
 		for (int c : classes) {
 			sequence[position]=c;
 			
-			int colDifference = z.checkClassAtPosition(c, position)- previousColissions;
+			int colDifference = z.checkClassAtPosition(c, position) - previousColissions;
+			colissionDifferences[c] = colDifference;
 			double colissionsValue = 1.0/(double)(1+colDifference);
 //			colissionsValues[c]=Math.pow(colissionsValue,beta);
 			colissionsValues[c]=Functions.pow(colissionsValue,beta);
+		}
+		
+		//Candidate list checking
+		int minColissions = NumberUtils.min(colissionDifferences);
+		
+		if(minColissions == 0) {
+			for (int c = 0; c<numClasses; c++) {
+				if(colissionDifferences[c]!=0) {
+					//If a minimumColission is considered, candidates are restricted.
+					colissionsValues[c] = 0;
+				}
+			}
 		}
 		
 		double [] values = new double [numClasses];
