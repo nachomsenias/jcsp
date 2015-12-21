@@ -98,7 +98,7 @@ public abstract class CSPNeighbourhood implements Neighbourhood<CSPSolution>{
 		for (int pos = 0; pos<demand; pos++) {
 			int o = 0;
 			while(o<options) {
-				if (colissions[pos][o]==0) {
+				if (colissions[o][pos]==0) {
 					o++;
 				} else {
 					intList.add(pos);

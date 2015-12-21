@@ -1,0 +1,7 @@
+algorithm=VNS
+maxSteps=200000
+maxSeconds=600
+neighbourhood=smartSwap
+maxShaking=10
+shakers=randomSwap
+greedyInitialSolution=true

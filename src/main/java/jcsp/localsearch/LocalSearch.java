@@ -8,6 +8,8 @@ import jcsp.CSPSolution;
 import jcsp.neighbourhood.CSPInsertionNeighbourhood;
 import jcsp.neighbourhood.CSPInvertionNeighbourhood;
 import jcsp.neighbourhood.CSPShuffleNeighbourhood;
+import jcsp.neighbourhood.CSPSmartInvertionNeighbourhood;
+import jcsp.neighbourhood.CSPSmartSwapNeighbourhood;
 import jcsp.neighbourhood.CSPSwapNeighbourhood;
 
 import org.jamesframework.core.search.SingleNeighbourhoodSearch;
@@ -72,7 +74,9 @@ public abstract class LocalSearch {
 				nh.add(new CSPInvertionNeighbourhood());
 				break;
 			case "smartInvertion":
-				nh.add(new CSPInvertionNeighbourhood());
+				nh.add(new CSPSmartInvertionNeighbourhood());
+			case "smartSwap":
+				nh.add(new CSPSmartSwapNeighbourhood());
 				break;
 			case "shuffle":
 				nh.add(new CSPShuffleNeighbourhood());
