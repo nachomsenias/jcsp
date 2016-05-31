@@ -28,22 +28,22 @@ public class CSPProblem implements Problem<CSPSolution>{
 	public static final byte TOTAL_INDEX = 1;
 
 	//First Line
-	private int carsDemand; 
-	private int numOptions; 
-	private int numClasses;
+	protected int carsDemand; 
+	protected int numOptions; 
+	protected int numClasses;
 	//Second/Third Line
-	private int[][] options;
+	protected int[][] options;
 	//Other lines
-	private int[][] requirements;
-	private int[] demandByClasses;
+	protected int[][] requirements;
+	protected int[] demandByClasses;
 	
 	//Auxiliar structs
 	
 	/**
 	 * For each option.
 	 */
-	private double [] ratioPossibleTotal;
-	private int [] carsRequiring;
+	protected double [] ratioPossibleTotal;
+	protected int [] carsRequiring;
 	
 	//Randomizer
 	public Randomizer random;

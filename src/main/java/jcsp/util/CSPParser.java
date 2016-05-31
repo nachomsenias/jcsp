@@ -5,12 +5,14 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import jcsp.CSPProblem;
+import jcsp.RobustCSPProblem;
 
 public class CSPParser {
 	
 	public static final int DEMAND_INDEX = 0;
 	public static final int NUM_OPTIONS_INDEX = 1;
 	public static final int NUM_CLASSES_INDEX = 2;
+	public static final int NUM_SPECIAL_INDEX = 3;
 	
 	public static final int POSSIBLE_INDEX = 0;
 	public static final int TOTAL_POSSIBLE_INDEX = 1;
@@ -37,6 +39,12 @@ public class CSPParser {
 		numOptions = Integer.parseInt(firstLineChunked[NUM_OPTIONS_INDEX]);
 		classes = Integer.parseInt(firstLineChunked[NUM_CLASSES_INDEX]);
 		
+		//Robust CSP
+		int specialClasses = 0;
+		if(firstLineChunked.length>3) {
+			specialClasses=Integer.parseInt(firstLineChunked[NUM_SPECIAL_INDEX]);
+		}
+		
 		//Second line: for each option, the maximum number of cars with that 
 		//option in a block.
 		options = new int [2][numOptions];
@@ -54,15 +62,20 @@ public class CSPParser {
 					= Integer.parseInt(thirdLineChunked[i]);
 		}
 		
+		//Skip non-regular classes
+		int regularClasses = classes-specialClasses+1;
+		
 		//Then for each class: index no.; no. of cars in this class; for each 
 		//option, whether or not this class requires it (1 or 0).
-		classDemand = new int[classes];
-		requirements = new int [classes][numOptions];
+		classDemand = new int[regularClasses];
+		requirements = new int [regularClasses][numOptions];
 		
 		int currentClass = 0;
 		line = fr.readLine();
 		
-		while(line!=null && currentClass<classes) {
+		
+		
+		while(line!=null && currentClass<regularClasses) {
 			String [] randomLineSplitted = line.split(" ");
 			classDemand[currentClass] = Integer.parseInt(
 					randomLineSplitted[CLASS_DEMAND_INDEX]);
@@ -74,10 +87,48 @@ public class CSPParser {
 			currentClass++;
 		}
 		
-		fr.close();
-		
-		return new CSPProblem(
-				demand, numOptions, classes, options, requirements, classDemand
-			);
+		if(specialClasses==0) {
+			fr.close();
+			return new CSPProblem(
+					demand, numOptions, classes, options, requirements, classDemand
+				);
+		} else {
+			
+//			int specialCarDemanded = Integer.parseInt(line);
+			int specialCarDemanded = classDemand[currentClass-1];
+			
+			int[][] specialRequirements = new int [specialClasses][numOptions];
+			int specialClassIndex = 0;
+			
+//			line = fr.readLine();
+			
+			while(currentClass<classes+1) {
+				String [] randomLineSplitted = line.split(" ");
+				for(int i=0; i<numOptions; i++) {
+					specialRequirements[specialClassIndex][i] = Integer.parseInt(
+							randomLineSplitted[i+1]);
+				}
+				line = fr.readLine();
+				currentClass++;
+				specialClassIndex++;
+			}
+			
+			int numPlans = Integer.parseInt(line);
+			int[][] demandSpecial = new int[numPlans][specialClasses];
+			
+			for (int p = 0; p<numPlans; p++) {
+				line = fr.readLine();
+				String [] randomLineSplitted = line.split(" ");
+				for (int s=0; s<specialClasses; s++) {
+					demandSpecial[p][s] = Integer.parseInt(randomLineSplitted[s]);
+				}
+			}
+			
+			fr.close();
+			return new RobustCSPProblem(
+					demand, numOptions, regularClasses, options, requirements, classDemand,
+					specialClasses,specialCarDemanded,specialRequirements,numPlans,demandSpecial
+				);
+		}
 	}
 }

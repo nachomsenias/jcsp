@@ -40,7 +40,7 @@ public class CSPProblemTest {
 	private List<CSPSolution> mediumSols;
 	
 	public CSPProblemTest() throws IOException {
-		String exampleFile="../xCSP/instances/test_10_cars.txt";
+		String exampleFile="instances/test_10_cars.txt";
 		easyCSP = CSPParser.load(exampleFile);
 		
 		easySols = new ArrayList<CSPSolution>();
@@ -49,7 +49,7 @@ public class CSPProblemTest {
 		easySols.add(new CSPSolution(null,easyCSP, new int[]{5,2,4,3,3,4,2,5,1,0}));
 		easySols.add(new CSPSolution(null,easyCSP, new int[]{4,3,2,4,3,5,1,5,2,0}));
 		
-		exampleFile="../xCSP/instances/60/pb_60-05.txt";
+		exampleFile="instances/60/pb_60-05.txt";
 		mediumCSP = CSPParser.load(exampleFile);
 		
 		mediumSols = new ArrayList<CSPSolution>();
