@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.jamesframework.core.problems.constraints.validations.Validation;
 
+import jcsp.robust.RobustCSPProblem;
 import jcsp.util.CSPParser;
 import util.random.RandomizerFactory;
 import util.random.RandomizerUtils;

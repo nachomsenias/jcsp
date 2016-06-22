@@ -120,22 +120,25 @@ public class CSPProblem implements Problem<CSPSolution>{
 				int total = this.options[TOTAL_INDEX][option];
 				int possible = this.options[POSSIBLE_INDEX][option];
 				
-				int occurrences = 0;
+//				int occurrences = 0;
 
 				if(requirements[sequence[car]][option] == 0) {
 					continue;
 				}
 				
-				int nextCar = 0;
-				while(nextCar<total && car+nextCar < carsDemand) {
-					occurrences+=requirements[sequence[car+nextCar]][option];
-					nextCar++;
-				}
+//				int nextCar = 0;
+//				while(nextCar<total && car+nextCar < carsDemand) {
+//					occurrences+=requirements[sequence[car+nextCar]][option];
+//					nextCar++;
+//				}
+//				
+//				//P+
+//				if (occurrences>possible) {
+//					excesses[option][car]=occurrences-possible;
+//				}
 				
-				//P+
-				if (occurrences>possible) {
-					excesses[option][car]=occurrences-possible;
-				}
+				excesses[option][car]= calculateColissions(
+						car, option, sequence, total, possible);
 
 			}
 		}
@@ -143,8 +146,8 @@ public class CSPProblem implements Problem<CSPSolution>{
 		return excesses;
 	}
 	
-	public int evaluateRestrictions(int[] sequence, int lastIndex) {
-		int fitness =0;
+	public double evaluateRestrictions(int[] sequence, int lastIndex) {
+		double fitness =0;
 		
 		for (int car=0; car<lastIndex; car++) {
 			for (int option=0; option<numOptions; option++) {
@@ -152,22 +155,25 @@ public class CSPProblem implements Problem<CSPSolution>{
 				int total = this.options[TOTAL_INDEX][option];
 				int possible = this.options[POSSIBLE_INDEX][option];
 				
-				int occurrences = 0;
+//				int occurrences = 0;
 
 				if(requirements[sequence[car]][option] == 0) {
 					continue;
 				}
 				
-				int nextCar = 0;
-				while(nextCar<total && car+nextCar < carsDemand) {
-					occurrences+=requirements[sequence[car+nextCar]][option];
-					nextCar++;
-				}
+//				int nextCar = 0;
+//				while(nextCar<total && car+nextCar < carsDemand) {
+//					occurrences+=requirements[sequence[car+nextCar]][option];
+//					nextCar++;
+//				}
+//				
+//				//P+
+//				if (occurrences>possible) {
+//					fitness+=occurrences-possible;
+//				}
 				
-				//P+
-				if (occurrences>possible) {
-					fitness+=occurrences-possible;
-				}
+				fitness+= calculateColissions(car, option, sequence, 
+						total, possible);
 
 			}
 		}
@@ -184,28 +190,45 @@ public class CSPProblem implements Problem<CSPSolution>{
 				int total = this.options[TOTAL_INDEX][option];
 				int possible = this.options[POSSIBLE_INDEX][option];
 				
-				int occurrences = 0;
-				
 				if(requirements[sequence[car]][option] == 0) {
 					continue;
 				}
 				
-				int nextCar = 0;
-				while(nextCar<total && car+nextCar<lastIndex 
-						&& sequence[car+nextCar]!=EMPTY_CAR) {
-					occurrences+=requirements[sequence[car+nextCar]][option];
-					nextCar++;
-				}
-				
-				//P+
-				if (occurrences>possible) {
-					fitness+=occurrences-possible;
-				}
+//				int occurrences = 0;
+//				int nextCar = 0;
+//				while(nextCar<total && car+nextCar<lastIndex 
+//						&& sequence[car+nextCar]!=EMPTY_CAR) {
+//					occurrences+=requirements[sequence[car+nextCar]][option];
+//					nextCar++;
+//				}
+//				
+//				//P+
+//				if (occurrences>possible) {
+//					fitness+=occurrences-possible;
+//				}
+				fitness+= calculateColissions(car, option, sequence, 
+						total, possible);
 				
 			}
 		}
 		
 		return fitness;
+	}
+	
+	protected int calculateColissions(int car, int option, 
+			int[] sequence, int total, int possible){
+		int nextCar = 1;
+		int occurrences = 1;
+		
+		while(nextCar<total && car+nextCar < carsDemand) {
+			occurrences+=requirements[sequence[car+nextCar]][option];
+			nextCar++;
+		}
+		
+		//P+
+		if (occurrences>possible) {
+			return occurrences-possible;
+		} else return 0;
 	}
 	
 	private double dynamicUtilizationRate(int option, int dynamicRequiring, int dynamicDemand) {

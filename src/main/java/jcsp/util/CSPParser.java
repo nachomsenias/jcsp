@@ -5,7 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import jcsp.CSPProblem;
-import jcsp.RobustCSPProblem;
+import jcsp.robust.RobustCSPProblem;
 
 public class CSPParser {
 	
@@ -63,7 +63,7 @@ public class CSPParser {
 		}
 		
 		//Skip non-regular classes
-		int regularClasses = classes-specialClasses+1;
+		int regularClasses = classes-specialClasses;
 		
 		//Then for each class: index no.; no. of cars in this class; for each 
 		//option, whether or not this class requires it (1 or 0).
@@ -94,15 +94,15 @@ public class CSPParser {
 				);
 		} else {
 			
-//			int specialCarDemanded = Integer.parseInt(line);
-			int specialCarDemanded = classDemand[currentClass-1];
+			int specialCarDemanded = Integer.parseInt(line);
+//			int specialCarDemanded = classDemand[currentClass-1];
 			
 			int[][] specialRequirements = new int [specialClasses][numOptions];
 			int specialClassIndex = 0;
 			
-//			line = fr.readLine();
+			line = fr.readLine();
 			
-			while(currentClass<classes+1) {
+			while(currentClass<classes) {
 				String [] randomLineSplitted = line.split(" ");
 				for(int i=0; i<numOptions; i++) {
 					specialRequirements[specialClassIndex][i] = Integer.parseInt(
