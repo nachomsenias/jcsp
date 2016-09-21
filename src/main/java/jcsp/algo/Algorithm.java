@@ -7,6 +7,7 @@ import jcsp.CSPProblem;
 import jcsp.CSPSolution;
 import jcsp.experiment.beans.AlgorithmBean;
 import jcsp.localsearch.LocalSearch;
+import jcsp.robust.RobustnessEvaluator;
 import jcsp.util.ProgressSearchListener;
 
 import org.jamesframework.core.search.SingleNeighbourhoodSearch;
@@ -33,9 +34,13 @@ public abstract class Algorithm {
 	//Time printing
 	protected boolean verbose;
 	
-	protected class Result {
-		final CSPSolution solution;
-		final double fitness;
+	//Robustness evaluation
+	protected RobustnessEvaluator evaluator;
+	protected final double omega = 0.6; 
+	
+	public class Result {
+		public final CSPSolution solution;
+		public final double fitness;
 		
 		public Result(CSPSolution solution, double fitness) {
 			this.solution = solution;
@@ -135,5 +140,9 @@ public abstract class Algorithm {
 	
 	public void setVerbose(boolean verbose) {
 		this.verbose=verbose;
+	}
+	
+	public void setRobustnessEvaluator(RobustnessEvaluator evaluator) {
+		this.evaluator=evaluator;
 	}
 }

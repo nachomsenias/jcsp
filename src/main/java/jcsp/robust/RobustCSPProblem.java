@@ -2,6 +2,9 @@ package jcsp.robust;
 
 import java.util.Arrays;
 
+import org.jamesframework.core.problems.constraints.validations.SimpleValidation;
+import org.jamesframework.core.problems.constraints.validations.Validation;
+
 import jcsp.CSPProblem;
 import jcsp.CSPSolution;
 import util.Functions;
@@ -12,7 +15,7 @@ import util.random.RandomizerFactory.RandomizerAlgorithm;
 
 public class RobustCSPProblem extends CSPProblem {
 	
-	public final static int BASE_MC = 30;
+	public final static int BASE_MC = 15;
 	public final static int ROBUST_CLASS = -1;
 
 	private int numMC;
@@ -64,6 +67,11 @@ public class RobustCSPProblem extends CSPProblem {
 			} else {
 				//Normal car
 				for (int option=0; option<numOptions; option++) {
+					
+					if(requirements[carClass][option] == 0) {
+						continue;
+					}
+					
 					// Q
 					int total = this.options[TOTAL_INDEX][option];
 					// P
@@ -212,6 +220,8 @@ public class RobustCSPProblem extends CSPProblem {
 		return robustPositions;
 	}
 	
+	//Solution genration
+	
 	public CSPSolution createRandomSolution() {
 		int [] sequence = new int [carsDemand];
 		
@@ -232,7 +242,40 @@ public class RobustCSPProblem extends CSPProblem {
 		
 		Functions.shuffleArrayFast(sequence, random);
 		
-		return new CSPSolution(null,this,sequence);
+		return new RobustCSPSolution(this,sequence);
+	}
+	
+	//Validation
+	public Validation validate(CSPSolution sol) {
+		
+		int[] sequence = sol.getSequence();
+		int lastIndex = sol.getLastIndex();
+		
+		if(sequence == null || lastIndex == EMPTY_CAR) {
+			return SimpleValidation.FAILED;
+		}
+		
+		if(lastIndex<carsDemand-1) {
+			return SimpleValidation.PASSED;
+		}
+		
+		
+		int[] ocurrences = new int [numClasses];
+		
+		int foundSpecialDemand = 0;
+		for (int ocurrence : sequence) {
+			if(ocurrence == ROBUST_CLASS) {
+				foundSpecialDemand++;
+			}else ocurrences[ocurrence]++;
+		}
+		
+		if(Arrays.equals(ocurrences, demandByClasses) 
+				&& foundSpecialDemand == demandSpecial) {
+			return SimpleValidation.PASSED;
+		} else {
+			return SimpleValidation.FAILED;
+		}
+
 	}
 	
 	//Getters & Setters

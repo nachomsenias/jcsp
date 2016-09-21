@@ -4,10 +4,15 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
+
+import org.apache.commons.io.FilenameUtils;
 
 import jcsp.CSPProblem;
 import jcsp.algo.Algorithm;
 import jcsp.experiment.beans.AlgorithmBean;
+import jcsp.robust.RobustnessEvaluator;
+import jcsp.util.AlternatePlanGenerator;
 import jcsp.util.CSPParser;
 import util.Functions;
 import util.random.RandomizerFactory;
@@ -16,9 +21,14 @@ import util.random.RandomizerUtils;
 
 public class Experiment {
 	private static BufferedWriter csvWriter = null;
+	
+	private static boolean computeRobustness = false;
+	private static String robustnessFlag = "-ROBUST";
+	
+	private static BufferedWriter logWriter = null;
 
 	public static void main(String[] args) throws IOException {
-		if (args.length != 3) {
+		if (args.length < 3 || args.length> 4) {
 			throw new IllegalArgumentException(
 				"Running experiments requires a directory with sequence files, "
 					+ "a folder for writing the experiment log and a experiment "
@@ -32,6 +42,10 @@ public class Experiment {
 		new File(logFolder).mkdirs();
 		
 		String experimentFile = args[2];
+		
+		if(args.length==4) {
+			computeRobustness = args[3].equals(robustnessFlag);
+		}
 		
 		runExperiment(logFolder,experimentFile,sourceDir);
 	}
@@ -54,6 +68,7 @@ public class Experiment {
 				+ "_" + timestamp + ".csv";
 
 		csvWriter = new BufferedWriter(new FileWriter(resulPath, false));
+		logWriter = new BufferedWriter(new FileWriter(resulPath+".info", false));
 
 		// PrintHeaders
 		String csvHeader = "Instance,"
@@ -71,7 +86,8 @@ public class Experiment {
 
 			String name = config.getName();
 
-			if (name.equals(".") || name.equals("..") || name.equals("results"))
+			if (name.equals(".") || name.equals("..") || name.equals("results")
+					|| name.endsWith(AlternatePlanGenerator.ROBUST_APPENDIX))
 				continue;
 
 			csvWriter.write(name);
@@ -82,6 +98,7 @@ public class Experiment {
 		}
 
 		csvWriter.close();
+		logWriter.close();
 	}
 	
 	private static void runAlgorithm(String sequenceFile, String signature, 
@@ -115,10 +132,51 @@ public class Experiment {
 			
 			Algorithm alg = bean.createAlgorithmInstance(csp, verbose);
 			
+			if(computeRobustness) {
+				File base = new File(sequenceFile);
+				String alternatePlanFile = base.getParent()+File.separator
+						+FilenameUtils.getBaseName(base.getName())
+							+AlternatePlanGenerator.ROBUST_APPENDIX;
+				
+				RobustnessEvaluator evaluator = CSPParser.loadRobustnessEvaluator(
+						sequenceFile, alternatePlanFile);
+				
+				alg.setRobustnessEvaluator(evaluator);
+			}
+			
 			alg.optimize();
 			double fitness = alg.getFinalFitness();
+			
+			logWriter.write(message);
+			logWriter.newLine();
+			logWriter.write("Computed fitness: "+fitness);
+			logWriter.newLine();
 
-			csvWriter.write("," + fitness);
+//			if(!computeRobustness) {
+				logWriter.write(Arrays.toString(alg.getBest().getSequence()));
+				logWriter.newLine();
+				logWriter.newLine();
+				
+				csvWriter.write("," + fitness);
+//			} else {
+//				File base = new File(sequenceFile);
+//				String alternatePlanFile = base.getParent()+File.separator
+//						+FilenameUtils.getBaseName(base.getName())
+//							+AlternatePlanGenerator.ROBUST_APPENDIX;
+//				
+//				RobustnessEvaluator evaluator = CSPParser.loadRobustnessEvaluator(
+//						sequenceFile, alternatePlanFile);
+//				
+//				RobustnessResult evaluation = evaluator.evaluateRobustness(alg.getBest());
+//				
+//				
+//				logWriter.write(evaluation.toString());
+//				logWriter.newLine();
+//				logWriter.newLine();
+//				
+//				csvWriter.write("," + evaluation.averagedMinRobustness);
+//				
+//			}
 		}
 	}
 }

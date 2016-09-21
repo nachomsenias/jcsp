@@ -13,13 +13,14 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.math3.stat.StatUtils;
 
+import gnu.trove.list.array.TIntArrayList;
 import util.Functions;
 
 public class ACO extends Algorithm{
 	
 	//ACO parameters
 	private int ants;
-	private int maxCycles;
+	protected int maxCycles;
 	
 	private double alpha;
 	private double beta;
@@ -38,8 +39,8 @@ public class ACO extends Algorithm{
 	private double[][][] trail;
 	
 	//Local search
-	private LocalSearch localSearch;
-	private LocalSearch overAllSearch;
+	protected LocalSearch localSearch;
+	protected LocalSearch overAllSearch;
 	
 	//CSP values
 	private final int numClasses;
@@ -67,7 +68,7 @@ public class ACO extends Algorithm{
 		numClasses = csp.getNumClasses();
 	}
 	
-	private void initializeTrail() {
+	protected void initializeTrail() {
 		trail = new double [numClasses][numClasses][maxQ];
 		
 		for (int i=0; i<numClasses; i++) {
@@ -77,7 +78,7 @@ public class ACO extends Algorithm{
 		}
 	}
 	
-	private CSPSolution[] createAnts() {
+	protected CSPSolution[] createAnts() {
 		
 		CSPSolution[] ants = new CSPSolution [this.ants];
 		
@@ -96,7 +97,7 @@ public class ACO extends Algorithm{
 	 * @param sequence
 	 * @param fitness
 	 */
-	private void evapore(int[] sequence, double fitness) {
+	protected void evapore(int[] sequence, double fitness) {
 		
 		for (int i=0; i<numClasses; i++) {
 			for (int j=0; j<numClasses; j++) {
@@ -194,7 +195,14 @@ public class ACO extends Algorithm{
 		
 		if(random<=q0) {
 			//Deterministic - Select Max values
-			chosenClass = ArrayUtils.indexOf(values, NumberUtils.max(values));
+//			chosenClass = ArrayUtils.indexOf(values, NumberUtils.max(values));
+			chosenClass = Functions.getIndexOfMax(values);
+			//If there is a double value fail
+			if(chosenClass==CSPProblem.EMPTY_CAR) {
+				TIntArrayList available = z.getAvailableClasses();
+				int remaining=available.size();
+				chosenClass = available.get(csp.random.nextInt(remaining));
+			}
 		} else {
 			//Probabilistic - Create roulette with max values
 			
@@ -206,8 +214,13 @@ public class ACO extends Algorithm{
 			do {
 				chosenClass++;
 				probAccumulada+=values[chosenClass]/total;
-			} while (probAccumulada<roulette && chosenClass<csp.getNumClasses());
+			} while (probAccumulada<=roulette && chosenClass<csp.getNumClasses());
 
+			if(chosenClass==0 && !z.getAvailableClasses().contains(0)) {
+				TIntArrayList available = z.getAvailableClasses();
+				int remaining=available.size();
+				chosenClass = available.get(csp.random.nextInt(remaining));
+			}
 		}
 
 		z.addCar(chosenClass);
@@ -225,7 +238,7 @@ public class ACO extends Algorithm{
 		}
 	}
 	
-	private double[] growAnts(CSPSolution[] ants) {
+	protected double[] growAnts(CSPSolution[] ants) {
 		
 		//Fill sequences for every ant
 		for (int p=1; p<csp.getCarsDemand(); p++) {

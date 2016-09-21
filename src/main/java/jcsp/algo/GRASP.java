@@ -17,16 +17,16 @@ import util.random.Randomizer;
 public class GRASP extends Algorithm{
 
 	//GRASP parameters
-	private int iterations;
-	private double alpha;
+	protected int iterations;
+	protected double alpha;
 
 	//Neighbourhoods
-	private List<Neighbourhood<CSPSolution>> neighbourhoods;
-	private boolean random = false;
-	private boolean once = false;
+	protected List<Neighbourhood<CSPSolution>> neighbourhoods;
+	protected boolean random = false;
+	protected boolean once = false;
 	
 	//Local search
-	private LocalSearch localSearch;
+	protected LocalSearch localSearch;
 	
 	public GRASP(CSPProblem csp, AlgorithmBean algBean, boolean verbose) {
 		super(csp,algBean,verbose);
@@ -44,7 +44,7 @@ public class GRASP extends Algorithm{
 		neighbourhoods.addAll(localSearch.getNeighbourhoods());
 	}
 	
-	private CSPSolution constructivePhase() {
+	protected CSPSolution constructivePhase() {
 		CSPSolution greedy = csp.createHeuristic(alpha);
 		greedy.fullEvaluation();
 		

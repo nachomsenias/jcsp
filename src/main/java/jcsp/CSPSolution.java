@@ -12,8 +12,8 @@ import util.Functions;
 
 public class CSPSolution extends Solution{
 
-	private final CSPProblem csp;
-	private final int[] sequence;
+	protected final CSPProblem csp;
+	protected final int[] sequence;
 	
 	private int[] demandByClass;
 	private int[] requiringByOption;
@@ -23,7 +23,7 @@ public class CSPSolution extends Solution{
 	private int lastType = -1;
 
 	//Evaluation
-	private double fitness = Double.MAX_VALUE;
+	protected double fitness = Double.MAX_VALUE;
 	
 	private int[] colissionsByOption;
 	private int[][] tempColissionsByClassAndOption;
@@ -195,6 +195,9 @@ public class CSPSolution extends Solution{
 		
 		if(demandByClass[typeClass]==0) {
 			disableCarClass(typeClass);
+		} else if(demandByClass[typeClass]<0 || !availableClasses.contains(typeClass)) {
+			throw new IllegalArgumentException(
+					"Illegal class.");
 		}
 		
 		lastType=typeClass;

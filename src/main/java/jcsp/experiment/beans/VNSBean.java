@@ -3,16 +3,15 @@ package jcsp.experiment.beans;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jamesframework.core.search.neigh.Neighbourhood;
+
 import jcsp.CSPProblem;
 import jcsp.CSPSolution;
 import jcsp.algo.Algorithm;
-import jcsp.algo.VNS;
+import jcsp.algo.CustomVNS;
 import jcsp.localsearch.LocalSearch;
 import jcsp.neighbourhood.CSPRandomShakingInsert;
 import jcsp.neighbourhood.CSPRandomShakingSwap;
-
-import org.jamesframework.core.search.neigh.Neighbourhood;
-
 import util.io.ConfigFileReader;
 
 public class VNSBean extends AlgorithmBean{
@@ -21,11 +20,15 @@ public class VNSBean extends AlgorithmBean{
 	public int maxSteps;
 	public int maxSeconds;
 	
+	public int maxShakings;
+	
 	public boolean greedyInitialSolution;
 	
 	public List<Neighbourhood<CSPSolution>> improvers;
 	
 	public List<Neighbourhood<CSPSolution>> shakers;
+	
+	public LocalSearch localSearch;
 	
 	private static List<Neighbourhood<CSPSolution>> readShakers(
 			String[] shakers, int max) {
@@ -62,14 +65,18 @@ public class VNSBean extends AlgorithmBean{
 		String[] neighbourhood = reader.getParameterStringArray("neighbourhood");
 		improvers = LocalSearch.createNeighbourhoods(neighbourhood);
 		
-		int maxShaking = reader.getParameterInteger("maxShaking");
+		maxShakings = reader.getParameterInteger("maxShaking");
 		String[] shaking = reader.getParameterStringArray("shakers");
 		
-		shakers = readShakers(shaking, maxShaking);
+		shakers = readShakers(shaking, maxShakings);
+		
+		String localSearhName = reader.getParameterString("localSearch");
+		localSearch=LocalSearch.createLocalSearch(localSearhName, neighbourhood);
 	}
 
 	@Override
 	public Algorithm createAlgorithmInstance(CSPProblem csp, boolean verbose) {
-		return new VNS(csp, this, verbose);
+//		return new VNS(csp, this, verbose);
+		return new CustomVNS(csp, this, verbose);
 	}
 }

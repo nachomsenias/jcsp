@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import jcsp.CSPProblem;
 import jcsp.robust.RobustCSPProblem;
+import jcsp.robust.RobustnessEvaluator;
 
 public class CSPParser {
 	
@@ -19,7 +20,37 @@ public class CSPParser {
 	
 	public static final int CLASS_DEMAND_INDEX = 1;
 	
-
+	public static RobustnessEvaluator loadRobustnessEvaluator(String pathProblem, 
+			String pathPlans) throws IOException{
+		//Load Problem
+		CSPProblem csp = load(pathProblem);
+		if(pathPlans==null || pathPlans.equals("")) {
+			throw new IllegalArgumentException(
+					"Invalid file pathPlans:: Cant be null or empty.");
+		}
+		//Load Plans
+		BufferedReader fr = new BufferedReader(new FileReader(pathPlans));
+		
+		String line = fr.readLine();
+		int numSpecial = Integer.parseInt(line);
+		
+		line = fr.readLine();
+		int numPlans = Integer.parseInt(line);
+		
+		int[][] productionPlans = new int [numPlans][numSpecial];
+		
+		for (int p=0; p<numPlans; p++) {
+			line = fr.readLine();
+			String[] chunked = line.split(" ");
+			for (int special=0; special<numSpecial; special++) {
+				productionPlans[p][special] = Integer.parseInt(chunked[special]);
+			}
+		}
+		fr.close();
+		
+		return new RobustnessEvaluator(csp, numSpecial, productionPlans);
+	}
+	
 	public static CSPProblem load(String path) throws IOException {
 		if(path==null || path.equals("")) {
 			throw new IllegalArgumentException(
