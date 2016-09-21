@@ -1,0 +1,8 @@
+algorithm=VNS
+maxSteps=10000
+maxSeconds=600
+localSearch=first
+neighbourhood=swap,inversion
+maxShaking=400
+shakers=randomInsert
+greedyInitialSolution=true

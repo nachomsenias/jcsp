@@ -1,0 +1,10 @@
+algorithm=RobustACO
+ants=15
+maxCycles=1000
+alpha=4
+beta=6
+delta=3
+q0=0.9
+tau0=0.005
+localRho=0.99
+globalRho=0.99

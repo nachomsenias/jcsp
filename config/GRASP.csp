@@ -1,0 +1,8 @@
+algorithm=GRASP
+alpha=0.15
+iterations=5000
+maxSteps=10000
+localSearch=first
+neighbourhood=swap,inversion
+random=false
+once=false

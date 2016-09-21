@@ -1,0 +1,8 @@
+algorithm=RobustGRASP
+alpha=0.15
+iterations=400
+maxSteps=10000
+localSearch=first
+neighbourhood=swap,inversion
+random=false
+once=false
