@@ -14,7 +14,7 @@ import jcsp.experiment.beans.AlgorithmBean;
 import jcsp.robust.RobustnessEvaluator;
 import jcsp.util.AlternatePlanGenerator;
 import jcsp.util.CSPParser;
-import util.Functions;
+import util.functions.ArrayFunctions;
 import util.random.RandomizerFactory;
 import util.random.RandomizerFactory.RandomizerAlgorithm;
 import util.random.RandomizerUtils;
@@ -72,7 +72,7 @@ public class Experiment {
 
 		// PrintHeaders
 		String csvHeader = "Instance,"
-				+ Functions.arrayToString(RandomizerUtils.PRIME_SEEDS, ",");
+				+ ArrayFunctions.arrayToString(RandomizerUtils.PRIME_SEEDS, ",");
 		csvWriter.write(csvHeader);
 		csvWriter.newLine();
 

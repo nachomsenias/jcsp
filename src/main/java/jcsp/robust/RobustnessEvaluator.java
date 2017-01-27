@@ -7,7 +7,7 @@ import java.util.List;
 import gnu.trove.list.array.TIntArrayList;
 import jcsp.CSPProblem;
 import jcsp.CSPSolution;
-import util.Functions;
+import util.functions.ArrayFunctions;
 import util.random.Randomizer;
 import util.random.RandomizerFactory;
 import util.random.RandomizerFactory.RandomizerAlgorithm;
@@ -172,7 +172,7 @@ public class RobustnessEvaluator {
 			int looserIndex = random.nextInt(loosers.size());
 			int classToRemove = loosers.get(looserIndex);
 			
-			int[] appereancesOfLooser = Functions.getAllIndexesOf(newSequence, classToRemove);
+			int[] appereancesOfLooser = ArrayFunctions.getAllIndexesOf(newSequence, classToRemove);
 			int randomAppereance = random.nextInt(appereancesOfLooser.length);
 			int position=appereancesOfLooser[randomAppereance];
 			

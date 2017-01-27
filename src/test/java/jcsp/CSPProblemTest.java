@@ -8,6 +8,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.jamesframework.core.problems.constraints.validations.Validation;
+import org.jamesframework.core.search.neigh.Move;
+import org.jamesframework.core.search.neigh.Neighbourhood;
+import org.junit.Test;
+
 import jcsp.algo.ACO;
 import jcsp.algo.GRASP;
 import jcsp.experiment.beans.ACOBean;
@@ -18,13 +23,7 @@ import jcsp.neighbourhood.CSPInvertionNeighbourhood;
 import jcsp.neighbourhood.CSPShuffleNeighbourhood;
 import jcsp.neighbourhood.CSPSwapNeighbourhood;
 import jcsp.util.CSPParser;
-
-import org.jamesframework.core.problems.constraints.validations.Validation;
-import org.jamesframework.core.search.neigh.Move;
-import org.jamesframework.core.search.neigh.Neighbourhood;
-import org.junit.Test;
-
-import util.Functions;
+import util.functions.MatrixFunctions;
 import util.random.RandomizerFactory;
 import util.random.RandomizerFactory.RandomizerAlgorithm;
 import util.random.RandomizerUtils;
@@ -174,7 +173,7 @@ public class CSPProblemTest {
 			int[] sequence = sol.getSequence();
 			
 			double debugFitness = mediumCSP.evaluateRestrictions(sequence,sequence.length);
-			double otherDebugFitness = Functions.addMatrix(mediumCSP.createExcessMatrix(sequence));
+			double otherDebugFitness = MatrixFunctions.addMatrix(mediumCSP.createExcessMatrix(sequence));
 			
 			assertion &= debugFitness == sol.getFitness();
 			assertion &= otherDebugFitness == debugFitness;
@@ -204,7 +203,7 @@ public class CSPProblemTest {
 			for (int i=0; i<mediumCSP.getNumOptions(); i++) {
 				colissionsByOption[i] = Arrays.stream(excessMatrix[i]).sum();
 			}
-			double debugFitness = Functions.addMatrix(excessMatrix);
+			double debugFitness = MatrixFunctions.addMatrix(excessMatrix);
 			
 			assertion &= fitness == debugFitness;
 			
@@ -230,7 +229,7 @@ public class CSPProblemTest {
 			
 			double debugFitness = mediumCSP.evaluateRestrictions(sequence,sequence.length);
 			int[][] colissions = mediumCSP.createExcessMatrix(sequence);
-			double otherDebugFitness = Functions.addMatrix(colissions);
+			double otherDebugFitness = MatrixFunctions.addMatrix(colissions);
 			
 			assertion &= debugFitness == sol.getFitness();
 			assertion &= otherDebugFitness == debugFitness;
@@ -258,7 +257,7 @@ public class CSPProblemTest {
 			
 			double debugFitness = mediumCSP.evaluateRestrictions(sequence,sequence.length);
 			int[][] colissions = mediumCSP.createExcessMatrix(sequence);
-			double otherDebugFitness = Functions.addMatrix(colissions);
+			double otherDebugFitness = MatrixFunctions.addMatrix(colissions);
 			
 			assertion &= debugFitness == sol.getFitness();
 			assertion &= otherDebugFitness == debugFitness;
@@ -285,7 +284,7 @@ public class CSPProblemTest {
 			
 			double debugFitness = mediumCSP.evaluateRestrictions(sequence,sequence.length);
 			int[][] colissions = mediumCSP.createExcessMatrix(sequence);
-			double otherDebugFitness = Functions.addMatrix(colissions);
+			double otherDebugFitness = MatrixFunctions.addMatrix(colissions);
 			
 			assertion &= debugFitness == sol.getFitness();
 			assertion &= otherDebugFitness == debugFitness;
@@ -312,7 +311,7 @@ public class CSPProblemTest {
 			
 			double debugFitness = mediumCSP.evaluateRestrictions(sequence,sequence.length);
 			int[][] colissions = mediumCSP.createExcessMatrix(sequence);
-			double otherDebugFitness = Functions.addMatrix(colissions);
+			double otherDebugFitness = MatrixFunctions.addMatrix(colissions);
 			
 			assertion &= debugFitness == sol.getFitness();
 			assertion &= otherDebugFitness == debugFitness;
@@ -359,7 +358,7 @@ public class CSPProblemTest {
 		    
 		    int[] sequence = best.getSequence();
 		    
-		    double debugFitness = Functions.addMatrix(mediumCSP.createExcessMatrix(sequence));
+		    double debugFitness = MatrixFunctions.addMatrix(mediumCSP.createExcessMatrix(sequence));
 		    assertion &= debugFitness == best.getFitness();
 		    if(!assertion) {
 		    	fail();
@@ -401,7 +400,8 @@ public class CSPProblemTest {
 		    
 		    int[] sequence = best.getSequence();
 		    
-		    double debugFitness = Functions.addMatrix(mediumCSP.createExcessMatrix(sequence));
+		    double debugFitness = MatrixFunctions.addMatrix(
+		    		mediumCSP.createExcessMatrix(sequence));
 		    assertion &= debugFitness == best.getFitness();
 		    if(!assertion) {
 		    	fail();

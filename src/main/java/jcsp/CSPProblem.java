@@ -1,10 +1,6 @@
 package jcsp;
 
-import gnu.trove.list.array.TIntArrayList;
-
 import java.util.Arrays;
-
-import jcsp.util.HeapBean;
 
 import org.apache.commons.collections.BinaryHeap;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -14,7 +10,9 @@ import org.jamesframework.core.problems.constraints.validations.Validation;
 import org.jamesframework.core.problems.objectives.evaluations.Evaluation;
 import org.jamesframework.core.problems.objectives.evaluations.SimpleEvaluation;
 
-import util.Functions;
+import gnu.trove.list.array.TIntArrayList;
+import jcsp.util.HeapBean;
+import util.functions.ArrayFunctions;
 import util.random.Randomizer;
 
 @SuppressWarnings("deprecation")
@@ -95,7 +93,7 @@ public class CSPProblem implements Problem<CSPSolution>{
 			}
 		}
 		
-		Functions.shuffleArrayFast(sequence, random);
+		ArrayFunctions.shuffleArrayFast(sequence, random);
 		
 		return new CSPSolution(null,this,sequence);
 	}

@@ -8,13 +8,15 @@ import jcsp.CSPSolution;
 import jcsp.experiment.beans.ACOBean;
 import jcsp.experiment.beans.AlgorithmBean;
 import jcsp.localsearch.LocalSearch;
+import util.functions.ArrayFunctions;
+import util.functions.Functions;
+import util.functions.MatrixFunctions;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.math3.stat.StatUtils;
 
 import gnu.trove.list.array.TIntArrayList;
-import util.Functions;
 
 public class ACO extends Algorithm{
 	
@@ -196,7 +198,7 @@ public class ACO extends Algorithm{
 		if(random<=q0) {
 			//Deterministic - Select Max values
 //			chosenClass = ArrayUtils.indexOf(values, NumberUtils.max(values));
-			chosenClass = Functions.getIndexOfMax(values);
+			chosenClass = ArrayFunctions.getIndexOfMax(values);
 			//If there is a double value fail
 			if(chosenClass==CSPProblem.EMPTY_CAR) {
 				TIntArrayList available = z.getAvailableClasses();
@@ -339,7 +341,7 @@ public class ACO extends Algorithm{
 		for (CSPSolution z: ants) {
 			double fitness = z.getFitness();
 			int[][] colissions = csp.createExcessMatrix(z.getSequence());
-			double debugFitness = Functions.addMatrix(colissions);
+			double debugFitness = MatrixFunctions.addMatrix(colissions);
 			if(debugFitness != fitness) {
 				throw new Exception("Ants checking failed.");
 			}

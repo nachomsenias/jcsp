@@ -3,18 +3,17 @@ package jcsp.algo;
 import java.util.Arrays;
 import java.util.List;
 
+import org.jamesframework.core.search.SingleNeighbourhoodSearch;
+import org.jamesframework.core.search.neigh.Neighbourhood;
+import org.jamesframework.core.search.stopcriteria.MaxSteps;
+
 import jcsp.CSPProblem;
 import jcsp.CSPSolution;
 import jcsp.experiment.beans.AlgorithmBean;
 import jcsp.localsearch.LocalSearch;
 import jcsp.robust.RobustnessEvaluator;
 import jcsp.util.ProgressSearchListener;
-
-import org.jamesframework.core.search.SingleNeighbourhoodSearch;
-import org.jamesframework.core.search.neigh.Neighbourhood;
-import org.jamesframework.core.search.stopcriteria.MaxSteps;
-
-import util.Functions;
+import util.functions.ArrayFunctions;
 
 public abstract class Algorithm {
 	
@@ -118,7 +117,7 @@ public abstract class Algorithm {
 		
 		int numNeigbours = neighbourhoods.size();
 		
-		int[] indexes = Functions.shuffleFast(numNeigbours, csp.random);
+		int[] indexes = ArrayFunctions.shuffleFast(numNeigbours, csp.random);
 		
 		for (int index:indexes) {
 			Neighbourhood<CSPSolution> neighbourhood = neighbourhoods.get(index);

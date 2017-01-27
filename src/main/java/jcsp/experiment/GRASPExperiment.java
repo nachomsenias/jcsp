@@ -11,7 +11,8 @@ import jcsp.algo.GRASP;
 import jcsp.experiment.beans.AlgorithmBean;
 import jcsp.experiment.beans.GRASPBean;
 import jcsp.util.CSPParser;
-import util.Functions;
+import util.functions.ArrayFunctions;
+import util.functions.Functions;
 import util.random.RandomizerFactory;
 import util.random.RandomizerFactory.RandomizerAlgorithm;
 import util.random.RandomizerUtils;
@@ -75,7 +76,7 @@ public class GRASPExperiment {
 
 		// PrintHeaders
 		String csvHeader = "Instance,"
-				+ Functions.arrayToString(RandomizerUtils.PRIME_SEEDS, ",");
+				+ ArrayFunctions.arrayToString(RandomizerUtils.PRIME_SEEDS, ",");
 		csvWriter.write(csvHeader);
 		csvWriter.newLine();
 

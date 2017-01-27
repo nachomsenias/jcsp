@@ -1,14 +1,14 @@
 package jcsp;
 
-import gnu.trove.list.array.TIntArrayList;
-
 import java.util.Arrays;
 import java.util.Objects;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.jamesframework.core.problems.Solution;
 
-import util.Functions;
+import gnu.trove.list.array.TIntArrayList;
+import util.functions.ArrayFunctions;
+import util.functions.MatrixFunctions;
 
 public class CSPSolution extends Solution{
 
@@ -79,14 +79,14 @@ public class CSPSolution extends Solution{
 			fullEvaluation();
 		} else {
 			exceedByQ = excess;
-			fitness = Functions.addMatrix(exceedByQ);
+			fitness = MatrixFunctions.addMatrix(exceedByQ);
 		}
 	}
 	
 	@Override
 	public Solution copy() {
 		return new CSPSolution(
-				Functions.copyMatrix(exceedByQ), 
+				MatrixFunctions.copyMatrix(exceedByQ), 
 					csp, Arrays.copyOf(sequence, sequence.length));
 	}
 
@@ -114,7 +114,7 @@ public class CSPSolution extends Solution{
 	public void fullEvaluation() {
 
 		exceedByQ = csp.createExcessMatrix(sequence);
-		fitness = Functions.addMatrix(exceedByQ);
+		fitness = MatrixFunctions.addMatrix(exceedByQ);
 	}
 	
 	// MOVE FUNCTIONALITY
@@ -170,7 +170,7 @@ public class CSPSolution extends Solution{
 	 * @param end
 	 */
 	public void shuffle(int begin, int end) {
-		Functions.partialShuffle(sequence, csp.random, begin, end);
+		ArrayFunctions.partialShuffle(sequence, csp.random, begin, end);
 		fullEvaluation();
 	}
 	

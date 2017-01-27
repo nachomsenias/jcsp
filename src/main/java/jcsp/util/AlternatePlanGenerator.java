@@ -8,11 +8,11 @@ import java.io.IOException;
 import org.apache.commons.io.FilenameUtils;
 
 import jcsp.CSPProblem;
-import util.Functions;
+import util.functions.ArrayFunctions;
 import util.random.Randomizer;
 import util.random.RandomizerFactory;
-import util.random.RandomizerUtils;
 import util.random.RandomizerFactory.RandomizerAlgorithm;
+import util.random.RandomizerUtils;
 
 public class AlternatePlanGenerator {
 
@@ -68,7 +68,7 @@ public class AlternatePlanGenerator {
 //				fw.write(" "+alternatePlans[p][car]);
 //			}
 //			fw.write("\n");
-			fw.write(Functions.arrayToString(alternatePlans[p], " "));
+			fw.write(ArrayFunctions.arrayToString(alternatePlans[p], " "));
 			fw.newLine();
 		}
 		

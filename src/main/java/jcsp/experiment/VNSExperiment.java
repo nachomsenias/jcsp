@@ -7,19 +7,18 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.jamesframework.core.search.algo.vns.VariableNeighbourhoodSearch;
+import org.jamesframework.core.search.neigh.Neighbourhood;
+import org.jamesframework.core.search.stopcriteria.MaxRuntime;
+import org.jamesframework.core.search.stopcriteria.MaxSteps;
+
 import jcsp.CSPProblem;
 import jcsp.CSPSolution;
 import jcsp.experiment.beans.AlgorithmBean;
 import jcsp.experiment.beans.VNSBean;
 import jcsp.util.CSPParser;
 import jcsp.util.ProgressSearchListener;
-
-import org.jamesframework.core.search.algo.vns.VariableNeighbourhoodSearch;
-import org.jamesframework.core.search.neigh.Neighbourhood;
-import org.jamesframework.core.search.stopcriteria.MaxRuntime;
-import org.jamesframework.core.search.stopcriteria.MaxSteps;
-
-import util.Functions;
+import util.functions.ArrayFunctions;
 import util.random.RandomizerFactory;
 import util.random.RandomizerFactory.RandomizerAlgorithm;
 import util.random.RandomizerUtils;
@@ -67,7 +66,7 @@ public class VNSExperiment {
 
 		// PrintHeaders
 		String csvHeader = "Instance,"
-				+ Functions.arrayToString(RandomizerUtils.PRIME_SEEDS, ",");
+				+ ArrayFunctions.arrayToString(RandomizerUtils.PRIME_SEEDS, ",");
 		csvWriter.write(csvHeader);
 		csvWriter.newLine();
 

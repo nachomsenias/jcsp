@@ -7,11 +7,11 @@ import org.jamesframework.core.problems.constraints.validations.Validation;
 
 import jcsp.CSPProblem;
 import jcsp.CSPSolution;
-import util.Functions;
+import util.functions.ArrayFunctions;
 import util.random.Randomizer;
 import util.random.RandomizerFactory;
-import util.random.RandomizerUtils;
 import util.random.RandomizerFactory.RandomizerAlgorithm;
+import util.random.RandomizerUtils;
 
 public class RobustCSPProblem extends CSPProblem {
 	
@@ -240,7 +240,7 @@ public class RobustCSPProblem extends CSPProblem {
 			}
 		}
 		
-		Functions.shuffleArrayFast(sequence, random);
+		ArrayFunctions.shuffleArrayFast(sequence, random);
 		
 		return new RobustCSPSolution(this,sequence);
 	}

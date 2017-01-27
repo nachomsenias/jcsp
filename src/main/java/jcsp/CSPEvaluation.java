@@ -1,6 +1,6 @@
 package jcsp;
 
-import util.Functions;
+import util.functions.ArrayFunctions;
 
 /**
  * Contains evaluation functions for CSP instances when using operators.
@@ -108,7 +108,7 @@ public class CSPEvaluation {
 			
 			int endIndexFirst = first;
 
-			int prevCollisionsFirst=Functions.addArraySegment(
+			int prevCollisionsFirst=ArrayFunctions.addArraySegment(
 					excess[option], beginIndexFirst, endIndexFirst+1);
 			
 			int currentCollisionsFirst = countCollisions(csp, sequence, 
@@ -131,7 +131,7 @@ public class CSPEvaluation {
 				endIndexSecond = beginIndexFirst-1;
 			}
 
-			int prevCollisionsSecond=Functions.addArraySegment(
+			int prevCollisionsSecond=ArrayFunctions.addArraySegment(
 					excess[option], beginIndexSecond, endIndexSecond+1);
 
 			int currentCollisionsSecond = countCollisions(csp, sequence, 
@@ -199,7 +199,7 @@ public class CSPEvaluation {
 			int prevCollisionsOld,currentCollisionsOld;
 			int prevCollisionsNew,currentCollisionsNew;
 
-			prevCollisionsOld=Functions.addArraySegment(
+			prevCollisionsOld=ArrayFunctions.addArraySegment(
 					collisions[option], beginIndexOld, endIndexOld+1);
 
 			if (oldPos<newPos) {
@@ -208,10 +208,10 @@ public class CSPEvaluation {
 					
 					rotateCollisions(collisions[option], endIndexOld, beginIndexNew, false);
 					//b+1 => e
-					prevCollisionsNew=Functions.addArraySegment(
+					prevCollisionsNew=ArrayFunctions.addArraySegment(
 							collisions[option], beginIndexNew+1, endIndexNew+1);
 				} else {
-					prevCollisionsNew=Functions.addArraySegment(
+					prevCollisionsNew=ArrayFunctions.addArraySegment(
 							collisions[option], beginIndexNew, endIndexNew+1);
 				}
 				
@@ -221,10 +221,10 @@ public class CSPEvaluation {
 
 					rotateCollisions(collisions[option], endIndexNew, beginIndexOld, true);
 					//nb => e-1
-					prevCollisionsNew=Functions.addArraySegment(
+					prevCollisionsNew=ArrayFunctions.addArraySegment(
 							collisions[option], beginIndexNew, endIndexNew);
 				}else {
-					prevCollisionsNew=Functions.addArraySegment(
+					prevCollisionsNew=ArrayFunctions.addArraySegment(
 							collisions[option], beginIndexNew, endIndexNew+1);
 				}
 
@@ -278,7 +278,7 @@ public class CSPEvaluation {
 				beginSequence = firstSequence-(q-1);
 			}
 			
-			int prevCollisions = Functions.addArraySegment(
+			int prevCollisions = ArrayFunctions.addArraySegment(
 					collisions[option], beginSequence, lastSequence+1);
 			
 			int currentCollisions = countCollisions(csp, sequence, 
