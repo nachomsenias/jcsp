@@ -277,7 +277,7 @@ public class ACO extends Algorithm{
 				System.out.println("Best ant before LS: "+bestFitness);
 			}
 
-			evapore(bestSequence, bestFitness);
+			//evapore(bestSequence, bestFitness);
 
 			if(localSearch!=null) {
 				Result localResult = iterateLocalSearch(
@@ -292,6 +292,9 @@ public class ACO extends Algorithm{
 					System.out.println("Best ant after LS: "+bestFitness);
 				}
 			}
+
+			//Shouldnt we evaporate after LS?
+			evapore(bestSequence, bestFitness);
 			
 			if(bestFitness<this.bestFitness) {
 				this.bestFitness = bestFitness;
