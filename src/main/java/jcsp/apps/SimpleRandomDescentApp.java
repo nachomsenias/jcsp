@@ -14,9 +14,9 @@ import org.jamesframework.core.search.LocalSearch;
 import org.jamesframework.core.search.algo.RandomDescent;
 import org.jamesframework.core.search.stopcriteria.MaxRuntime;
 
-import util.random.RandomizerFactory;
-import util.random.RandomizerFactory.RandomizerAlgorithm;
-import util.random.RandomizerUtils;
+import jcsp.util.random.RandomizerFactory;
+import jcsp.util.random.RandomizerFactory.RandomizerAlgorithm;
+import jcsp.util.random.RandomizerUtils;
 
 /**
  * Main running stuff.

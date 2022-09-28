@@ -10,7 +10,7 @@ import jcsp.move.SingleInsertion;
 
 import org.jamesframework.core.search.neigh.Move;
 
-import util.random.Randomizer;
+import jcsp.util.random.Randomizer;
 
 public class CSPRandomShakingInsert extends CSPNeighbourhood{
 

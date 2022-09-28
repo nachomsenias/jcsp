@@ -14,10 +14,10 @@ import jcsp.experiment.beans.AlgorithmBean;
 import jcsp.robust.RobustnessEvaluator;
 import jcsp.util.AlternatePlanGenerator;
 import jcsp.util.CSPParser;
-import util.functions.ArrayFunctions;
-import util.random.RandomizerFactory;
-import util.random.RandomizerFactory.RandomizerAlgorithm;
-import util.random.RandomizerUtils;
+import jcsp.util.functions.ArrayFunctions;
+import jcsp.util.random.RandomizerFactory;
+import jcsp.util.random.RandomizerFactory.RandomizerAlgorithm;
+import jcsp.util.random.RandomizerUtils;
 
 public class Experiment {
 	private static BufferedWriter csvWriter = null;

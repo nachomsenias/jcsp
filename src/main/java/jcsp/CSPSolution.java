@@ -7,8 +7,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.jamesframework.core.problems.Solution;
 
 import gnu.trove.list.array.TIntArrayList;
-import util.functions.ArrayFunctions;
-import util.functions.MatrixFunctions;
+import jcsp.util.functions.ArrayFunctions;
+import jcsp.util.functions.MatrixFunctions;
 
 public class CSPSolution extends Solution{
 

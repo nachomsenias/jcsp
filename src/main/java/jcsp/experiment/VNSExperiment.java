@@ -18,10 +18,10 @@ import jcsp.experiment.beans.AlgorithmBean;
 import jcsp.experiment.beans.VNSBean;
 import jcsp.util.CSPParser;
 import jcsp.util.ProgressSearchListener;
-import util.functions.ArrayFunctions;
-import util.random.RandomizerFactory;
-import util.random.RandomizerFactory.RandomizerAlgorithm;
-import util.random.RandomizerUtils;
+import jcsp.util.functions.ArrayFunctions;
+import jcsp.util.random.RandomizerFactory;
+import jcsp.util.random.RandomizerFactory.RandomizerAlgorithm;
+import jcsp.util.random.RandomizerUtils;
 
 public class VNSExperiment {
 	private static BufferedWriter csvWriter = null;

@@ -23,10 +23,10 @@ import jcsp.neighbourhood.CSPInvertionNeighbourhood;
 import jcsp.neighbourhood.CSPShuffleNeighbourhood;
 import jcsp.neighbourhood.CSPSwapNeighbourhood;
 import jcsp.util.CSPParser;
-import util.functions.MatrixFunctions;
-import util.random.RandomizerFactory;
-import util.random.RandomizerFactory.RandomizerAlgorithm;
-import util.random.RandomizerUtils;
+import jcsp.util.functions.MatrixFunctions;
+import jcsp.util.random.RandomizerFactory;
+import jcsp.util.random.RandomizerFactory.RandomizerAlgorithm;
+import jcsp.util.random.RandomizerUtils;
 
 public class CSPProblemTest {
 	

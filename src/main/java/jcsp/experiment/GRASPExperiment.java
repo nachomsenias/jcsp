@@ -11,11 +11,11 @@ import jcsp.algo.GRASP;
 import jcsp.experiment.beans.AlgorithmBean;
 import jcsp.experiment.beans.GRASPBean;
 import jcsp.util.CSPParser;
-import util.functions.ArrayFunctions;
-import util.functions.Functions;
-import util.random.RandomizerFactory;
-import util.random.RandomizerFactory.RandomizerAlgorithm;
-import util.random.RandomizerUtils;
+import jcsp.util.functions.ArrayFunctions;
+import jcsp.util.functions.Functions;
+import jcsp.util.random.RandomizerFactory;
+import jcsp.util.random.RandomizerFactory.RandomizerAlgorithm;
+import jcsp.util.random.RandomizerUtils;
 
 public class GRASPExperiment {
 

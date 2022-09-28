@@ -8,9 +8,9 @@ import jcsp.CSPSolution;
 import jcsp.experiment.beans.ACOBean;
 import jcsp.experiment.beans.AlgorithmBean;
 import jcsp.localsearch.LocalSearch;
-import util.functions.ArrayFunctions;
-import util.functions.Functions;
-import util.functions.MatrixFunctions;
+import jcsp.util.functions.ArrayFunctions;
+import jcsp.util.functions.Functions;
+import jcsp.util.functions.MatrixFunctions;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.math.NumberUtils;

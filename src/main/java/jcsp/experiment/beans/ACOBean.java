@@ -4,7 +4,7 @@ import jcsp.CSPProblem;
 import jcsp.algo.ACO;
 import jcsp.algo.Algorithm;
 import jcsp.localsearch.LocalSearch;
-import util.io.ConfigFileReader;
+import jcsp.util.io.ConfigFileReader;
 
 public class ACOBean extends AlgorithmBean{
 	

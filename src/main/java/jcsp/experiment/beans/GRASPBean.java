@@ -5,7 +5,7 @@ import jcsp.algo.Algorithm;
 import jcsp.algo.GRASP;
 import jcsp.localsearch.BestImprovement;
 import jcsp.localsearch.LocalSearch;
-import util.io.ConfigFileReader;
+import jcsp.util.io.ConfigFileReader;
 
 public class GRASPBean extends AlgorithmBean{
 

@@ -12,9 +12,9 @@ import org.jamesframework.core.search.stopcriteria.MaxSteps;
 import jcsp.neighbourhood.CSPSwapNeighbourhood;
 import jcsp.robust.RobustCSPProblem;
 import jcsp.util.CSPParser;
-import util.random.RandomizerFactory;
-import util.random.RandomizerFactory.RandomizerAlgorithm;
-import util.random.RandomizerUtils;
+import jcsp.util.random.RandomizerFactory;
+import jcsp.util.random.RandomizerFactory.RandomizerAlgorithm;
+import jcsp.util.random.RandomizerUtils;
 
 public class CSPParserRobustTest {
 	

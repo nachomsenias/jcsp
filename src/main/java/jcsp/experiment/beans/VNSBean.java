@@ -12,7 +12,7 @@ import jcsp.algo.CustomVNS;
 import jcsp.localsearch.LocalSearch;
 import jcsp.neighbourhood.CSPRandomShakingInsert;
 import jcsp.neighbourhood.CSPRandomShakingSwap;
-import util.io.ConfigFileReader;
+import jcsp.util.io.ConfigFileReader;
 
 public class VNSBean extends AlgorithmBean{
 

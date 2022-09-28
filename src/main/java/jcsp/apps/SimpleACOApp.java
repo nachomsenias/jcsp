@@ -17,9 +17,9 @@ import jcsp.util.CSPParser;
 
 import org.jamesframework.core.search.neigh.Neighbourhood;
 
-import util.random.RandomizerFactory;
-import util.random.RandomizerFactory.RandomizerAlgorithm;
-import util.random.RandomizerUtils;
+import jcsp.util.random.RandomizerFactory;
+import jcsp.util.random.RandomizerFactory.RandomizerAlgorithm;
+import jcsp.util.random.RandomizerUtils;
 
 public class SimpleACOApp {
 

@@ -1,6 +1,6 @@
 package jcsp;
 
-import util.functions.ArrayFunctions;
+import jcsp.util.functions.ArrayFunctions;
 
 /**
  * Contains evaluation functions for CSP instances when using operators.

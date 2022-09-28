@@ -4,7 +4,7 @@ import java.io.File;
 
 import jcsp.CSPProblem;
 import jcsp.algo.Algorithm;
-import util.io.ConfigFileReader;
+import jcsp.util.io.ConfigFileReader;
 
 public abstract class AlgorithmBean {
 

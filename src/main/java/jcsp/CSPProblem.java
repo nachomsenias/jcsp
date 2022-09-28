@@ -12,8 +12,8 @@ import org.jamesframework.core.problems.objectives.evaluations.SimpleEvaluation;
 
 import gnu.trove.list.array.TIntArrayList;
 import jcsp.util.HeapBean;
-import util.functions.ArrayFunctions;
-import util.random.Randomizer;
+import jcsp.util.functions.ArrayFunctions;
+import jcsp.util.random.Randomizer;
 
 @SuppressWarnings("deprecation")
 public class CSPProblem implements Problem<CSPSolution>{

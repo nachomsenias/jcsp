@@ -8,7 +8,7 @@ import jcsp.move.SingleSwap;
 
 import org.jamesframework.core.search.neigh.Move;
 
-import util.random.Randomizer;
+import jcsp.util.random.Randomizer;
 
 public class CSPSwapNeighbourhood extends CSPNeighbourhood{
 

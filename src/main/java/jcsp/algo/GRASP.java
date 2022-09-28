@@ -12,7 +12,7 @@ import jcsp.localsearch.LocalSearch;
 
 import org.jamesframework.core.search.neigh.Neighbourhood;
 
-import util.random.Randomizer;
+import jcsp.util.random.Randomizer;
 
 public class GRASP extends Algorithm{
 

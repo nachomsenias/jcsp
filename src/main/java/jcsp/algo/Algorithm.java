@@ -13,7 +13,7 @@ import jcsp.experiment.beans.AlgorithmBean;
 import jcsp.localsearch.LocalSearch;
 import jcsp.robust.RobustnessEvaluator;
 import jcsp.util.ProgressSearchListener;
-import util.functions.ArrayFunctions;
+import jcsp.util.functions.ArrayFunctions;
 
 public abstract class Algorithm {
 	

@@ -7,11 +7,11 @@ import java.util.List;
 import gnu.trove.list.array.TIntArrayList;
 import jcsp.CSPProblem;
 import jcsp.CSPSolution;
-import util.functions.ArrayFunctions;
-import util.random.Randomizer;
-import util.random.RandomizerFactory;
-import util.random.RandomizerFactory.RandomizerAlgorithm;
-import util.random.RandomizerUtils;
+import jcsp.util.functions.ArrayFunctions;
+import jcsp.util.random.Randomizer;
+import jcsp.util.random.RandomizerFactory;
+import jcsp.util.random.RandomizerFactory.RandomizerAlgorithm;
+import jcsp.util.random.RandomizerUtils;
 
 public class RobustnessEvaluator {
 	

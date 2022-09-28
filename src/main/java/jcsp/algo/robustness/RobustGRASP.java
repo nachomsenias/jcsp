@@ -8,7 +8,7 @@ import jcsp.CSPProblem;
 import jcsp.CSPSolution;
 import jcsp.algo.GRASP;
 import jcsp.experiment.beans.AlgorithmBean;
-import util.random.Randomizer;
+import jcsp.util.random.Randomizer;
 
 public class RobustGRASP extends GRASP {
 
